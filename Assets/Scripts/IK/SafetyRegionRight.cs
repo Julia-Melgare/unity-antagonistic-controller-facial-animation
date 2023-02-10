@@ -344,6 +344,8 @@ public class SafetyRegionRight : SafetyRegion
 
                 // Method in charge of moving back the hand
                 rightTarget.SetTargetBack(reactionTime, hasRightStartedMovingOut);
+
+                targetObstacle.obstacle = nowObstacle = null;
             }
         }
     }
