@@ -126,10 +126,15 @@ public class FaceController : MonoBehaviour
         int xRightEyeBlendShapeIndex = Mathf.Sign(xRightEyeRotation) < 0 ? EyeLookUpRightBlendShapeIndex : EyeLookDownRightBlendShapeIndex;
         int yRightEyeBlendShapeIndex = Mathf.Sign(yRightEyeRotation) < 0 ? EyeLookOutRightBlendShapeIndex : EyeLookInRightBlendShapeIndex;
 
-        faceMeshRenderer.SetBlendShapeWeight(xLeftEyeBlendShapeIndex, 4 * Mathf.Abs(xLeftEyeRotation));
-        faceMeshRenderer.SetBlendShapeWeight(yLeftEyeBlendShapeIndex, 4 * Mathf.Abs(yLeftEyeRotation));
-        faceMeshRenderer.SetBlendShapeWeight(xRightEyeBlendShapeIndex, 4 * Mathf.Abs(xRightEyeRotation));
-        faceMeshRenderer.SetBlendShapeWeight(yRightEyeBlendShapeIndex, 4 * Mathf.Abs(yRightEyeRotation));
+        faceMeshRenderer.SetBlendShapeWeight(xLeftEyeBlendShapeIndex, NormalizeBlendshapeValue(xLeftEyeRotation, eyeXRotationLimit));
+        faceMeshRenderer.SetBlendShapeWeight(yLeftEyeBlendShapeIndex, NormalizeBlendshapeValue(yLeftEyeRotation, eyeYRotationLimit));
+        faceMeshRenderer.SetBlendShapeWeight(xRightEyeBlendShapeIndex, NormalizeBlendshapeValue(xRightEyeRotation, eyeXRotationLimit));
+        faceMeshRenderer.SetBlendShapeWeight(yRightEyeBlendShapeIndex, NormalizeBlendshapeValue(yRightEyeRotation, eyeYRotationLimit));
+    }
+
+    private float NormalizeBlendshapeValue(float value, float max)
+    {
+        return (100 * Mathf.Abs(value))/max;
     }
 
     private IEnumerator Blink()
