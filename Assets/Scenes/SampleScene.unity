@@ -203,6 +203,34 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5656338420393517599, guid: a834f0168963b6a44a9283d73ab63eac, type: 3}
+      propertyPath: m_BlendShapeWeights.Array.data[5]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5656338420393517599, guid: a834f0168963b6a44a9283d73ab63eac, type: 3}
+      propertyPath: m_BlendShapeWeights.Array.data[6]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5656338420393517599, guid: a834f0168963b6a44a9283d73ab63eac, type: 3}
+      propertyPath: m_BlendShapeWeights.Array.data[7]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5656338420393517599, guid: a834f0168963b6a44a9283d73ab63eac, type: 3}
+      propertyPath: m_BlendShapeWeights.Array.data[8]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5656338420393517599, guid: a834f0168963b6a44a9283d73ab63eac, type: 3}
+      propertyPath: m_BlendShapeWeights.Array.data[9]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5656338420393517599, guid: a834f0168963b6a44a9283d73ab63eac, type: 3}
+      propertyPath: m_BlendShapeWeights.Array.data[10]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5656338420393517599, guid: a834f0168963b6a44a9283d73ab63eac, type: 3}
+      propertyPath: m_BlendShapeWeights.Array.data[11]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5656338420393517599, guid: a834f0168963b6a44a9283d73ab63eac, type: 3}
       propertyPath: m_BlendShapeWeights.Array.data[12]
       value: 0
       objectReference: {fileID: 0}
@@ -216,6 +244,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5656338420393517599, guid: a834f0168963b6a44a9283d73ab63eac, type: 3}
       propertyPath: m_BlendShapeWeights.Array.data[46]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5656338420393517599, guid: a834f0168963b6a44a9283d73ab63eac, type: 3}
+      propertyPath: m_BlendShapeWeights.Array.data[49]
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6731555250141816126, guid: a834f0168963b6a44a9283d73ab63eac, type: 3}
@@ -244,6 +276,30 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6731555250141816126, guid: a834f0168963b6a44a9283d73ab63eac, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7435236622474090325, guid: a834f0168963b6a44a9283d73ab63eac, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7435236622474090325, guid: a834f0168963b6a44a9283d73ab63eac, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7435236622474090325, guid: a834f0168963b6a44a9283d73ab63eac, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7435236622474090325, guid: a834f0168963b6a44a9283d73ab63eac, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7435236622474090325, guid: a834f0168963b6a44a9283d73ab63eac, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7435236622474090325, guid: a834f0168963b6a44a9283d73ab63eac, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

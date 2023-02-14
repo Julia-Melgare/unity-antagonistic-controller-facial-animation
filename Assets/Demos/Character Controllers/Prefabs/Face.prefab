@@ -73,9 +73,16 @@ MonoBehaviour:
   safetyRegionLeft: {fileID: 0}
   safetyRegionRight: {fileID: 0}
   faceAnimator: {fileID: 2397113510338702070}
-  neckTransform: {fileID: 6731555250141816126}
+  faceMeshRenderer: {fileID: 5656338420393517599}
+  leftEyeTransform: {fileID: 7435236622474090325}
+  rightEyeTransform: {fileID: 7952963345548195245}
+  eyeXRotationLimit: 25
+  eyeYRotationLimit: 25
+  eyeZRotationLimit: 25
+  eyeMovementSpeed: 1.5
   blinkIntervalMin: 0.2
   blinkIntervalMax: 3
+  neckTransform: {fileID: 6731555250141816126}
   neckXRotationLimit: 45
   neckYRotationLimit: 45
   neckZRotationLimit: 30

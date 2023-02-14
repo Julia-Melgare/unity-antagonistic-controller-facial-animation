@@ -12,18 +12,46 @@ public class FaceController : MonoBehaviour
     [SerializeField]
     private Animator faceAnimator;
     [SerializeField]
-    private Transform neckTransform;
+    private SkinnedMeshRenderer faceMeshRenderer;
 
+    [Header("Eyes Settings")]
+    [SerializeField]
+    private Transform leftEyeTransform;
+    [SerializeField]
+    private Transform rightEyeTransform;
+    [SerializeField]
+    private float eyeXRotationLimit = 25f;
+    [SerializeField]
+    private float eyeYRotationLimit = 25f;
+    [SerializeField]
+    private float eyeZRotationLimit = 25f;
+    [SerializeField]
+    private float eyeMovementSpeed = 2f;
+
+    private Vector3 initialLeftEyeForward;
+    private Vector3 initialRightEyeForward;
+
+    private const int EyeLookInLeftBlendShapeIndex = 4;
+    private const int EyeLookInRightBlendShapeIndex = 5;
+    private const int EyeLookOutLeftBlendShapeIndex = 6;
+    private const int EyeLookOutRightBlendShapeIndex = 7;
+    private const int EyeLookUpLeftBlendShapeIndex = 8;
+    private const int EyeLookUpRightBlendShapeIndex = 9;
+    private const int EyeLookDownLeftBlendShapeIndex = 10;
+    private const int EyeLookDownRightBlendShapeIndex = 11;
 
     [SerializeField]
     private float blinkIntervalMin = 0.1f,  blinkIntervalMax = 1f;
+
+    [Header("Neck Settings")]
+    [SerializeField]
+    private Transform neckTransform;
     [SerializeField]
     private float neckXRotationLimit = 70f;
     [SerializeField]
     private float neckYRotationLimit = 70f;
     [SerializeField]
     private float neckZRotationLimit = 30f;
-
     [SerializeField]
     private float neckMovementSpeed = 1.5f;
 
@@ -33,6 +61,8 @@ public class FaceController : MonoBehaviour
     {
         StartCoroutine(Blink());
         initialNeckForward = neckTransform.forward;
+        initialLeftEyeForward = leftEyeTransform.forward;
+        initialRightEyeForward = rightEyeTransform.forward;
     }
 
     private void Update()
@@ -44,26 +74,62 @@ public class FaceController : MonoBehaviour
         else
            nearestObstacle = safetyRegionLeft.targetObstacle.obstacle != null ? safetyRegionLeft.targetObstacle.obstacle : safetyRegionRight.targetObstacle.obstacle;
 
-        // Set neck rotation
-        Vector3 targetDirection = transform.forward + new Vector3(0, initialNeckForward.y, 0);
+        // Rotate neck and eyes towards the target
+        SetRotation(neckTransform, nearestObstacle, initialNeckForward, neckMovementSpeed);
+        SetRotation(leftEyeTransform, nearestObstacle, initialLeftEyeForward, eyeMovementSpeed);
+        SetRotation(rightEyeTransform, nearestObstacle, initialRightEyeForward, eyeMovementSpeed);
 
-        if (nearestObstacle != null) targetDirection = nearestObstacle.transform.position - neckTransform.position;
-        float singleNeckStep = neckMovementSpeed * Time.deltaTime;
-        Vector3 newNeckDirection = Vector3.RotateTowards(neckTransform.forward, targetDirection, singleNeckStep, 0.0f);
-        Debug.DrawRay(neckTransform.position, newNeckDirection, Color.red);
-        neckTransform.rotation = Quaternion.LookRotation(newNeckDirection);
+        //Clamp rotations
+        ClampRotation(neckTransform, neckXRotationLimit, neckYRotationLimit, neckZRotationLimit);
+        ClampRotation(leftEyeTransform, eyeXRotationLimit, eyeYRotationLimit, eyeZRotationLimit);
+        ClampRotation(rightEyeTransform, eyeXRotationLimit, eyeYRotationLimit, eyeZRotationLimit);
 
-        //Clamp neck rotation
-        Vector3 localNeckRotation = neckTransform.localEulerAngles;
-        float xRotation = localNeckRotation.x > 180 ? localNeckRotation.x - 360 : localNeckRotation.x; 
-        float yRotation = localNeckRotation.y > 180 ? localNeckRotation.y - 360 : localNeckRotation.y; 
-        float zRotation = localNeckRotation.z > 180 ? localNeckRotation.z - 360 : localNeckRotation.z; 
-        neckTransform.localEulerAngles = new Vector3
+        //Animate eye blendhsapes according to gaze direction
+        AnimateEyeBlendShapes();
+    }
+
+    private void SetRotation(Transform objectTransform, Collider nearestObstacle, Vector3 initialForward, float movementSpeed)
+    {
+        Vector3 targetDirection = transform.forward + new Vector3(0, initialForward.y, 0);
+
+        if (nearestObstacle != null) targetDirection = nearestObstacle.transform.position - objectTransform.position;
+        float singleStep = movementSpeed * Time.deltaTime;
+        Vector3 newDirection = Vector3.RotateTowards(objectTransform.forward, targetDirection, singleStep, 0.0f);
+        objectTransform.rotation = Quaternion.LookRotation(newDirection);
+    }
+
+    private void ClampRotation(Transform objectTransform, float xRotationLimit, float yRotationLimit, float zRotationLimit) 
+    {
+        Vector3 localRotation = objectTransform.localEulerAngles;
+        float xRotation = localRotation.x > 180 ? localRotation.x - 360 : localRotation.x;
+        float yRotation = localRotation.y > 180 ? localRotation.y - 360 : localRotation.y;
+        float zRotation = localRotation.z > 180 ? localRotation.z - 360 : localRotation.z;
+        objectTransform.localEulerAngles = new Vector3
             (
-                Mathf.Clamp(xRotation, -neckXRotationLimit, neckXRotationLimit),
-                Mathf.Clamp(yRotation, -neckYRotationLimit, neckYRotationLimit),
-                Mathf.Clamp(zRotation, -neckZRotationLimit, neckZRotationLimit)
+                Mathf.Clamp(xRotation, -xRotationLimit, xRotationLimit),
+                Mathf.Clamp(yRotation, -yRotationLimit, yRotationLimit),
+                Mathf.Clamp(zRotation, -zRotationLimit, zRotationLimit)
             );
+    }
+
+    private void AnimateEyeBlendShapes()
+    {
+        Vector3 localLeftEyeRotation = leftEyeTransform.localEulerAngles;
+        float xLeftEyeRotation = localLeftEyeRotation.x > 180 ? localLeftEyeRotation.x - 360 : localLeftEyeRotation.x;
+        float yLeftEyeRotation = localLeftEyeRotation.y > 180 ? localLeftEyeRotation.y - 360 : localLeftEyeRotation.y;
+        int xLeftEyeBlendShapeIndex = Mathf.Sign(xLeftEyeRotation) < 0 ? EyeLookUpLeftBlendShapeIndex : EyeLookDownLeftBlendShapeIndex;
+        int yLeftEyeBlendShapeIndex = Mathf.Sign(yLeftEyeRotation) < 0 ? EyeLookOutLeftBlendShapeIndex : EyeLookInLeftBlendShapeIndex;
+
+        Vector3 localRightEyeRotation = rightEyeTransform.localEulerAngles;
+        float xRightEyeRotation = localRightEyeRotation.x > 180 ? localRightEyeRotation.x - 360 : localRightEyeRotation.x;
+        float yRightEyeRotation = localRightEyeRotation.y > 180 ? localRightEyeRotation.y - 360 : localRightEyeRotation.y;
+        int xRightEyeBlendShapeIndex = Mathf.Sign(xRightEyeRotation) < 0 ? EyeLookUpRightBlendShapeIndex : EyeLookDownRightBlendShapeIndex;
+        int yRightEyeBlendShapeIndex = Mathf.Sign(yRightEyeRotation) < 0 ? EyeLookOutRightBlendShapeIndex : EyeLookInRightBlendShapeIndex;
+
+        faceMeshRenderer.SetBlendShapeWeight(xLeftEyeBlendShapeIndex, 4 * Mathf.Abs(xLeftEyeRotation));
+        faceMeshRenderer.SetBlendShapeWeight(yLeftEyeBlendShapeIndex, 4 * Mathf.Abs(yLeftEyeRotation));
+        faceMeshRenderer.SetBlendShapeWeight(xRightEyeBlendShapeIndex, 4 * Mathf.Abs(xRightEyeRotation));
+        faceMeshRenderer.SetBlendShapeWeight(yRightEyeBlendShapeIndex, 4 * Mathf.Abs(yRightEyeRotation));
     }
 
     private IEnumerator Blink()
