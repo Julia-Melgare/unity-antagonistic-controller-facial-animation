@@ -669,7 +669,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 2.1808367, y: 1}
+    m_SensorSize: {x: 2.4900763, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -3059,7 +3059,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 2.1808367, y: 1}
+    m_SensorSize: {x: 2.4900763, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -3665,6 +3665,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6232217848685439211, guid: a834f0168963b6a44a9283d73ab63eac, type: 3}
+      propertyPath: distance
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 6731555250141816126, guid: a834f0168963b6a44a9283d73ab63eac, type: 3}
       propertyPath: m_LocalRotation.w
       value: 1
@@ -3744,7 +3748,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 2.1808367, y: 1}
+    m_SensorSize: {x: 2.4900763, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -9185,7 +9189,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 2.1808367, y: 1}
+    m_SensorSize: {x: 2.4900763, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
