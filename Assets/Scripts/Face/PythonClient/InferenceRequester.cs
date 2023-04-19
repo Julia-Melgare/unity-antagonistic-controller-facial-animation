@@ -31,7 +31,8 @@ public class InferenceRequester : RunAbleThread
                     }
                     catch (Exception e)
                     {
-                        Debug.LogError(e.Message);
+                        if (!(e is NetMQ.FiniteStateMachineException))
+                            Debug.LogError(e.Message);
                     }
                 }
 

@@ -8,13 +8,27 @@ public class AttentionModel : MonoBehaviour
     private Camera agentCamera;
     [SerializeField]
     private InferenceClient inferenceClient;
+
+    [Header("Saliency Map Settings")]
+    [SerializeField]
+    private float scanFrequency = 30f;
+
+    private float scanInterval; 
+    private float scanTimer;
+    
     void Start()
     {
-        
+        scanInterval = 1.0f / scanFrequency;
     }
     void Update()
     {
-        
+        scanTimer -= Time.deltaTime;
+
+        if (scanTimer < 0)
+        {
+            scanTimer += scanInterval;
+            InferSaliencyMap();
+        }
     }
 
     private void InferSaliencyMap()
@@ -22,10 +36,10 @@ public class AttentionModel : MonoBehaviour
         var input = GetCameraImage();
         inferenceClient.Infer(input, output =>
         {
-            // TODO: receive saliency map bytes and process them as an image
+            Debug.Log(output.Length);
         }, error =>
         {
-            // TODO: catch error
+            Debug.LogError(error.Message);
         });
     }
 
