@@ -102,7 +102,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   agentCamera: {fileID: 2621118056989290313}
+  saliencyMapOutput: {fileID: 0}
   inferenceClient: {fileID: 2728485655539910894}
+  scanFrequency: 1
 --- !u!114 &2728485655539910894
 MonoBehaviour:
   m_ObjectHideFlags: 0

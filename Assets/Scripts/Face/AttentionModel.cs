@@ -1,11 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class AttentionModel : MonoBehaviour
 {
     [SerializeField]
     private Camera agentCamera;
+    [SerializeField]
+    private RawImage saliencyMapOutput;
     [SerializeField]
     private InferenceClient inferenceClient;
 
@@ -15,6 +16,8 @@ public class AttentionModel : MonoBehaviour
 
     private float scanInterval; 
     private float scanTimer;
+
+    private byte[] saliencyMapBytes;
     
     void Start()
     {
@@ -28,6 +31,7 @@ public class AttentionModel : MonoBehaviour
         {
             scanTimer += scanInterval;
             InferSaliencyMap();
+            if (saliencyMapBytes!=null) updateSaliencyMap(saliencyMapBytes);
         }
     }
 
@@ -37,6 +41,7 @@ public class AttentionModel : MonoBehaviour
         inferenceClient.Infer(input, output =>
         {
             Debug.Log(output.Length);
+            saliencyMapBytes = output;
         }, error =>
         {
             Debug.LogError(error.Message);
@@ -61,5 +66,12 @@ public class AttentionModel : MonoBehaviour
         RenderTexture.active = currentRT;
 
         return bytes;
+    }
+
+    private void updateSaliencyMap(byte[] rawData)
+    {
+        Texture2D saliencyMapTexture = new Texture2D(2, 2);
+        ImageConversion.LoadImage(saliencyMapTexture, rawData);
+        saliencyMapOutput.texture = saliencyMapTexture;
     }
 }
