@@ -32,7 +32,37 @@ public class AttentionModel : MonoBehaviour
             scanTimer += scanInterval;
             InferSaliencyMap();
             if (saliencyMapBytes!=null) updateSaliencyMap(saliencyMapBytes);
+            GetSaliencyPoint();
         }
+    }
+
+    Vector3 GetSaliencyPoint()
+    {
+        // find index of highest value in map
+        int max = 0;
+        int maxIndex = -1;
+        for (int i = 0; i < saliencyMapBytes.Length; i++)
+        {
+            if (saliencyMapBytes[i] > max)
+            {
+                max = saliencyMapBytes[i];
+                maxIndex = i;
+            }
+        }
+        // convert array index to matrix indexes
+        int width = agentCamera.targetTexture.width;
+        int height = agentCamera.targetTexture.height;
+        int matrix_i = maxIndex / width;
+        int matrix_j = maxIndex % width;
+        // get world coordinates from matrix indexes
+        Ray ray = agentCamera.ViewportPointToRay(new Vector3(matrix_i, matrix_j, 0));
+        Debug.DrawRay(ray.origin, ray.direction, Color.green, 0.5f);
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit))
+            print("I'm looking at " + hit.transform.name);
+        else
+            print("I'm looking at nothing!");
+        return Vector3.zero;
     }
 
     private void InferSaliencyMap()
