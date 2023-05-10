@@ -10,6 +10,9 @@ public class FaceController : MonoBehaviour
     private SafetyRegionRight safetyRegionRight;
 
     [SerializeField]
+    private AttentionModel attentionModel;
+
+    [SerializeField]
     private Animator faceAnimator;
     [SerializeField]
     private SkinnedMeshRenderer faceMeshRenderer;
@@ -73,6 +76,10 @@ public class FaceController : MonoBehaviour
            nearestObstacle = safetyRegionLeft.targetObstacle.distance < safetyRegionRight.targetObstacle.distance ? safetyRegionLeft.targetObstacle.obstacle : safetyRegionRight.targetObstacle.obstacle;
         else
            nearestObstacle = safetyRegionLeft.targetObstacle.obstacle != null ? safetyRegionLeft.targetObstacle.obstacle : safetyRegionRight.targetObstacle.obstacle;
+        if (nearestObstacle == null)
+        {
+            nearestObstacle = attentionModel.GetSaliencyPoint();
+        }
 
         // Rotate neck and eyes towards the target
         SetRotation(neckTransform, nearestObstacle, initialNeckForward, neckMovementSpeed);

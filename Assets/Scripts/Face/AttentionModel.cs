@@ -32,37 +32,43 @@ public class AttentionModel : MonoBehaviour
             scanTimer += scanInterval;
             InferSaliencyMap();
             if (saliencyMapBytes!=null) updateSaliencyMap(saliencyMapBytes);
-            GetSaliencyPoint();
         }
     }
 
-    Vector3 GetSaliencyPoint()
+    public Collider GetSaliencyPoint()
     {
-        // find index of highest value in map
-        int max = 0;
+        // Find index of highest value in map
+        Color[] saliencyMapPixels = (saliencyMapOutput.texture as Texture2D).GetPixels();
+        float maxValue = 0;
         int maxIndex = -1;
-        for (int i = 0; i < saliencyMapBytes.Length; i++)
+        for (int i = 0; i < saliencyMapPixels.Length; i++)
         {
-            if (saliencyMapBytes[i] > max)
+            float grayscaleValue = saliencyMapPixels[i].grayscale;
+            if (grayscaleValue > maxValue)
             {
-                max = saliencyMapBytes[i];
+                maxValue = grayscaleValue;
                 maxIndex = i;
             }
         }
-        // convert array index to matrix indexes
+        // Convert array index to matrix indexes
         int width = agentCamera.targetTexture.width;
         int height = agentCamera.targetTexture.height;
         int matrix_i = maxIndex / width;
         int matrix_j = maxIndex % width;
-        // get world coordinates from matrix indexes
-        Ray ray = agentCamera.ViewportPointToRay(new Vector3(matrix_i, matrix_j, 0));
-        Debug.DrawRay(ray.origin, ray.direction, Color.green, 0.5f);
+        // Convert matrix indexes to camera coordinates
+        float screenPointX = (float)matrix_i/width;
+        float screenPointY = (float)matrix_j/height;
+        // Get world coordinates from camera
+        Ray ray = agentCamera.ViewportPointToRay(new Vector3(screenPointX, screenPointY, 0));
+        Debug.DrawRay(ray.origin, ray.direction, Color.green, 0.25f);
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit))
-            print("I'm looking at " + hit.transform.name);
-        else
-            print("I'm looking at nothing!");
-        return Vector3.zero;
+        {
+            Debug.Log("I'm looking at " + hit.transform.name);
+            return hit.collider;
+        }            
+        Debug.Log("I'm looking at nothing!");
+        return null;
     }
 
     private void InferSaliencyMap()
@@ -70,7 +76,6 @@ public class AttentionModel : MonoBehaviour
         var input = GetCameraImage();
         inferenceClient.Infer(input, output =>
         {
-            Debug.Log(output.Length);
             saliencyMapBytes = output;
         }, error =>
         {
