@@ -23,7 +23,7 @@ public class FPSMouseLook : MonoBehaviour
 
         // Rotate the camera vertically
         xRotation -= mouseY;
-        //xRotation = Mathf.Clamp(xRotation, -90f, 90f); // Clamp the vertical rotation to avoid flipping
+        xRotation = Mathf.Clamp(xRotation, -90f, 90f); // Clamp the vertical rotation to avoid flipping
 
         yRotation += mouseX;
         //yRotation = Mathf.Clamp(yRotation, -90f, 90f);
