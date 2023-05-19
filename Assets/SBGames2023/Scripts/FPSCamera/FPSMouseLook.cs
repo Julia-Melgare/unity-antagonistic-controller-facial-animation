@@ -1,11 +1,13 @@
 using UnityEngine;
+using Cinemachine;
 
 public class FPSMouseLook : MonoBehaviour
 {
+    [SerializeField]
+    private CinemachineDollyCart dollyCart;
     public float sensitivity = 2f; // Mouse sensitivity
     private float xRotation = 0f;
-    private float yRotation = 0f;
-    
+    private float yRotation = 0f;    
 
     private void Start()
     {
@@ -29,5 +31,11 @@ public class FPSMouseLook : MonoBehaviour
         //yRotation = Mathf.Clamp(yRotation, -90f, 90f);
 
         transform.localRotation = Quaternion.Euler(xRotation, yRotation, 0f);
+    }
+
+    public void EnableCameraRotation(bool enable)
+    {
+        dollyCart.ChangeRotation = !enable;
+        this.enabled = enable;
     }
 }

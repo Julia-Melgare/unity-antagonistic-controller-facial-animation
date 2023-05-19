@@ -14,7 +14,7 @@ public class GameStart : MonoBehaviour
     {
         if(!gameStarted && Input.GetKey(KeyCode.Return))
         {
-            Time.timeScale = 1f;
+            Time.timeScale = 1.5f;
             gameStartUICanvas.enabled = false;
             gameStarted = true;
         }
