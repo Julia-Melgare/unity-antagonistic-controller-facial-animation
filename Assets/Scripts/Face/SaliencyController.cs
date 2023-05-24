@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class AttentionModel : MonoBehaviour
+public class SaliencyController : MonoBehaviour
 {
     [SerializeField]
     private Camera agentCamera;
@@ -60,6 +60,7 @@ public class AttentionModel : MonoBehaviour
         }        
         // Get world coordinates from camera
         var objects = new List<string>();
+        Collider obstacle = null;
         foreach (var screenPoint in saliencyPoints)
         {
             Ray ray = agentCamera.ViewportPointToRay(screenPoint);
@@ -69,7 +70,7 @@ public class AttentionModel : MonoBehaviour
             {
                 //Debug.Log("I'm looking at " + hit.transform.name);
                 objects.Add(hit.transform.name);
-                //return hit.collider;
+                obstacle = hit.collider;
             }            
             //Debug.Log("I'm looking at nothing!");
             objects.Add("null");
@@ -79,7 +80,7 @@ public class AttentionModel : MonoBehaviour
         foreach (string obj in objects) output+= obj + " ";
         output+= "]";
         Debug.Log(output);        
-        return null;
+        return obstacle;
     }
 
     private void InferSaliencyMap()

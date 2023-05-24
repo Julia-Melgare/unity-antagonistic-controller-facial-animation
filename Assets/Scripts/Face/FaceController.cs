@@ -10,7 +10,7 @@ public class FaceController : MonoBehaviour
     private SafetyRegionRight safetyRegionRight;
 
     [SerializeField]
-    private AttentionModel attentionModel;
+    private SaliencyController saliencyController;
 
     [SerializeField]
     private Animator faceAnimator;
@@ -60,6 +60,8 @@ public class FaceController : MonoBehaviour
 
     private Vector3 initialNeckForward;
 
+    private Collider currentFocus = null;
+
     private void Start()
     {
         StartCoroutine(Blink());
@@ -78,7 +80,7 @@ public class FaceController : MonoBehaviour
            nearestObstacle = safetyRegionLeft.targetObstacle.obstacle != null ? safetyRegionLeft.targetObstacle.obstacle : safetyRegionRight.targetObstacle.obstacle;
         if (nearestObstacle == null)
         {
-            nearestObstacle = attentionModel.GetSaliencyPoint();
+            nearestObstacle = saliencyController.GetSaliencyPoint();
         }
 
         // Rotate neck and eyes towards the target
@@ -93,6 +95,9 @@ public class FaceController : MonoBehaviour
 
         //Animate eye blendhsapes according to gaze direction
         AnimateEyeBlendShapes();
+
+        //Update current focus
+        if (nearestObstacle!=null) currentFocus = nearestObstacle;
     }
 
     private void SetRotation(Transform objectTransform, Collider nearestObstacle, Vector3 initialForward, float movementSpeed)

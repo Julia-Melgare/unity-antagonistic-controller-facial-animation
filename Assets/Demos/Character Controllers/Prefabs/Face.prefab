@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 796606709438301115}
   - component: {fileID: 2397113510338702070}
   - component: {fileID: 8731453604925911308}
-  - component: {fileID: 8683149996325786160}
+  - component: {fileID: 884323973809061713}
   - component: {fileID: 2728485655539910894}
   m_Layer: 0
   m_Name: Face
@@ -74,7 +74,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   safetyRegionLeft: {fileID: 0}
   safetyRegionRight: {fileID: 0}
-  attentionModel: {fileID: 8683149996325786160}
+  saliencyController: {fileID: 884323973809061713}
   faceAnimator: {fileID: 2397113510338702070}
   faceMeshRenderer: {fileID: 5656338420393517599}
   leftEyeTransform: {fileID: 7435236622474090325}
@@ -90,7 +90,7 @@ MonoBehaviour:
   neckYRotationLimit: 45
   neckZRotationLimit: 30
   neckMovementSpeed: 1
---- !u!114 &8683149996325786160
+--- !u!114 &884323973809061713
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -99,13 +99,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 19647415933147393}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a680319e597a2474db6065135ba23f56, type: 3}
+  m_Script: {fileID: 11500000, guid: 0ce7671154d564e45a2bd8b274cef39a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   agentCamera: {fileID: 2621118056989290313}
   saliencyMapOutput: {fileID: 0}
   inferenceClient: {fileID: 2728485655539910894}
-  scanFrequency: 5
+  scanFrequency: 10
 --- !u!114 &2728485655539910894
 MonoBehaviour:
   m_ObjectHideFlags: 0
