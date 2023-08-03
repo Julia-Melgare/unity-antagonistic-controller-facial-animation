@@ -105,7 +105,10 @@ MonoBehaviour:
   agentCamera: {fileID: 2621118056989290313}
   saliencyMapOutput: {fileID: 0}
   inferenceClient: {fileID: 2728485655539910894}
-  scanFrequency: 10
+  scanFrequency: 5
+  scanLayerMask:
+    serializedVersion: 2
+    m_Bits: 3959
 --- !u!114 &2728485655539910894
 MonoBehaviour:
   m_ObjectHideFlags: 0

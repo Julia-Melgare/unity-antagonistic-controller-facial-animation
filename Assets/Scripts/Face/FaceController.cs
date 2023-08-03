@@ -73,7 +73,7 @@ public class FaceController : MonoBehaviour
     private void Update()
     {
         // Find nearest obstacle
-        Collider nearestObstacle = null;
+        Collider nearestObstacle;
         if (safetyRegionLeft.targetObstacle.obstacle != null && safetyRegionRight.targetObstacle.obstacle != null)
            nearestObstacle = safetyRegionLeft.targetObstacle.distance < safetyRegionRight.targetObstacle.distance ? safetyRegionLeft.targetObstacle.obstacle : safetyRegionRight.targetObstacle.obstacle;
         else
@@ -98,6 +98,7 @@ public class FaceController : MonoBehaviour
 
         //Update current focus
         if (nearestObstacle!=null) currentFocus = nearestObstacle;
+        Debug.Log("Currently focusing on: "+currentFocus.gameObject.name);
     }
 
     private void SetRotation(Transform objectTransform, Collider nearestObstacle, Vector3 initialForward, float movementSpeed)
@@ -146,7 +147,7 @@ public class FaceController : MonoBehaviour
 
     private float NormalizeBlendshapeValue(float value, float max)
     {
-        return (100 * Mathf.Abs(value))/max;
+        return 100 * Mathf.Abs(value)/max;
     }
 
     private IEnumerator Blink()
@@ -158,5 +159,4 @@ public class FaceController : MonoBehaviour
         yield return Blink();
         yield return null;
     }
-
 }

@@ -15,6 +15,8 @@ public class SaliencyController : MonoBehaviour
     [Header("Saliency Map Settings")]
     [SerializeField]
     private float scanFrequency = 30f;
+    [SerializeField]
+    private LayerMask scanLayerMask;
 
     private float scanInterval; 
     private float scanTimer;
@@ -37,7 +39,7 @@ public class SaliencyController : MonoBehaviour
         }
     }
 
-    public Collider GetSaliencyPoint()
+    private List<Collider> GetSalientObjects()
     {
         // Find index of highest value in map
         Color[] saliencyMapPixels = (saliencyMapOutput.texture as Texture2D).GetPixels();
@@ -60,27 +62,46 @@ public class SaliencyController : MonoBehaviour
         }        
         // Get world coordinates from camera
         var objects = new List<string>();
-        Collider obstacle = null;
+        var obstacles = new List<Collider>();
         foreach (var screenPoint in saliencyPoints)
         {
             Ray ray = agentCamera.ViewportPointToRay(screenPoint);
             Debug.DrawRay(ray.origin, ray.direction, Color.green, 0.25f);
             RaycastHit hit;
-            if (Physics.Raycast(ray, out hit))
+            if (Physics.Raycast(ray, out hit, float.MaxValue, scanLayerMask))
             {
-                //Debug.Log("I'm looking at " + hit.transform.name);
                 objects.Add(hit.transform.name);
-                obstacle = hit.collider;
+                obstacles.Add(hit.collider);
             }            
-            //Debug.Log("I'm looking at nothing!");
             objects.Add("null");
         }
         //Print list
         string output = "[ ";
         foreach (string obj in objects) output+= obj + " ";
         output+= "]";
-        Debug.Log(output);        
-        return obstacle;
+        //Debug.Log(output);        
+        return obstacles;
+    }
+    
+    public Collider GetSaliencyPoint()
+    {
+        List<Collider> salientObjects = GetSalientObjects();
+        //TODO: Here we have to implement all of the object selection logic (choose by speed, distance, tags, etc.)
+        // For now: focuses on the nearest object
+        Collider salientObject = null;
+
+        float minDistance = float.MaxValue;
+        foreach (Collider obj in salientObjects)
+        {
+            var distance = Vector3.Distance(transform.position, obj.transform.position);
+            if (distance < minDistance)
+            {
+                minDistance = distance;
+                salientObject = obj;
+            }
+        }
+
+        return salientObject;
     }
 
     private void InferSaliencyMap()
