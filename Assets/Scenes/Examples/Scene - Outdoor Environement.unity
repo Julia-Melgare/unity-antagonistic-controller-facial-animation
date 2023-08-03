@@ -1024,7 +1024,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 132957507}
-  m_LocalRotation: {x: -0.08773498, y: 0.8567811, z: -0.15536402, w: -0.48382932}
+  m_LocalRotation: {x: -0.08773498, y: 0.8567811, z: -0.15536405, w: -0.48382926}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -10858,14 +10858,6 @@ PrefabInstance:
       propertyPath: m_Color.a
       value: 0.5019608
       objectReference: {fileID: 0}
-    - target: {fileID: 242003641472051549, guid: e870347c99002d7458a4e1f71374d35a, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 400
-      objectReference: {fileID: 0}
-    - target: {fileID: 242003641472051549, guid: e870347c99002d7458a4e1f71374d35a, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 400
-      objectReference: {fileID: 0}
     - target: {fileID: 242003641773968663, guid: e870347c99002d7458a4e1f71374d35a, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -10953,14 +10945,6 @@ PrefabInstance:
     - target: {fileID: 242003641773969131, guid: e870347c99002d7458a4e1f71374d35a, type: 3}
       propertyPath: m_Name
       value: UIInfoCanvas
-      objectReference: {fileID: 0}
-    - target: {fileID: 242003642484710752, guid: e870347c99002d7458a4e1f71374d35a, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 400
-      objectReference: {fileID: 0}
-    - target: {fileID: 242003642484710752, guid: e870347c99002d7458a4e1f71374d35a, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 400
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e870347c99002d7458a4e1f71374d35a, type: 3}
