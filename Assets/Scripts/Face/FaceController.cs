@@ -60,7 +60,12 @@ public class FaceController : MonoBehaviour
 
     private Vector3 initialNeckForward;
 
+    [Header("Attention Settings")]
+    [SerializeField]
+    private float focusTime = 2f;    
+
     private Collider currentFocus = null;
+    private float focusTimer;
 
     private void Start()
     {
@@ -68,6 +73,7 @@ public class FaceController : MonoBehaviour
         initialNeckForward = neckTransform.forward;
         initialLeftEyeForward = leftEyeTransform.forward;
         initialRightEyeForward = rightEyeTransform.forward;
+        focusTimer = 0f;
     }
 
     private void Update()
