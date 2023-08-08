@@ -62,6 +62,10 @@ public class FaceController : MonoBehaviour
 
     [Header("Attention Settings")]
     [SerializeField]
+    private bool focusOnSafetyRegions = true;
+    [SerializeField]
+    private bool focusOnSalientRegions = true;
+    [SerializeField]
     private float focusTime = 2f;    
 
     private Collider currentFocus = null;
@@ -73,26 +77,15 @@ public class FaceController : MonoBehaviour
         initialNeckForward = neckTransform.forward;
         initialLeftEyeForward = leftEyeTransform.forward;
         initialRightEyeForward = rightEyeTransform.forward;
-        focusTimer = 0f;
+        focusTimer = 0;
     }
 
     private void Update()
     {
-        // Find nearest obstacle
-        Collider nearestObstacle;
-        if (safetyRegionLeft.targetObstacle.obstacle != null && safetyRegionRight.targetObstacle.obstacle != null)
-           nearestObstacle = safetyRegionLeft.targetObstacle.distance < safetyRegionRight.targetObstacle.distance ? safetyRegionLeft.targetObstacle.obstacle : safetyRegionRight.targetObstacle.obstacle;
-        else
-           nearestObstacle = safetyRegionLeft.targetObstacle.obstacle != null ? safetyRegionLeft.targetObstacle.obstacle : safetyRegionRight.targetObstacle.obstacle;
-        if (nearestObstacle == null)
-        {
-            nearestObstacle = saliencyController.GetSaliencyPoint();
-        }
-
         // Rotate neck and eyes towards the target
-        SetRotation(neckTransform, nearestObstacle, initialNeckForward, neckMovementSpeed);
-        SetRotation(leftEyeTransform, nearestObstacle, initialLeftEyeForward, eyeMovementSpeed);
-        SetRotation(rightEyeTransform, nearestObstacle, initialRightEyeForward, eyeMovementSpeed);
+        SetRotation(neckTransform, currentFocus, initialNeckForward, neckMovementSpeed);
+        SetRotation(leftEyeTransform, currentFocus, initialLeftEyeForward, eyeMovementSpeed);
+        SetRotation(rightEyeTransform, currentFocus, initialRightEyeForward, eyeMovementSpeed);
 
         //Clamp rotations
         ClampRotation(neckTransform, neckXRotationLimit, neckYRotationLimit, neckZRotationLimit);
@@ -102,9 +95,30 @@ public class FaceController : MonoBehaviour
         //Animate eye blendhsapes according to gaze direction
         AnimateEyeBlendShapes();
 
+        if (focusTimer > 0)
+        {
+            focusTimer -= Time.deltaTime;
+            return;
+        }
+
+        // Find nearest obstacle
+        Collider nearestObstacle = null;
+        if (focusOnSalientRegions)
+        {
+            nearestObstacle = saliencyController.GetSaliencyPoint();
+        }
+
+        if (focusOnSafetyRegions)
+        {
+            if (safetyRegionLeft.targetObstacle.obstacle != null && safetyRegionRight.targetObstacle.obstacle != null)
+                nearestObstacle = safetyRegionLeft.targetObstacle.distance < safetyRegionRight.targetObstacle.distance ? safetyRegionLeft.targetObstacle.obstacle : safetyRegionRight.targetObstacle.obstacle;
+            else
+                nearestObstacle = safetyRegionLeft.targetObstacle.obstacle ?? safetyRegionRight.targetObstacle.obstacle;
+        }        
         //Update current focus
         if (nearestObstacle!=null) currentFocus = nearestObstacle;
         Debug.Log("Currently focusing on: "+currentFocus.gameObject.name);
+        focusTimer = focusTime;
     }
 
     private void SetRotation(Transform objectTransform, Collider nearestObstacle, Vector3 initialForward, float movementSpeed)
