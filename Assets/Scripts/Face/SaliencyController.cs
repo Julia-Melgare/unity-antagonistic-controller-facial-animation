@@ -35,7 +35,7 @@ public class SaliencyController : MonoBehaviour
         {
             scanTimer += scanInterval;
             InferSaliencyMap();
-            if (saliencyMapBytes!=null) updateSaliencyMap(saliencyMapBytes);
+            if (saliencyMapBytes!=null) UpdateSaliencyMap(saliencyMapBytes);
         }
     }
 
@@ -91,6 +91,7 @@ public class SaliencyController : MonoBehaviour
         Collider salientObject = null;
 
         float minDistance = float.MaxValue;
+        float maxDistance = float.MinValue;
         foreach (Collider obj in salientObjects)
         {
             var distance = Vector3.Distance(transform.position, obj.transform.position);
@@ -99,8 +100,14 @@ public class SaliencyController : MonoBehaviour
                 minDistance = distance;
                 salientObject = obj;
             }
-        }
 
+            if (distance < maxDistance)
+            {
+                maxDistance = distance;
+            }
+            Debug.Log("Distance factor: "+NormalizeValue(distance, maxDistance, minDistance));
+        }
+        
         return salientObject;
     }
 
@@ -136,10 +143,15 @@ public class SaliencyController : MonoBehaviour
         return bytes;
     }
 
-    private void updateSaliencyMap(byte[] rawData)
+    private void UpdateSaliencyMap(byte[] rawData)
     {
         Texture2D saliencyMapTexture = new Texture2D(2, 2);
         ImageConversion.LoadImage(saliencyMapTexture, rawData);
         saliencyMapOutput.texture = saliencyMapTexture;
+    }
+
+    private float NormalizeValue(float value, float min, float max)
+    {
+        return (value-min)/(max-min);
     }
 }
