@@ -119,7 +119,7 @@ public class SaliencyController : MonoBehaviour
             saliencyMapBytes = output;
         }, error =>
         {
-            Debug.LogError(error.Message);
+            //Debug.LogError(error.Message);
         });
     }
 
