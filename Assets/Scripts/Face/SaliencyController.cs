@@ -105,7 +105,7 @@ public class SaliencyController : MonoBehaviour
             {
                 maxDistance = distance;
             }
-            Debug.Log("Distance factor: "+NormalizeValue(distance, maxDistance, minDistance));
+            //Debug.Log("Distance factor: "+NormalizeValue(distance, maxDistance, minDistance));
         }
         
         return salientObject;

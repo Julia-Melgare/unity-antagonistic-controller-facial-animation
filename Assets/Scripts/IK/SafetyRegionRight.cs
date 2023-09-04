@@ -154,7 +154,7 @@ public class SafetyRegionRight : SafetyRegion
                 hasRightStartedMovingIn = true;
                 hasRightStartedMovingOut = false;
                 hasRightTargetReached = false;
-                Debug.Log("[TEST] 1) hasRightStartedMovingIn: " + hasRightStartedMovingIn + " | hasRightStartedMovingOut: " + hasRightStartedMovingOut + " | hasRightTargeReached: " + hasRightTargetReached);
+                //Debug.Log("[TEST] 1) hasRightStartedMovingIn: " + hasRightStartedMovingIn + " | hasRightStartedMovingOut: " + hasRightStartedMovingOut + " | hasRightTargeReached: " + hasRightTargetReached);
             }
 
             // Add new obstacle to the dynamic list
@@ -202,7 +202,7 @@ public class SafetyRegionRight : SafetyRegion
             if(prevObstacle != nowObstacle)
             {
                 colliderChanged = true;
-                Debug.Log("[TEST] colliderChanged RIGHT: " + colliderChanged);
+                //Debug.Log("[TEST] colliderChanged RIGHT: " + colliderChanged);
                 prevObstacle = nowObstacle;
             }
 
@@ -219,7 +219,7 @@ public class SafetyRegionRight : SafetyRegion
                 // Create an offset, in case it is necessary
                 Vector3 offset = (rightTargetTransform.up * hitOffsetRight.y) + (rightTargetTransform.right * hitOffsetRight.x) + (rightTargetTransform.forward * hitOffsetRight.z);
 
-                Debug.Log("[TEST] Fixing to pose because hasRightStartedMovingIn: " + hasRightStartedMovingIn);
+                //Debug.Log("[TEST] Fixing to pose because hasRightStartedMovingIn: " + hasRightStartedMovingIn);
                 hitRightFixed = hitRight + offset;
                 localHitRightFixed = (hitRightFixed - other.transform.position);
 
@@ -245,7 +245,7 @@ public class SafetyRegionRight : SafetyRegion
                         // If the system detects a change of obstacle, we update the bools, that will induce again the smooth transition
                         if(!colliderChanged && !hasRightStartedMovingIn)
                         {
-                            Debug.Log("[TEST] Fixing to pose because colliderChanged: " + colliderChanged + " and hasRightStartedMovingIn: " + hasRightStartedMovingIn);
+                            //Debug.Log("[TEST] Fixing to pose because colliderChanged: " + colliderChanged + " and hasRightStartedMovingIn: " + hasRightStartedMovingIn);
                             hitRightFixed = hitRight + offset;
                         }
                         else if (colliderChanged)
@@ -254,7 +254,7 @@ public class SafetyRegionRight : SafetyRegion
                             hasRightStartedMovingIn = true;
                             hasRightStartedMovingOut = false;
                             hasRightTargetReached = false;
-                            Debug.Log("[TEST] 2) hasRightStartedMovingIn: " + hasRightStartedMovingIn + " | hasRightStartedMovingOut: " + hasRightStartedMovingOut + " | hasRightTargeReached: " + hasRightTargetReached);
+                            //Debug.Log("[TEST] 2) hasRightStartedMovingIn: " + hasRightStartedMovingIn + " | hasRightStartedMovingOut: " + hasRightStartedMovingOut + " | hasRightTargeReached: " + hasRightTargetReached);
                         }
                     }
                 }
@@ -262,7 +262,7 @@ public class SafetyRegionRight : SafetyRegion
                 {
                     if (!isRightInRange)
                     {
-                        Debug.Log("WALL UPDATE RIGHT");
+                        //Debug.Log("WALL UPDATE RIGHT");
                         //handRB.freezeRotation = false;
 
                         Vector3 offset = (rightTargetTransform.up * hitOffsetRight.y) + (rightTargetTransform.right * hitOffsetRight.x) + (rightTargetTransform.forward * hitOffsetRight.z);
@@ -270,7 +270,7 @@ public class SafetyRegionRight : SafetyRegion
                     }
                     else
                     {
-                        Debug.Log("NOW FIX HAND");
+                        //Debug.Log("NOW FIX HAND");
                         //handRB.freezeRotation = true;
                     }
                 }
@@ -302,10 +302,10 @@ public class SafetyRegionRight : SafetyRegion
             if (hasRightTargetReached) 
                 hasRightStartedMovingIn = false;
 
-            Debug.Log("[TEST] 3) hasRightStartedMovingIn: " + hasRightStartedMovingIn + " | hasRightStartedMovingOut: " + hasRightStartedMovingOut + " | hasRightTargeReached: " + hasRightTargetReached);
+            //Debug.Log("[TEST] 3) hasRightStartedMovingIn: " + hasRightStartedMovingIn + " | hasRightStartedMovingOut: " + hasRightStartedMovingOut + " | hasRightTargeReached: " + hasRightTargetReached);
 
             colliderChanged = false;
-            Debug.Log("[TEST] colliderChanged: " + colliderChanged);
+            //Debug.Log("[TEST] colliderChanged: " + colliderChanged);
         }
     }
 
@@ -340,7 +340,7 @@ public class SafetyRegionRight : SafetyRegion
                 hasRightStartedMovingIn = false;
                 hasRightStartedMovingOut = true;
                 hasRightTargetReached = false;
-                Debug.Log("[TEST] 4) hasRightStartedMovingIn: " + hasRightStartedMovingIn + " | hasRightStartedMovingOut: " + hasRightStartedMovingOut + " | hasRightTargeReached: " + hasRightTargetReached);
+                //Debug.Log("[TEST] 4) hasRightStartedMovingIn: " + hasRightStartedMovingIn + " | hasRightStartedMovingOut: " + hasRightStartedMovingOut + " | hasRightTargeReached: " + hasRightTargetReached);
 
                 // Method in charge of moving back the hand
                 rightTarget.SetTargetBack(reactionTime, hasRightStartedMovingOut);
@@ -397,7 +397,7 @@ public class SafetyRegionRight : SafetyRegion
                 hasRightStartedMovingIn = true;
                 hasRightStartedMovingOut = false;
                 hasRightTargetReached = false;
-                Debug.Log("[TEST] 1) hasRightStartedMovingIn: " + hasRightStartedMovingIn + " | hasRightStartedMovingOut: " + hasRightStartedMovingOut + " | hasRightTargeReached: " + hasRightTargetReached);
+                //Debug.Log("[TEST] 1) hasRightStartedMovingIn: " + hasRightStartedMovingIn + " | hasRightStartedMovingOut: " + hasRightStartedMovingOut + " | hasRightTargeReached: " + hasRightTargetReached);
             }
 
             // Add new obstacle to the dynamic list
@@ -445,7 +445,7 @@ public class SafetyRegionRight : SafetyRegion
             if (prevObstacle != nowObstacle)
             {
                 colliderChanged = true;
-                Debug.Log("[TEST] colliderChanged RIGHT: " + colliderChanged);
+                //Debug.Log("[TEST] colliderChanged RIGHT: " + colliderChanged);
                 prevObstacle = nowObstacle;
             }
 
@@ -462,7 +462,7 @@ public class SafetyRegionRight : SafetyRegion
                 // Create an offset, in case it is necessary
                 Vector3 offset = (rightTargetTransform.up * hitOffsetRight.y) + (rightTargetTransform.right * hitOffsetRight.x) + (rightTargetTransform.forward * hitOffsetRight.z);
 
-                Debug.Log("[TEST] Fixing to pose because hasRightStartedMovingIn: " + hasRightStartedMovingIn);
+                //Debug.Log("[TEST] Fixing to pose because hasRightStartedMovingIn: " + hasRightStartedMovingIn);
                 hitRightFixed = hitRight + offset;
                 localHitRightFixed = (hitRightFixed - other.transform.position);
 
@@ -488,7 +488,7 @@ public class SafetyRegionRight : SafetyRegion
                         // If the system detects a change of obstacle, we update the bools, that will induce again the smooth transition
                         if (!colliderChanged && !hasRightStartedMovingIn)
                         {
-                            Debug.Log("[TEST] Fixing to pose because colliderChanged: " + colliderChanged + " and hasRightStartedMovingIn: " + hasRightStartedMovingIn);
+                            //Debug.Log("[TEST] Fixing to pose because colliderChanged: " + colliderChanged + " and hasRightStartedMovingIn: " + hasRightStartedMovingIn);
                             hitRightFixed = hitRight + offset;
                         }
                         else if (colliderChanged)
@@ -497,7 +497,7 @@ public class SafetyRegionRight : SafetyRegion
                             hasRightStartedMovingIn = true;
                             hasRightStartedMovingOut = false;
                             hasRightTargetReached = false;
-                            Debug.Log("[TEST] 2) hasRightStartedMovingIn: " + hasRightStartedMovingIn + " | hasRightStartedMovingOut: " + hasRightStartedMovingOut + " | hasRightTargeReached: " + hasRightTargetReached);
+                            //Debug.Log("[TEST] 2) hasRightStartedMovingIn: " + hasRightStartedMovingIn + " | hasRightStartedMovingOut: " + hasRightStartedMovingOut + " | hasRightTargeReached: " + hasRightTargetReached);
                         }
                     }
                 }
@@ -505,7 +505,7 @@ public class SafetyRegionRight : SafetyRegion
                 {
                     if (!isRightInRange)
                     {
-                        Debug.Log("WALL UPDATE RIGHT");
+                        //Debug.Log("WALL UPDATE RIGHT");
                         Vector3 offset = (rightTargetTransform.up * hitOffsetRight.y) + (rightTargetTransform.right * hitOffsetRight.x) + (rightTargetTransform.forward * hitOffsetRight.z);
                         rightTarget.SetTargetUpdate(hitRightFixed, offset, 0.5f); // TODO: Time that takes to make the small jump
                     }
@@ -538,10 +538,10 @@ public class SafetyRegionRight : SafetyRegion
             if (hasRightTargetReached)
                 hasRightStartedMovingIn = false;
 
-            Debug.Log("[TEST] 3) hasRightStartedMovingIn: " + hasRightStartedMovingIn + " | hasRightStartedMovingOut: " + hasRightStartedMovingOut + " | hasRightTargeReached: " + hasRightTargetReached);
+            //Debug.Log("[TEST] 3) hasRightStartedMovingIn: " + hasRightStartedMovingIn + " | hasRightStartedMovingOut: " + hasRightStartedMovingOut + " | hasRightTargeReached: " + hasRightTargetReached);
 
             colliderChanged = false;
-            Debug.Log("[TEST] colliderChanged: " + colliderChanged);
+            //Debug.Log("[TEST] colliderChanged: " + colliderChanged);
         }
     }
 
@@ -568,7 +568,7 @@ public class SafetyRegionRight : SafetyRegion
                 hasRightStartedMovingIn = false;
                 hasRightStartedMovingOut = true;
                 hasRightTargetReached = false;
-                Debug.Log("[TEST] 4) hasRightStartedMovingIn: " + hasRightStartedMovingIn + " | hasRightStartedMovingOut: " + hasRightStartedMovingOut + " | hasRightTargeReached: " + hasRightTargetReached);
+                //Debug.Log("[TEST] 4) hasRightStartedMovingIn: " + hasRightStartedMovingIn + " | hasRightStartedMovingOut: " + hasRightStartedMovingOut + " | hasRightTargeReached: " + hasRightTargetReached);
 
                 // Method in charge of moving back the hand
                 rightTarget.SetTargetBack(reactionTime, hasRightStartedMovingOut);

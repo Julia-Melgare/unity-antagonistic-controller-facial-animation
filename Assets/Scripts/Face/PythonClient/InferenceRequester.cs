@@ -13,6 +13,8 @@ public class InferenceRequester : RunAbleThread
 
     private int failCount = 0;
     public bool NeedReset = false;
+
+    private int failThreshold = 3;
     protected override void Run()
     {
         ForceDotNet.Force();
@@ -64,8 +66,8 @@ public class InferenceRequester : RunAbleThread
         {
             onFail(e);
             failCount++;
-            Debug.Log("NetMQ send fail count: "+failCount);
-            if (failCount >= 25)
+            //Debug.Log("NetMQ send fail count: "+failCount);
+            if (failCount >= failThreshold)
             {
                 NeedReset = true;
                 failCount = 0;

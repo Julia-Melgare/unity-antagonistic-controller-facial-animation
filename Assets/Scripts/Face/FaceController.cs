@@ -101,23 +101,32 @@ public class FaceController : MonoBehaviour
             return;
         }
 
-        // Find nearest obstacle
-        Collider nearestObstacle = null;
+        Collider salientObstacle = null;
+        Collider safetyRegionObstacle = null;
         if (focusOnSalientRegions)
         {
-            nearestObstacle = saliencyController.GetSaliencyPoint();
+            salientObstacle = saliencyController.GetSaliencyPoint();
         }
 
         if (focusOnSafetyRegions)
         {
             if (safetyRegionLeft.targetObstacle.obstacle != null && safetyRegionRight.targetObstacle.obstacle != null)
-                nearestObstacle = safetyRegionLeft.targetObstacle.distance < safetyRegionRight.targetObstacle.distance ? safetyRegionLeft.targetObstacle.obstacle : safetyRegionRight.targetObstacle.obstacle;
+                safetyRegionObstacle = safetyRegionLeft.targetObstacle.distance < safetyRegionRight.targetObstacle.distance ? safetyRegionLeft.targetObstacle.obstacle : safetyRegionRight.targetObstacle.obstacle;
             else
-                nearestObstacle = safetyRegionLeft.targetObstacle.obstacle ?? safetyRegionRight.targetObstacle.obstacle;
-        }        
+                safetyRegionObstacle = safetyRegionLeft.targetObstacle.obstacle ?? safetyRegionRight.targetObstacle.obstacle;
+        }
+
+
+        // Find nearest obstacle
+        Collider nearestObstacle;
+        if (focusOnSalientRegions && focusOnSafetyRegions)
+            nearestObstacle = safetyRegionObstacle != null ? safetyRegionObstacle : salientObstacle;
+        else
+            nearestObstacle = focusOnSalientRegions ? salientObstacle : safetyRegionObstacle;
+
         //Update current focus
         if (nearestObstacle!=null) currentFocus = nearestObstacle;
-        Debug.Log("Currently focusing on: "+currentFocus.gameObject.name);
+        Debug.Log("Currently focusing on: "+(currentFocus != null ? currentFocus.gameObject.name : "null"));
         focusTimer = focusTime;
     }
 
@@ -173,7 +182,7 @@ public class FaceController : MonoBehaviour
     private IEnumerator Blink()
     {
         float blinkInterval = Random.Range(blinkIntervalMin, blinkIntervalMax);
-        Debug.Log("Blinking: " + blinkInterval);
+        //Debug.Log("Blinking: " + blinkInterval);
         yield return new WaitForSeconds(blinkInterval);
         faceAnimator.Play("Blinking");
         yield return Blink();
