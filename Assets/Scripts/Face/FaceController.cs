@@ -67,8 +67,10 @@ public class FaceController : MonoBehaviour
     private bool focusOnSalientRegions = true;
     [SerializeField]
     private float focusTime = 2f;    
-
+    [SerializeField]
     private Collider currentFocus = null;
+    [SerializeField]
+    private List<int> objectsFocusedOn;
     private float focusTimer;
 
     private void Start()
@@ -78,6 +80,7 @@ public class FaceController : MonoBehaviour
         initialLeftEyeForward = leftEyeTransform.forward;
         initialRightEyeForward = rightEyeTransform.forward;
         focusTimer = 0;
+        objectsFocusedOn = new List<int>();
     }
 
     private void Update()
@@ -87,12 +90,12 @@ public class FaceController : MonoBehaviour
         SetRotation(leftEyeTransform, currentFocus, initialLeftEyeForward, eyeMovementSpeed);
         SetRotation(rightEyeTransform, currentFocus, initialRightEyeForward, eyeMovementSpeed);
 
-        //Clamp rotations
+        // Clamp rotations
         ClampRotation(neckTransform, neckXRotationLimit, neckYRotationLimit, neckZRotationLimit);
         ClampRotation(leftEyeTransform, eyeXRotationLimit, eyeYRotationLimit, eyeZRotationLimit);
         ClampRotation(rightEyeTransform, eyeXRotationLimit, eyeYRotationLimit, eyeZRotationLimit);
 
-        //Animate eye blendhsapes according to gaze direction
+        // Animate eye blendhsapes according to gaze direction
         AnimateEyeBlendShapes();
 
         if (focusTimer > 0)
@@ -105,7 +108,7 @@ public class FaceController : MonoBehaviour
         Collider safetyRegionObstacle = null;
         if (focusOnSalientRegions)
         {
-            salientObstacle = saliencyController.GetSaliencyPoint();
+            salientObstacle = saliencyController.GetSalientObject();
         }
 
         if (focusOnSafetyRegions)
@@ -124,8 +127,10 @@ public class FaceController : MonoBehaviour
         else
             nearestObstacle = focusOnSalientRegions ? salientObstacle : safetyRegionObstacle;
 
-        //Update current focus
-        if (nearestObstacle!=null) currentFocus = nearestObstacle;
+        // Update current focus
+        if (currentFocus!=null) objectsFocusedOn.Add(currentFocus.gameObject.GetInstanceID());
+        currentFocus = nearestObstacle;
+
         Debug.Log("Currently focusing on: "+(currentFocus != null ? currentFocus.gameObject.name : "null"));
         focusTimer = focusTime;
     }

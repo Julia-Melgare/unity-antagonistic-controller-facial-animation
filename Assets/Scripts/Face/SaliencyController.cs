@@ -22,6 +22,14 @@ public class SaliencyController : MonoBehaviour
     private float scanTimer;
 
     private byte[] saliencyMapBytes;
+
+    [Header("Saliency Parameters Settings")]
+    [SerializeField]
+    private float distanceWeight = 0.33f;
+    [SerializeField]
+    private float velocityWeight = 0.33f;
+    [SerializeField]
+    private float sizeWeight = 0.33f;
     
     void Start()
     {
@@ -83,17 +91,23 @@ public class SaliencyController : MonoBehaviour
         return obstacles;
     }
     
-    public Collider GetSaliencyPoint()
+    public Collider GetSalientObject()
     {
         List<Collider> salientObjects = GetSalientObjects();
         //TODO: Here we have to implement all of the object selection logic (choose by speed, distance, tags, etc.)
-        // For now: focuses on the nearest object
         Collider salientObject = null;
 
         float minDistance = float.MaxValue;
         float maxDistance = float.MinValue;
+        float minVelocity = float.MaxValue;
+        float maxVelocity = float.MinValue;
+        float minSize = float.MaxValue;
+        float maxSize = float.MinValue;
+        float maxSaliencyScore = float.MinValue;
         foreach (Collider obj in salientObjects)
         {
+            string output = obj.name + ": \\";
+            // Calculate distance
             var distance = Vector3.Distance(transform.position, obj.transform.position);
             if (distance < minDistance)
             {
@@ -105,10 +119,59 @@ public class SaliencyController : MonoBehaviour
             {
                 maxDistance = distance;
             }
-            //Debug.Log("Distance factor: "+NormalizeValue(distance, maxDistance, minDistance));
+            float distanceFactor = NormalizeValue(distance, maxDistance, minDistance);
+            output+="distance factor: "+distanceFactor+"\\";
+
+            // Calculate velocity
+            var rigidbody = salientObject.gameObject.GetComponent<Rigidbody>();
+            var velocity = 0.0f;
+            if (rigidbody != null)
+            {
+                velocity = rigidbody.velocity.magnitude;
+                if (velocity < minVelocity)
+                {
+                    minVelocity = velocity;
+                }
+
+                if (velocity < maxVelocity)
+                {
+                    maxVelocity = velocity;
+                }
+            }
+            float velocityFactor = NormalizeValue(velocity, maxVelocity, minVelocity);
+            output+="velocity factor: "+velocityFactor+"\\";
+
+            // Calculate size
+            var size = salientObject.bounds.size.magnitude; // TODO: not sure if we want to calculate size like this
+            if (size < minSize)
+            {
+                minSize = size;
+            }
+
+            if (size < maxSize)
+            {
+                maxSize = size;
+            }
+            float sizeFactor = NormalizeValue(size, maxSize, minSize);
+            output+="size factor: "+sizeFactor+"\\";
+            
+            // Now calculate saliency score
+            float saliencyScore = CalculateSaliencyScore(distanceFactor, velocityFactor, sizeFactor);
+            if (saliencyScore > maxSaliencyScore)
+            {
+                maxSaliencyScore = saliencyScore;
+                salientObject = obj;
+            }
+            output+="saliency score: "+saliencyScore;
+            Debug.Log(output);           
         }
         
         return salientObject;
+    }
+
+    private float CalculateSaliencyScore(float distanceFactor, float velocityFactor, float sizeFactor)
+    {
+        return distanceFactor * distanceWeight + velocityFactor * velocityWeight + sizeFactor * sizeWeight;
     }
 
     private void InferSaliencyMap()
