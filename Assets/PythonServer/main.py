@@ -1,4 +1,5 @@
 import zmq
+import gc
 import cv2
 import numpy as np
 import tensorflow as tf
@@ -47,4 +48,4 @@ with tf.Session() as sess:
         data_encode = np.array(img_encode)
         byte_encode = data_encode.tobytes()
         socket.send(byte_encode)
-
+        gc.collect()

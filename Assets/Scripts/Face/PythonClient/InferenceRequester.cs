@@ -10,6 +10,11 @@ public class InferenceRequester : RunAbleThread
 
     private Action<byte[]> onOutputReceived;
     private Action<Exception> onFail;
+
+    private int failCount = 0;
+    public bool NeedReset = false;
+
+    private int failThreshold = 3;
     protected override void Run()
     {
         ForceDotNet.Force();
@@ -55,11 +60,20 @@ public class InferenceRequester : RunAbleThread
             var byteArray = new byte[input.Length];
             Buffer.BlockCopy(input, 0, byteArray, 0, byteArray.Length);
             client.SendFrame(byteArray);
+            failCount = 0;
         }
         catch (Exception e)
         {
             onFail(e);
+            failCount++;
+            //Debug.Log("NetMQ send fail count: "+failCount);
+            if (failCount >= failThreshold)
+            {
+                NeedReset = true;
+                failCount = 0;
+            }
         }
+
     }
 
     public void SetOnOutputReceivedListener(Action<byte[]> onOutputReceived, Action<Exception> fallback)

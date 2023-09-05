@@ -73,3 +73,5 @@ crashlytics-build.properties
 /[Aa]ssets/[Pp]lugins
 
 # Others
+/[Aa]ssets/[Pp]olygonFarm*
+/[Aa]ssets/TextMesh*
