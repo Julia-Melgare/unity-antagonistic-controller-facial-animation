@@ -35,7 +35,7 @@ public class FPSMouseLook : MonoBehaviour
 
     public void EnableCameraRotation(bool enable)
     {
-        dollyCart.ChangeRotation = !enable;
+        //dollyCart.ChangeRotation = !enable;
         this.enabled = enable;
     }
 }
