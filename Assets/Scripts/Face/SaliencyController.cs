@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -17,19 +18,25 @@ public class SaliencyController : MonoBehaviour
     private float scanFrequency = 30f;
     [SerializeField]
     private LayerMask scanLayerMask;
+    [SerializeField]
+    public List<GameObject> salientObjects;
+    [SerializeField]
+    [Range(0.0f, 1.0f)]
+    private float saliencyValueThreshold = 0.5f;
+
 
     private float scanInterval; 
     private float scanTimer;
 
     private byte[] saliencyMapBytes;
 
-    [Header("Saliency Parameters Settings")]
-    [SerializeField]
-    private float distanceWeight = 0.33f;
-    [SerializeField]
-    private float velocityWeight = 0.33f;
-    [SerializeField]
-    private float sizeWeight = 0.33f;
+    // [Header("Saliency Parameters Settings")]
+    // [SerializeField]
+    // private float distanceWeight = 0.33f;
+    // [SerializeField]
+    // private float velocityWeight = 0.33f;
+    // [SerializeField]
+    // private float sizeWeight = 0.33f;
     
     void Start()
     {
@@ -43,11 +50,15 @@ public class SaliencyController : MonoBehaviour
         {
             scanTimer += scanInterval;
             InferSaliencyMap();
-            if (saliencyMapBytes!=null) UpdateSaliencyMap(saliencyMapBytes);
+            if (saliencyMapBytes!=null)
+            {
+                UpdateSaliencyMap(saliencyMapBytes);
+                ScanSaliencyMap();
+            } 
         }
     }
 
-    private List<Collider> GetSalientObjects()
+    private void ScanSaliencyMap()
     {
         // Find index of highest value in map
         Color[] saliencyMapPixels = (saliencyMapOutput.texture as Texture2D).GetPixels();
@@ -55,7 +66,7 @@ public class SaliencyController : MonoBehaviour
         for (int i = 0; i < saliencyMapPixels.Length; i++)
         {
             float grayscaleValue = saliencyMapPixels[i].grayscale;
-            if (grayscaleValue >= .95f)
+            if (grayscaleValue >= saliencyValueThreshold)
             {
                 // Convert array index to matrix indexes
                 int width = agentCamera.targetTexture.width;
@@ -68,110 +79,24 @@ public class SaliencyController : MonoBehaviour
                 saliencyPoints.Add(new Vector3(screenPointX, screenPointY, 0));
             } 
         }        
-        // Get world coordinates from camera
-        var objects = new List<string>();
-        var obstacles = new List<Collider>();
+        // Get world coordinates from camera and raycast for objects
+        var salientObjectsSet = new HashSet<GameObject>();
         foreach (var screenPoint in saliencyPoints)
         {
             Ray ray = agentCamera.ViewportPointToRay(screenPoint);
-            Debug.DrawRay(ray.origin, ray.direction, Color.green, 0.25f);
-            RaycastHit hit;
-            if (Physics.Raycast(ray, out hit, float.MaxValue, scanLayerMask))
+            //Debug.DrawRay(ray.origin, ray.direction*100f, Color.green, 2.5f);
+            RaycastHit[] hits = Physics.RaycastAll(ray, Mathf.Infinity, scanLayerMask);
+            foreach (RaycastHit hit in hits)
             {
-                objects.Add(hit.transform.name);
-                obstacles.Add(hit.collider);
-            }            
-            objects.Add("null");
+                Debug.DrawLine(gameObject.transform.position, hit.transform.position, Color.red, 2.5f);
+                salientObjectsSet.Add(hit.collider.gameObject);
+            }                      
         }
-        //Print list
-        string output = "[ ";
-        foreach (string obj in objects) output+= obj + " ";
-        output+= "]";
-        //Debug.Log(output);        
-        return obstacles;
+        salientObjects = new List<GameObject>(salientObjectsSet.ToList());
     }
-    
-    public Collider GetSalientObject()
+    public List<GameObject> GetSalientObjects()
     {
-        List<Collider> salientObjects = GetSalientObjects();
-        //TODO: Here we have to implement all of the object selection logic (choose by speed, distance, tags, etc.)
-        Collider salientObject = null;
-
-        float minDistance = float.MaxValue;
-        float maxDistance = float.MinValue;
-        float minVelocity = float.MaxValue;
-        float maxVelocity = float.MinValue;
-        float minSize = float.MaxValue;
-        float maxSize = float.MinValue;
-        float maxSaliencyScore = float.MinValue;
-        foreach (Collider obj in salientObjects)
-        {
-            string output = obj.name + ": \\";
-            // Calculate distance
-            var distance = Vector3.Distance(transform.position, obj.transform.position);
-            if (distance < minDistance)
-            {
-                minDistance = distance;
-                salientObject = obj;
-            }
-
-            if (distance < maxDistance)
-            {
-                maxDistance = distance;
-            }
-            float distanceFactor = NormalizeValue(distance, maxDistance, minDistance);
-            output+="distance factor: "+distanceFactor+"\\";
-
-            // Calculate velocity
-            var rigidbody = salientObject.gameObject.GetComponent<Rigidbody>();
-            var velocity = 0.0f;
-            if (rigidbody != null)
-            {
-                velocity = rigidbody.velocity.magnitude;
-                if (velocity < minVelocity)
-                {
-                    minVelocity = velocity;
-                }
-
-                if (velocity < maxVelocity)
-                {
-                    maxVelocity = velocity;
-                }
-            }
-            float velocityFactor = NormalizeValue(velocity, maxVelocity, minVelocity);
-            output+="velocity factor: "+velocityFactor+"\\";
-
-            // Calculate size
-            var size = salientObject.bounds.size.magnitude; // TODO: not sure if we want to calculate size like this
-            if (size < minSize)
-            {
-                minSize = size;
-            }
-
-            if (size < maxSize)
-            {
-                maxSize = size;
-            }
-            float sizeFactor = NormalizeValue(size, maxSize, minSize);
-            output+="size factor: "+sizeFactor+"\\";
-            
-            // Now calculate saliency score
-            float saliencyScore = CalculateSaliencyScore(distanceFactor, velocityFactor, sizeFactor);
-            if (saliencyScore > maxSaliencyScore)
-            {
-                maxSaliencyScore = saliencyScore;
-                salientObject = obj;
-            }
-            output+="saliency score: "+saliencyScore;
-            Debug.Log(output);           
-        }
-        
-        return salientObject;
-    }
-
-    private float CalculateSaliencyScore(float distanceFactor, float velocityFactor, float sizeFactor)
-    {
-        return distanceFactor * distanceWeight + velocityFactor * velocityWeight + sizeFactor * sizeWeight;
+        return salientObjects;
     }
 
     private void InferSaliencyMap()
@@ -212,9 +137,92 @@ public class SaliencyController : MonoBehaviour
         ImageConversion.LoadImage(saliencyMapTexture, rawData);
         saliencyMapOutput.texture = saliencyMapTexture;
     }
+    
+    // public Collider GetSalientObject()
+    // {
+    //     List<Collider> salientObjects = GetSalientObjects();
+    //     //TODO: Here we have to implement all of the object selection logic (choose by speed, distance, tags, etc.)
+    //     Collider salientObject = null;
 
-    private float NormalizeValue(float value, float min, float max)
-    {
-        return (value-min)/(max-min);
-    }
+    //     float minDistance = float.MaxValue;
+    //     float maxDistance = float.MinValue;
+    //     float minVelocity = float.MaxValue;
+    //     float maxVelocity = float.MinValue;
+    //     float minSize = float.MaxValue;
+    //     float maxSize = float.MinValue;
+    //     float maxSaliencyScore = float.MinValue;
+    //     foreach (Collider obj in salientObjects)
+    //     {
+    //         string output = obj.name + ": \\";
+    //         // Calculate distance
+    //         var distance = Vector3.Distance(transform.position, obj.transform.position);
+    //         if (distance < minDistance)
+    //         {
+    //             minDistance = distance;
+    //             salientObject = obj;
+    //         }
+
+    //         if (distance < maxDistance)
+    //         {
+    //             maxDistance = distance;
+    //         }
+    //         float distanceFactor = NormalizeValue(distance, maxDistance, minDistance);
+    //         output+="distance factor: "+distanceFactor+"\\";
+
+    //         // Calculate velocity
+    //         var rigidbody = salientObject.gameObject.GetComponent<Rigidbody>();
+    //         var velocity = 0.0f;
+    //         if (rigidbody != null)
+    //         {
+    //             velocity = rigidbody.velocity.magnitude;
+    //             if (velocity < minVelocity)
+    //             {
+    //                 minVelocity = velocity;
+    //             }
+
+    //             if (velocity < maxVelocity)
+    //             {
+    //                 maxVelocity = velocity;
+    //             }
+    //         }
+    //         float velocityFactor = NormalizeValue(velocity, maxVelocity, minVelocity);
+    //         output+="velocity factor: "+velocityFactor+"\\";
+
+    //         // Calculate size
+    //         var size = salientObject.bounds.size.magnitude; // TODO: not sure if we want to calculate size like this
+    //         if (size < minSize)
+    //         {
+    //             minSize = size;
+    //         }
+
+    //         if (size < maxSize)
+    //         {
+    //             maxSize = size;
+    //         }
+    //         float sizeFactor = NormalizeValue(size, maxSize, minSize);
+    //         output+="size factor: "+sizeFactor+"\\";
+            
+    //         // Now calculate saliency score
+    //         float saliencyScore = CalculateSaliencyScore(distanceFactor, velocityFactor, sizeFactor);
+    //         if (saliencyScore > maxSaliencyScore)
+    //         {
+    //             maxSaliencyScore = saliencyScore;
+    //             salientObject = obj;
+    //         }
+    //         output+="saliency score: "+saliencyScore;
+    //         Debug.Log(output);           
+    //     }
+        
+    //     return salientObject;
+    // }
+
+    // private float CalculateSaliencyScore(float distanceFactor, float velocityFactor, float sizeFactor)
+    // {
+    //     return distanceFactor * distanceWeight + velocityFactor * velocityWeight + sizeFactor * sizeWeight;
+    // }
+
+    // private float NormalizeValue(float value, float min, float max)
+    // {
+    //     return (value-min)/(max-min);
+    // }
 }

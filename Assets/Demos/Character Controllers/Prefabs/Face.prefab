@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 796606709438301115}
   - component: {fileID: 2397113510338702070}
   - component: {fileID: 8731453604925911308}
+  - component: {fileID: 6086461624978598981}
   - component: {fileID: 884323973809061713}
   - component: {fileID: 2728485655539910894}
   m_Layer: 0
@@ -72,9 +73,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6be01fc587a3214e904bc1e214864aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  safetyRegionLeft: {fileID: 0}
-  safetyRegionRight: {fileID: 0}
-  saliencyController: {fileID: 884323973809061713}
+  attentionController: {fileID: 6086461624978598981}
   faceAnimator: {fileID: 2397113510338702070}
   faceMeshRenderer: {fileID: 5656338420393517599}
   leftEyeTransform: {fileID: 7435236622474090325}
@@ -90,6 +89,27 @@ MonoBehaviour:
   neckYRotationLimit: 45
   neckZRotationLimit: 30
   neckMovementSpeed: 1
+--- !u!114 &6086461624978598981
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 19647415933147393}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c5598e282eaac14a94a76adf453ff0a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  saliencyController: {fileID: 884323973809061713}
+  frustrumLineOfSight: {fileID: 7856600383182948550}
+  safetyRegionLeft: {fileID: 0}
+  safetyRegionRight: {fileID: 0}
+  focusOnSafetyRegions: 1
+  focusOnSalientRegions: 1
+  focusTime: 2
+  currentFocus: {fileID: 0}
+  objectsFocusedOn: 
 --- !u!114 &884323973809061713
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -109,6 +129,7 @@ MonoBehaviour:
   scanLayerMask:
     serializedVersion: 2
     m_Bits: 3959
+  salientObjects: []
 --- !u!114 &2728485655539910894
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -457,6 +478,7 @@ Transform:
   m_Children:
   - {fileID: 7619479519837753933}
   - {fileID: 8792206969810845722}
+  - {fileID: 2180382763526264958}
   m_Father: {fileID: 4296765923295440540}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -524,6 +546,62 @@ Transform:
   m_Father: {fileID: 3791974257848749456}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &5497469506738753761
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2180382763526264958}
+  - component: {fileID: 7856600383182948550}
+  m_Layer: 0
+  m_Name: Frustrum
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2180382763526264958
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5497469506738753761}
+  m_LocalRotation: {x: -0.1890955, y: 0, z: 0, w: 0.9819587}
+  m_LocalPosition: {x: 0, y: -1.34, z: 0.4}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6731555250141816126}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: -21.8, y: 0, z: 0}
+--- !u!114 &7856600383182948550
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5497469506738753761}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7943d43dd2ef1514cb93077529b99d35, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  distance: 10
+  angle: 130
+  height: 6
+  meshColor: {r: 0.015686274, g: 0.9622341, b: 1, a: 0.3529412}
+  scanFrequency: 30
+  layers:
+    serializedVersion: 2
+    m_Bits: 3703
+  occlusionLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  objects: []
 --- !u!1 &5736172082614536476
 GameObject:
   m_ObjectHideFlags: 0
@@ -645,7 +723,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 60
+  field of view: 90
   orthographic: 0
   orthographic size: 5
   m_Depth: 1

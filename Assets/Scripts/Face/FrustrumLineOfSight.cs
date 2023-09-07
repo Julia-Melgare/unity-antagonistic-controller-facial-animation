@@ -16,10 +16,10 @@ public class FrustrumLineOfSight : MonoBehaviour
     private int scanFrequency = 30;
     [SerializeField] 
     private LayerMask layers;
-    /*[SerializeField] 
-    private LayerMask occlusionLayers; - Not using layers at the moment*/
     [SerializeField] 
-    private List<Obstacle> obstacles = new List<Obstacle>();
+    private LayerMask occlusionLayers;
+    [SerializeField] 
+    private List<GameObject> objects = new List<GameObject>();
 
     private Collider[] colliders = new Collider[50];
     private Mesh mesh;
@@ -47,22 +47,20 @@ public class FrustrumLineOfSight : MonoBehaviour
     {
         count = Physics.OverlapSphereNonAlloc(transform.position, distance, colliders, layers, QueryTriggerInteraction.Collide);
 
-        obstacles.Clear();
+        objects.Clear();
         for (int i = 0; i < count; i++)
         {
             GameObject obj = colliders[i].gameObject;
             if (IsInSight(obj))
             {
-                ObstacleDynamics obstacle;
-                if (obj.GetComponent<Rigidbody>())
-                    obstacle = obj.GetComponent<ObstacleDynamics>();
-                else
-                    obstacle = obj.GetComponentInParent<ObstacleDynamics>();
-
-                if (obstacle != null) //TODO: maybe we shouldn't use the object's exact location and this position for calculating distance?
-                    obstacles.Add(new Obstacle(colliders[i], obj.transform.position, Vector3.Distance(obj.transform.position, gameObject.transform.position), obstacle.realMass, obstacle.expectedMass, obstacle.realVelocity, obstacle.expectedVelocity));
+                objects.Add(obj);
             }
         }
+    }
+
+    public List<GameObject> GetObjects()
+    {
+        return objects;
     }
 
     public bool IsInSight(GameObject obj)
@@ -79,22 +77,22 @@ public class FrustrumLineOfSight : MonoBehaviour
 
         origin.y += height / 2;
         dest.y = origin.y;
-        //if (Physics.Linecast(origin, dest, occlusionLayers)) return false; - Not using occlusion layers right now
+        if (Physics.Linecast(origin, dest, occlusionLayers)) return false;
 
         return true;
     }
 
-    /*public int Filter(GameObject[] buffer, string layerName)
+    public int Filter(GameObject[] buffer, string layerName)
     {
         int layer = LayerMask.NameToLayer(layerName);
         int count = 0;
-        foreach (var obj in obstacles)
+        foreach (var obj in objects)
         {
             if (obj.layer == layer) buffer[count++] = obj;
             if (count == buffer.Length) break;
         }
         return count;
-    } - Not using filters at the moment*/
+    }
 
     private Mesh CreateWedgeMesh()
     {

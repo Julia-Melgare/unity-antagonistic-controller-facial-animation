@@ -1504,6 +1504,14 @@ PrefabInstance:
       propertyPath: m_NormalizedViewPortRect.height
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 6086461624978598981, guid: a834f0168963b6a44a9283d73ab63eac, type: 3}
+      propertyPath: safetyRegionLeft
+      value: 
+      objectReference: {fileID: 124837034752668891}
+    - target: {fileID: 6086461624978598981, guid: a834f0168963b6a44a9283d73ab63eac, type: 3}
+      propertyPath: safetyRegionRight
+      value: 
+      objectReference: {fileID: 124837034390244996}
     - target: {fileID: 6731555250141816126, guid: a834f0168963b6a44a9283d73ab63eac, type: 3}
       propertyPath: m_LocalRotation.w
       value: 1

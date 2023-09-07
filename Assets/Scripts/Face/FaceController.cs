@@ -5,12 +5,7 @@ using UnityEngine;
 public class FaceController : MonoBehaviour
 {
     [SerializeField]
-    private SafetyRegionLeft safetyRegionLeft;
-    [SerializeField]
-    private SafetyRegionRight safetyRegionRight;
-
-    [SerializeField]
-    private SaliencyController saliencyController;
+    private AttentionController attentionController;
 
     [SerializeField]
     private Animator faceAnimator;
@@ -60,35 +55,22 @@ public class FaceController : MonoBehaviour
 
     private Vector3 initialNeckForward;
 
-    [Header("Attention Settings")]
-    [SerializeField]
-    private bool focusOnSafetyRegions = true;
-    [SerializeField]
-    private bool focusOnSalientRegions = true;
-    [SerializeField]
-    private float focusTime = 2f;    
-    [SerializeField]
-    private Collider currentFocus = null;
-    [SerializeField]
-    private List<int> objectsFocusedOn;
-    private float focusTimer;
-
     private void Start()
     {
         StartCoroutine(Blink());
         initialNeckForward = neckTransform.forward;
         initialLeftEyeForward = leftEyeTransform.forward;
         initialRightEyeForward = rightEyeTransform.forward;
-        focusTimer = 0;
-        objectsFocusedOn = new List<int>();
     }
 
     private void Update()
     {
+        GameObject objectOfInterest = attentionController.GetCurrentFocus();
+
         // Rotate neck and eyes towards the target
-        SetRotation(neckTransform, currentFocus, initialNeckForward, neckMovementSpeed);
-        SetRotation(leftEyeTransform, currentFocus, initialLeftEyeForward, eyeMovementSpeed);
-        SetRotation(rightEyeTransform, currentFocus, initialRightEyeForward, eyeMovementSpeed);
+        SetRotation(neckTransform, objectOfInterest, initialNeckForward, neckMovementSpeed);
+        SetRotation(leftEyeTransform, objectOfInterest, initialLeftEyeForward, eyeMovementSpeed);
+        SetRotation(rightEyeTransform, objectOfInterest, initialRightEyeForward, eyeMovementSpeed);
 
         // Clamp rotations
         ClampRotation(neckTransform, neckXRotationLimit, neckYRotationLimit, neckZRotationLimit);
@@ -97,49 +79,13 @@ public class FaceController : MonoBehaviour
 
         // Animate eye blendhsapes according to gaze direction
         AnimateEyeBlendShapes();
-
-        if (focusTimer > 0)
-        {
-            focusTimer -= Time.deltaTime;
-            return;
-        }
-
-        Collider salientObstacle = null;
-        Collider safetyRegionObstacle = null;
-        if (focusOnSalientRegions)
-        {
-            salientObstacle = saliencyController.GetSalientObject();
-        }
-
-        if (focusOnSafetyRegions)
-        {
-            if (safetyRegionLeft.targetObstacle.obstacle != null && safetyRegionRight.targetObstacle.obstacle != null)
-                safetyRegionObstacle = safetyRegionLeft.targetObstacle.distance < safetyRegionRight.targetObstacle.distance ? safetyRegionLeft.targetObstacle.obstacle : safetyRegionRight.targetObstacle.obstacle;
-            else
-                safetyRegionObstacle = safetyRegionLeft.targetObstacle.obstacle ?? safetyRegionRight.targetObstacle.obstacle;
-        }
-
-
-        // Find nearest obstacle
-        Collider nearestObstacle;
-        if (focusOnSalientRegions && focusOnSafetyRegions)
-            nearestObstacle = safetyRegionObstacle != null ? safetyRegionObstacle : salientObstacle;
-        else
-            nearestObstacle = focusOnSalientRegions ? salientObstacle : safetyRegionObstacle;
-
-        // Update current focus
-        if (currentFocus!=null) objectsFocusedOn.Add(currentFocus.gameObject.GetInstanceID());
-        currentFocus = nearestObstacle;
-
-        Debug.Log("Currently focusing on: "+(currentFocus != null ? currentFocus.gameObject.name : "null"));
-        focusTimer = focusTime;
     }
 
-    private void SetRotation(Transform objectTransform, Collider nearestObstacle, Vector3 initialForward, float movementSpeed)
+    private void SetRotation(Transform objectTransform, GameObject objectOfInterest, Vector3 initialForward, float movementSpeed)
     {
         Vector3 targetDirection = transform.forward + new Vector3(0, initialForward.y, 0);
 
-        if (nearestObstacle != null) targetDirection = nearestObstacle.transform.position - objectTransform.position;
+        if (objectOfInterest != null) targetDirection = objectOfInterest.transform.position - objectTransform.position;
         float singleStep = movementSpeed * Time.deltaTime;
         Vector3 newDirection = Vector3.RotateTowards(objectTransform.forward, targetDirection, singleStep, 0.0f);
         objectTransform.rotation = Quaternion.LookRotation(newDirection);
