@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -8,6 +7,8 @@ public class SaliencyController : MonoBehaviour
 {
     [SerializeField]
     private Camera agentCamera;
+    [SerializeField]
+    private Camera auxiliaryAgentCamera;
     [SerializeField]
     private RawImage saliencyMapOutput;
     [SerializeField]
@@ -41,6 +42,7 @@ public class SaliencyController : MonoBehaviour
     void Start()
     {
         scanInterval = 1.0f / scanFrequency;
+        auxiliaryAgentCamera.enabled = false;
     }
     void Update()
     {
@@ -50,6 +52,7 @@ public class SaliencyController : MonoBehaviour
         {
             scanTimer += scanInterval;
             InferSaliencyMap();
+            UpdateAuxiliaryCamera();
             if (saliencyMapBytes!=null)
             {
                 UpdateSaliencyMap(saliencyMapBytes);
@@ -73,17 +76,16 @@ public class SaliencyController : MonoBehaviour
                 int height = agentCamera.targetTexture.height;
                 int matrix_i = i / width;
                 int matrix_j = i % width;
-                // Convert matrix indexes to camera coordinates
-                float screenPointX = (float)matrix_i/width;
-                float screenPointY = (float)matrix_j/height;
-                saliencyPoints.Add(new Vector3(screenPointX, screenPointY, 0));
+                saliencyPoints.Add(new Vector3(matrix_j, matrix_i, 0));
+                // Highlight pixel for visualization purposes
+                saliencyMapPixels[i] = Color.red;
             } 
         }        
         // Get world coordinates from camera and raycast for objects
         var salientObjectsSet = new HashSet<GameObject>();
         foreach (var screenPoint in saliencyPoints)
         {
-            Ray ray = agentCamera.ViewportPointToRay(screenPoint);
+            Ray ray = auxiliaryAgentCamera.ScreenPointToRay(screenPoint);
             //Debug.DrawRay(ray.origin, ray.direction*100f, Color.green, 2.5f);
             RaycastHit[] hits = Physics.RaycastAll(ray, Mathf.Infinity, scanLayerMask);
             foreach (RaycastHit hit in hits)
@@ -93,6 +95,10 @@ public class SaliencyController : MonoBehaviour
             }                      
         }
         salientObjects = new List<GameObject>(salientObjectsSet.ToList());
+        Texture2D newTexture = new Texture2D(360, 360);
+        newTexture.SetPixels(saliencyMapPixels);
+        newTexture.Apply();
+        saliencyMapOutput.texture = newTexture;
     }
     public List<GameObject> GetSalientObjects()
     {
@@ -136,6 +142,15 @@ public class SaliencyController : MonoBehaviour
         Texture2D saliencyMapTexture = new Texture2D(2, 2);
         ImageConversion.LoadImage(saliencyMapTexture, rawData);
         saliencyMapOutput.texture = saliencyMapTexture;
+    }
+
+    private void UpdateAuxiliaryCamera()
+    {
+        auxiliaryAgentCamera.enabled = true;
+        auxiliaryAgentCamera.transform.position = agentCamera.transform.position;
+        auxiliaryAgentCamera.transform.rotation = agentCamera.transform.rotation;
+        auxiliaryAgentCamera.transform.localScale = agentCamera.transform.localScale;
+        auxiliaryAgentCamera.enabled = false;
     }
     
     // public Collider GetSalientObject()
