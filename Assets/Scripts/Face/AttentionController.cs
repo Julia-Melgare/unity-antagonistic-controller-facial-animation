@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class AttentionController : MonoBehaviour
@@ -28,7 +29,7 @@ public class AttentionController : MonoBehaviour
     private float focusTimer;
 
     [SerializeField]
-    private HashSet<GameObject> currentObjects;
+    private List<GameObject> currentObjects;
 
     private List<GameObject> lineOfSightObjects;
     private List<GameObject> salientObjects;
@@ -36,26 +37,36 @@ public class AttentionController : MonoBehaviour
     private void Start()
     {
         focusTimer = 0;
+        saliencyController.enabled = focusOnSalientRegions;
         objectsFocusedOn = new List<int>();
-        currentObjects = new HashSet<GameObject>();
+        currentObjects = new List<GameObject>();
         lineOfSightObjects = new List<GameObject>();
-        salientObjects = new List<GameObject>();
-        safetyRegionObjects = new List<GameObject>();
+        if (focusOnSalientRegions)
+            salientObjects = new List<GameObject>();
+        
+        if (focusOnSafetyRegions)
+            safetyRegionObjects = new List<GameObject>();     
     }
 
     private void Update()
     {
         lineOfSightObjects = frustrumLineOfSight.GetObjects();
-        salientObjects = saliencyController.GetSalientObjects();
-        if (safetyRegionLeft.targetObstacle.obstacle!=null) safetyRegionObjects.Add(safetyRegionLeft.targetObstacle.obstacle.gameObject);
-        if (safetyRegionRight.targetObstacle.obstacle!=null) safetyRegionObjects.Add(safetyRegionRight.targetObstacle.obstacle.gameObject);
+        if (focusOnSalientRegions)
+            salientObjects = saliencyController.GetSalientObjects();
+        
+        if (focusOnSafetyRegions)
+        {
+            if (safetyRegionLeft.targetObstacle.obstacle!=null) safetyRegionObjects.Add(safetyRegionLeft.targetObstacle.obstacle.gameObject);
+            if (safetyRegionRight.targetObstacle.obstacle!=null) safetyRegionObjects.Add(safetyRegionRight.targetObstacle.obstacle.gameObject);
+        }
+        
         UpdateCurrentObjects();
-        //Debug.Log(currentObjects);
-        // if (focusTimer > 0)
-        // {
-        //     focusTimer -= Time.deltaTime;
-        //     return;
-        // }
+
+        if (focusTimer > 0)
+        {
+            focusTimer -= Time.deltaTime;
+            return;
+        }
 
         // Collider salientObstacle = null;
         // Collider safetyRegionObstacle = null;
@@ -79,28 +90,33 @@ public class AttentionController : MonoBehaviour
         // else
         //     nearestObstacle = focusOnSalientRegions ? salientObstacle : safetyRegionObstacle;
 
-        // // Update current focus
+        // Update current focus
         // if (currentFocus!=null) objectsFocusedOn.Add(currentFocus.gameObject.GetInstanceID());
-        // currentFocus = nearestObstacle;
+        if (currentObjects.Count() > 0) currentFocus = currentObjects[0];
 
         // Debug.Log("Currently focusing on: "+(currentFocus != null ? currentFocus.gameObject.name : "null"));
-        // focusTimer = focusTime;
+        focusTimer = focusTime;
     }
 
     private void UpdateCurrentObjects()
     {
+        var currentObjectsSet = new HashSet<GameObject>();
         foreach(GameObject obj in lineOfSightObjects)
+            currentObjectsSet.Add(obj);
+
+        if (focusOnSalientRegions)
         {
-            currentObjects.Add(obj);
+            foreach(GameObject obj in salientObjects)
+                currentObjectsSet.Add(obj);
         }
-        foreach(GameObject obj in salientObjects)
+        
+        if (focusOnSafetyRegions)
         {
-            currentObjects.Add(obj);
+            foreach(GameObject obj in safetyRegionObjects)
+                currentObjectsSet.Add(obj);
         }
-        foreach(GameObject obj in safetyRegionObjects)
-        {
-            currentObjects.Add(obj);
-        }        
+        
+        currentObjects = new List<GameObject>(currentObjectsSet.ToList());        
     }
 
     public GameObject GetCurrentFocus()

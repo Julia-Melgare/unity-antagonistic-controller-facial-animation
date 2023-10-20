@@ -110,6 +110,7 @@ MonoBehaviour:
   focusTime: 2
   currentFocus: {fileID: 0}
   objectsFocusedOn: 
+  currentObjects: []
 --- !u!114 &884323973809061713
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -123,6 +124,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   agentCamera: {fileID: 2621118056989290313}
+  auxiliaryAgentCamera: {fileID: 0}
   saliencyMapOutput: {fileID: 0}
   inferenceClient: {fileID: 2728485655539910894}
   scanFrequency: 5
@@ -130,6 +132,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 3959
   salientObjects: []
+  saliencyValueThreshold: 0.5
 --- !u!114 &2728485655539910894
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -830,7 +833,63 @@ SkinnedMeshRenderer:
   - {fileID: 7619479519837753933}
   - {fileID: 7435236622474090325}
   - {fileID: 7952963345548195245}
-  m_BlendShapeWeights: []
+  m_BlendShapeWeights:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
   m_RootBone: {fileID: 4296765923295440540}
   m_AABB:
     m_Center: {x: 0, y: 0.15512523, z: -0.017755494}
