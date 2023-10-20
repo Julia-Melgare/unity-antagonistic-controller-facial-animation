@@ -51,7 +51,7 @@ public class FrustrumLineOfSight : MonoBehaviour
         for (int i = 0; i < count; i++)
         {
             GameObject obj = colliders[i].gameObject;
-            if (IsInSight(obj))
+            if (IsInSight(obj) && IsMoving(obj))
             {
                 objects.Add(obj);
             }
@@ -80,6 +80,20 @@ public class FrustrumLineOfSight : MonoBehaviour
         if (Physics.Linecast(origin, dest, occlusionLayers)) return false;
 
         return true;
+    }
+
+    public bool IsMoving(GameObject obj)
+    {
+        var rigidbody = obj.GetComponent<Rigidbody>();
+        if (rigidbody != null && rigidbody.velocity.magnitude > 0) return true;
+
+        var movingObj = obj.GetComponent<MovingObject>();
+        if (movingObj != null) return true;
+
+        var animator = obj.GetComponent<Animator>();
+        if (animator != null && animator.isActiveAndEnabled) return true;
+
+        return false;
     }
 
     public int Filter(GameObject[] buffer, string layerName)
