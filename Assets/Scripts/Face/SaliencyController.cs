@@ -25,19 +25,15 @@ public class SaliencyController : MonoBehaviour
     [Range(0.0f, 1.0f)]
     private float saliencyValueThreshold = 0.5f;
 
+    [Header("Debug")]
+    [SerializeField]
+    private bool debugSaliencyRaycast = false;
+
 
     private float scanInterval; 
     private float scanTimer;
 
     private byte[] saliencyMapBytes;
-
-    // [Header("Saliency Parameters Settings")]
-    // [SerializeField]
-    // private float distanceWeight = 0.33f;
-    // [SerializeField]
-    // private float velocityWeight = 0.33f;
-    // [SerializeField]
-    // private float sizeWeight = 0.33f;
     
     void Start()
     {
@@ -77,8 +73,8 @@ public class SaliencyController : MonoBehaviour
                 int matrix_i = i / width;
                 int matrix_j = i % width;
                 saliencyPoints.Add(new Vector3(matrix_j, matrix_i, 0));
-                // Highlight pixel for visualization purposes
-                saliencyMapPixels[i] = Color.red;
+                if(debugSaliencyRaycast)
+                    saliencyMapPixels[i] = Color.red; // Highlight pixel for visualization purposes
             } 
         }        
         // Get world coordinates from camera and raycast for objects
@@ -86,19 +82,19 @@ public class SaliencyController : MonoBehaviour
         foreach (var screenPoint in saliencyPoints)
         {
             Ray ray = auxiliaryAgentCamera.ScreenPointToRay(screenPoint);
-            //Debug.DrawRay(ray.origin, ray.direction*100f, Color.green, 2.5f);
             RaycastHit[] hits = Physics.RaycastAll(ray, Mathf.Infinity, scanLayerMask);
             foreach (RaycastHit hit in hits)
-            {
-                Debug.DrawLine(gameObject.transform.position, hit.transform.position, Color.red, 2.5f);
-                salientObjectsSet.Add(hit.collider.gameObject);
-            }                      
+                salientObjectsSet.Add(hit.collider.gameObject);                      
         }
         salientObjects = new List<GameObject>(salientObjectsSet.ToList());
-        Texture2D newTexture = new Texture2D(360, 360);
-        newTexture.SetPixels(saliencyMapPixels);
-        newTexture.Apply();
-        saliencyMapOutput.texture = newTexture;
+        if (debugSaliencyRaycast)
+        {
+            Texture2D newTexture = new Texture2D(360, 360);
+            newTexture.SetPixels(saliencyMapPixels);
+            newTexture.Apply();
+            saliencyMapOutput.texture = newTexture;
+        }
+        
     }
     public List<GameObject> GetSalientObjects()
     {

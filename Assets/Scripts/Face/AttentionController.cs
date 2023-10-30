@@ -14,6 +14,10 @@ public class AttentionController : MonoBehaviour
     private SafetyRegionLeft safetyRegionLeft;
     [SerializeField]
     private SafetyRegionRight safetyRegionRight;
+    [SerializeField]
+    private FaceSafetyRegion faceSafetyRegionLeft;
+    [SerializeField]
+    private FaceSafetyRegion faceSafetyRegionRight;
 
     [Header("Attention Settings")]
     [SerializeField]
@@ -56,8 +60,10 @@ public class AttentionController : MonoBehaviour
         
         if (focusOnSafetyRegions)
         {
-            if (safetyRegionLeft.targetObstacle.obstacle!=null) safetyRegionObjects.Add(safetyRegionLeft.targetObstacle.obstacle.gameObject);
-            if (safetyRegionRight.targetObstacle.obstacle!=null) safetyRegionObjects.Add(safetyRegionRight.targetObstacle.obstacle.gameObject);
+            if (safetyRegionLeft!=null && safetyRegionLeft.targetObstacle.obstacle!=null) safetyRegionObjects.Add(safetyRegionLeft.targetObstacle.obstacle.gameObject);
+            if (safetyRegionRight!=null && safetyRegionRight.targetObstacle.obstacle!=null) safetyRegionObjects.Add(safetyRegionRight.targetObstacle.obstacle.gameObject);
+            if (faceSafetyRegionLeft!=null && faceSafetyRegionLeft.closestObstacle!=null) safetyRegionObjects.Add(faceSafetyRegionLeft.closestObstacle);
+            if (faceSafetyRegionRight!=null && faceSafetyRegionRight.closestObstacle!=null) safetyRegionObjects.Add(faceSafetyRegionRight.closestObstacle);
         }
         
         UpdateCurrentObjects();
@@ -92,6 +98,7 @@ public class AttentionController : MonoBehaviour
 
         // Update current focus
         // if (currentFocus!=null) objectsFocusedOn.Add(currentFocus.gameObject.GetInstanceID());
+        currentFocus = null;
         if (currentObjects.Count() > 0) currentFocus = currentObjects[0];
 
         // Debug.Log("Currently focusing on: "+(currentFocus != null ? currentFocus.gameObject.name : "null"));
@@ -121,6 +128,6 @@ public class AttentionController : MonoBehaviour
 
     public GameObject GetCurrentFocus()
     {
-        return currentFocus.gameObject;
+        return currentFocus;
     }
 }

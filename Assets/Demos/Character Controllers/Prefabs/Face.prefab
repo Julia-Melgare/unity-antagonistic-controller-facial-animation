@@ -89,6 +89,9 @@ MonoBehaviour:
   neckYRotationLimit: 45
   neckZRotationLimit: 30
   neckMovementSpeed: 1
+  faceSafetyRegionLeft: {fileID: 8896361891826307433}
+  faceSafetyRegionRight: {fileID: 880753386943309096}
+  minEyeDistance: 0.2
 --- !u!114 &6086461624978598981
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -105,6 +108,8 @@ MonoBehaviour:
   frustrumLineOfSight: {fileID: 7856600383182948550}
   safetyRegionLeft: {fileID: 0}
   safetyRegionRight: {fileID: 0}
+  faceSafetyRegionLeft: {fileID: 8896361891826307433}
+  faceSafetyRegionRight: {fileID: 880753386943309096}
   focusOnSafetyRegions: 1
   focusOnSalientRegions: 1
   focusTime: 2
@@ -133,6 +138,7 @@ MonoBehaviour:
     m_Bits: 3959
   salientObjects: []
   saliencyValueThreshold: 0.5
+  debugSaliencyRaycast: 0
 --- !u!114 &2728485655539910894
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -246,6 +252,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7952963345548195245}
+  - component: {fileID: 8751071752439426961}
+  - component: {fileID: 880753386943309096}
   m_Layer: 0
   m_Name: Eye_R
   m_TagString: Untagged
@@ -268,6 +276,36 @@ Transform:
   m_Father: {fileID: 7619479519837753933}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &8751071752439426961
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1160357008516528474}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  m_Radius: 0.049916375
+  m_Height: 0.2586509
+  m_Direction: 2
+  m_Center: {x: 0.009640345, y: -0.015375918, z: 0.10194159}
+--- !u!114 &880753386943309096
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1160357008516528474}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60601b37c3867f2499729b57ff8cf25d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  safetyRegionSphere: {fileID: 8751071752439426961}
+  eyeTransform: {fileID: 7952963345548195245}
+  closestObstacle: {fileID: 0}
+  closestDistanceToEye: 3.4028235e+38
 --- !u!1 &1211852985654733632
 GameObject:
   m_ObjectHideFlags: 0
@@ -614,6 +652,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7435236622474090325}
+  - component: {fileID: 6004576646052484736}
+  - component: {fileID: 8896361891826307433}
   m_Layer: 0
   m_Name: Eye_L
   m_TagString: Untagged
@@ -636,6 +676,36 @@ Transform:
   m_Father: {fileID: 7619479519837753933}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &6004576646052484736
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5736172082614536476}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  m_Radius: 0.049916375
+  m_Height: 0.2586509
+  m_Direction: 2
+  m_Center: {x: -0.009640345, y: -0.015375918, z: 0.10194159}
+--- !u!114 &8896361891826307433
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5736172082614536476}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60601b37c3867f2499729b57ff8cf25d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  safetyRegionSphere: {fileID: 6004576646052484736}
+  eyeTransform: {fileID: 7435236622474090325}
+  closestObstacle: {fileID: 0}
+  closestDistanceToEye: 3.4028235e+38
 --- !u!1 &6784492368101239881
 GameObject:
   m_ObjectHideFlags: 0
