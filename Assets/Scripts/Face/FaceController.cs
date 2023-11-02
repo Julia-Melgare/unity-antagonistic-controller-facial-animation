@@ -211,6 +211,14 @@ public class FaceController : MonoBehaviour
 
     private void AnimateSquintBlendShapes()
     {
+        if (faceSafetyRegionLeft.closestObstacle == null)
+        {
+            faceMeshRenderer.SetBlendShapeWeight(EyeSquintLeftBlendShapeIndex, 0f);
+        }
+        if (faceSafetyRegionRight.closestObstacle == null)
+        {
+            faceMeshRenderer.SetBlendShapeWeight(EyeSquintRightBlendShapeIndex, 0f);
+        }
         if (faceSafetyRegionLeft.closestDistanceToEye < minEyeDistance)
         {
             faceMeshRenderer.SetBlendShapeWeight(EyeSquintLeftBlendShapeIndex, 100f - NormalizeBlendshapeValue(faceSafetyRegionLeft.closestDistanceToEye, minEyeDistance, maxEyeDistance));
