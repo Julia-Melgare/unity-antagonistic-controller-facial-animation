@@ -111,9 +111,7 @@ public class FaceController : MonoBehaviour
     [SerializeField]
     private FaceSafetyRegion faceSafetyRegionRight;
     [SerializeField]
-    private float minEyeDistance = 0.2f; // Minimum distance to eye needed to start animating squint blendshape
-    private float maxEyeDistance = 0.1f; // Maximum eye distance for squint blendshape (we can change dynamically after)
-
+    private float minEyeDistance = 0.3f; // Minimum distance to eye needed to start animating squint blendshape
     private Vector3 initialNeckForward;
 
     private void Start()
@@ -221,11 +219,11 @@ public class FaceController : MonoBehaviour
         }
         if (faceSafetyRegionLeft.closestDistanceToEye < minEyeDistance)
         {
-            faceMeshRenderer.SetBlendShapeWeight(EyeSquintLeftBlendShapeIndex, 100f - NormalizeBlendshapeValue(faceSafetyRegionLeft.closestDistanceToEye, minEyeDistance, maxEyeDistance));
+            faceMeshRenderer.SetBlendShapeWeight(EyeSquintLeftBlendShapeIndex, 100f - NormalizeBlendshapeValue(faceSafetyRegionLeft.closestDistanceToEye, minEyeDistance));
         }
         if (faceSafetyRegionRight.closestDistanceToEye < minEyeDistance)
         {
-            faceMeshRenderer.SetBlendShapeWeight(EyeSquintRightBlendShapeIndex, 100f - NormalizeBlendshapeValue(faceSafetyRegionRight.closestDistanceToEye, minEyeDistance, maxEyeDistance));
+            faceMeshRenderer.SetBlendShapeWeight(EyeSquintRightBlendShapeIndex, 100f - NormalizeBlendshapeValue(faceSafetyRegionRight.closestDistanceToEye, minEyeDistance));
         }
     }
 
