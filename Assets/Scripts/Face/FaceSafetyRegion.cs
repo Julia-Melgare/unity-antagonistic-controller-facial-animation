@@ -15,12 +15,13 @@ public class FaceSafetyRegion : MonoBehaviour
 
     public void OnTriggerStay(Collider other)
     {
-        float distanceToEye = Vector3.Distance(other.gameObject.transform.position, eyeTransform.position);
-        if (distanceToEye < closestDistanceToEye)
+        closestDistanceToEye = Vector3.Distance(other.gameObject.transform.position, eyeTransform.position);
+        closestObstacle = other.gameObject;
+        /*if (distanceToEye < closestDistanceToEye)
         {
             closestDistanceToEye = distanceToEye;
             closestObstacle = other.gameObject;
-        }
+        }*/
     }
 
     public void OnTriggerExit(Collider other)

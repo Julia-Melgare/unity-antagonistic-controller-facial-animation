@@ -214,18 +214,30 @@ public class FaceController : MonoBehaviour
         if (faceSafetyRegionLeft.closestObstacle == null)
         {
             faceMeshRenderer.SetBlendShapeWeight(EyeSquintLeftBlendShapeIndex, 0f);
+            faceMeshRenderer.SetBlendShapeWeight(BrowDownLeftBlendShapeIndex, 0f);
+            //faceMeshRenderer.SetBlendShapeWeight(MouthUpperUpLeftBlendShapeIndex, 0f);
+            faceMeshRenderer.SetBlendShapeWeight(MouthSmileLeftBlendShapeIndex, 0f);
         }
         if (faceSafetyRegionRight.closestObstacle == null)
         {
             faceMeshRenderer.SetBlendShapeWeight(EyeSquintRightBlendShapeIndex, 0f);
+            faceMeshRenderer.SetBlendShapeWeight(BrowDownRightBlendShapeIndex, 0f);
+            //faceMeshRenderer.SetBlendShapeWeight(MouthUpperUpRightBlendShapeIndex, 0f);
+            faceMeshRenderer.SetBlendShapeWeight(MouthSmileRightBlendShapeIndex, 0f);
         }
         if (faceSafetyRegionLeft.closestDistanceToEye < minEyeDistance)
         {
             faceMeshRenderer.SetBlendShapeWeight(EyeSquintLeftBlendShapeIndex, 100f - NormalizeBlendshapeValue(faceSafetyRegionLeft.closestDistanceToEye, minEyeDistance, maxEyeDistance));
+            faceMeshRenderer.SetBlendShapeWeight(BrowDownLeftBlendShapeIndex, 100f - NormalizeBlendshapeValue(faceSafetyRegionLeft.closestDistanceToEye, minEyeDistance, maxEyeDistance));
+            //faceMeshRenderer.SetBlendShapeWeight(MouthUpperUpLeftBlendShapeIndex, (100f - NormalizeBlendshapeValue(faceSafetyRegionLeft.closestDistanceToEye, minEyeDistance, maxEyeDistance))/2);
+            faceMeshRenderer.SetBlendShapeWeight(MouthSmileLeftBlendShapeIndex, (100f - NormalizeBlendshapeValue(faceSafetyRegionLeft.closestDistanceToEye, minEyeDistance, maxEyeDistance))/2);
         }
         if (faceSafetyRegionRight.closestDistanceToEye < minEyeDistance)
         {
             faceMeshRenderer.SetBlendShapeWeight(EyeSquintRightBlendShapeIndex, 100f - NormalizeBlendshapeValue(faceSafetyRegionRight.closestDistanceToEye, minEyeDistance, maxEyeDistance));
+            faceMeshRenderer.SetBlendShapeWeight(BrowDownRightBlendShapeIndex, 100f - NormalizeBlendshapeValue(faceSafetyRegionRight.closestDistanceToEye, minEyeDistance, maxEyeDistance));
+            //faceMeshRenderer.SetBlendShapeWeight(MouthUpperUpRightBlendShapeIndex, (100f - NormalizeBlendshapeValue(faceSafetyRegionRight.closestDistanceToEye, minEyeDistance, maxEyeDistance))/2);
+            faceMeshRenderer.SetBlendShapeWeight(MouthSmileRightBlendShapeIndex, (100f - NormalizeBlendshapeValue(faceSafetyRegionRight.closestDistanceToEye, minEyeDistance, maxEyeDistance))/2);
         }
     }
 
