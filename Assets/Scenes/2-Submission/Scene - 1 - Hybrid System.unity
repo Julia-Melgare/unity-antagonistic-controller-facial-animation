@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44970918, g: 0.49977744, b: 0.575634, a: 1}
+  m_IndirectSpecularColor: {r: 0.44970965, g: 0.49977773, b: 0.5756354, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -405,7 +405,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.7770035, y: 1}
+    m_SensorSize: {x: 1.7779528, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -1109,6 +1109,10 @@ PrefabInstance:
     - target: {fileID: 4888170442091769870, guid: f2d81aab5e097974f8d1d5b6fc4fa9e9, type: 3}
       propertyPath: m_Name
       value: CharacterWithFace
+      objectReference: {fileID: 0}
+    - target: {fileID: 4888170442091769870, guid: f2d81aab5e097974f8d1d5b6fc4fa9e9, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f2d81aab5e097974f8d1d5b6fc4fa9e9, type: 3}
@@ -2043,7 +2047,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.7770035, y: 1}
+    m_SensorSize: {x: 1.7779528, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -2571,7 +2575,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.7770035, y: 1}
+    m_SensorSize: {x: 1.7779528, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -4606,6 +4610,103 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1287700478}
   m_CullTransparentMesh: 1
+--- !u!1001 &1294458109
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 0dd64318a4c41384386c689f02e04cfe, type: 3}
+      propertyPath: m_RootOrder
+      value: 14
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 0dd64318a4c41384386c689f02e04cfe, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 5.26
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 0dd64318a4c41384386c689f02e04cfe, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 0dd64318a4c41384386c689f02e04cfe, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 4.93
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 0dd64318a4c41384386c689f02e04cfe, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 0dd64318a4c41384386c689f02e04cfe, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 0dd64318a4c41384386c689f02e04cfe, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 0dd64318a4c41384386c689f02e04cfe, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 0dd64318a4c41384386c689f02e04cfe, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 0dd64318a4c41384386c689f02e04cfe, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 0dd64318a4c41384386c689f02e04cfe, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -7965085189428993227, guid: 0dd64318a4c41384386c689f02e04cfe, type: 3}
+      propertyPath: m_DirtyAABB
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -7965085189428993227, guid: 0dd64318a4c41384386c689f02e04cfe, type: 3}
+      propertyPath: m_AABB.m_Center.x
+      value: 0.0003886256
+      objectReference: {fileID: 0}
+    - target: {fileID: -7965085189428993227, guid: 0dd64318a4c41384386c689f02e04cfe, type: 3}
+      propertyPath: m_AABB.m_Center.y
+      value: 0.00000039204315
+      objectReference: {fileID: 0}
+    - target: {fileID: -7965085189428993227, guid: 0dd64318a4c41384386c689f02e04cfe, type: 3}
+      propertyPath: m_AABB.m_Center.z
+      value: 0.00000005174661
+      objectReference: {fileID: 0}
+    - target: {fileID: -7965085189428993227, guid: 0dd64318a4c41384386c689f02e04cfe, type: 3}
+      propertyPath: m_AABB.m_Extent.x
+      value: 0.0006989777
+      objectReference: {fileID: 0}
+    - target: {fileID: -7965085189428993227, guid: 0dd64318a4c41384386c689f02e04cfe, type: 3}
+      propertyPath: m_AABB.m_Extent.y
+      value: 0.0003099477
+      objectReference: {fileID: 0}
+    - target: {fileID: -7965085189428993227, guid: 0dd64318a4c41384386c689f02e04cfe, type: 3}
+      propertyPath: m_AABB.m_Extent.z
+      value: 0.0003104148
+      objectReference: {fileID: 0}
+    - target: {fileID: -6575462590082156981, guid: 0dd64318a4c41384386c689f02e04cfe, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.349
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 0dd64318a4c41384386c689f02e04cfe, type: 3}
+      propertyPath: m_Name
+      value: Sintel_04
+      objectReference: {fileID: 0}
+    - target: {fileID: 8879528566716807029, guid: 0dd64318a4c41384386c689f02e04cfe, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8879528566716807029, guid: 0dd64318a4c41384386c689f02e04cfe, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -1.92
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 0dd64318a4c41384386c689f02e04cfe, type: 3}
 --- !u!1 &1296453547
 GameObject:
   m_ObjectHideFlags: 0
@@ -7624,7 +7725,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.7770035, y: 1}
+    m_SensorSize: {x: 1.7779528, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
