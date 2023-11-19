@@ -137,8 +137,7 @@ public class FaceController : MonoBehaviour
         ClampRotation(rightEyeTransform, eyeXRotationLimit, eyeYRotationLimit, eyeZRotationLimit);
 
         // Rotate neck towards eyes middle point
-        Vector3 middlePoint = (leftEyeTransform.forward + rightEyeTransform.forward).normalized;
-        SetRotation(neckTransform, objectOfInterest, initialNeckForward, middlePoint, neckMovementSpeed);
+        AnimateNeck();
 
         // Clamp neck rotation
         ClampRotation(neckTransform, neckXRotationLimit, neckYRotationLimit, neckZRotationLimit);
@@ -238,6 +237,23 @@ public class FaceController : MonoBehaviour
             faceMeshRenderer.SetBlendShapeWeight(BrowDownRightBlendShapeIndex, 100f - NormalizeBlendshapeValue(faceSafetyRegionRight.closestDistanceToEye, minEyeDistance, maxEyeDistance));
             //faceMeshRenderer.SetBlendShapeWeight(MouthUpperUpRightBlendShapeIndex, (100f - NormalizeBlendshapeValue(faceSafetyRegionRight.closestDistanceToEye, minEyeDistance, maxEyeDistance))/2);
             faceMeshRenderer.SetBlendShapeWeight(MouthSmileRightBlendShapeIndex, (100f - NormalizeBlendshapeValue(faceSafetyRegionRight.closestDistanceToEye, minEyeDistance, maxEyeDistance))/2);
+        }
+    }
+
+    private void AnimateNeck()
+    {
+        Vector3 middlePoint = (leftEyeTransform.forward + rightEyeTransform.forward).normalized;
+
+        if ((faceSafetyRegionLeft.closestObstacle != null || faceSafetyRegionRight.closestObstacle != null) && (faceSafetyRegionLeft.closestDistanceToEye < minEyeDistance || faceSafetyRegionRight.closestDistanceToEye < minEyeDistance))
+        {
+            GameObject closestObstacle = faceSafetyRegionLeft.closestObstacle == null ? faceSafetyRegionRight.closestObstacle : faceSafetyRegionLeft.closestObstacle;
+            float singleStep = neckMovementSpeed * Time.deltaTime;
+            Vector3 newDirection = Vector3.RotateTowards(middlePoint, closestObstacle.transform.position, singleStep, 0.0f);
+            neckTransform.rotation = Quaternion.LookRotation(-newDirection);
+        }
+        else
+        {
+            SetRotation(neckTransform, attentionController.GetCurrentFocus(), initialNeckForward, middlePoint, neckMovementSpeed);
         }
     }
 
