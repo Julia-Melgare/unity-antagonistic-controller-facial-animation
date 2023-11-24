@@ -111,10 +111,12 @@ public class FaceController : MonoBehaviour
     [SerializeField]
     private FaceSafetyRegion faceSafetyRegionRight;
     [SerializeField]
-    private float minEyeDistance = 0.2f; // Minimum distance to eye needed to start animating squint blendshape
-    private float maxEyeDistance = 0.1f; // Maximum eye distance for squint blendshape (we can change dynamically after)
-
+    private float minEyeDistance = 0.1f; // Minimum distance to eye needed to start animating squint blendshape
+    private float maxEyeDistance = 0.05f; // Maximum eye distance for squint blendshape (we can change dynamically after)
     private Vector3 initialNeckForward;
+
+    private bool amAvoiding = false;
+    private Vector3 defaultMiddlePoint;
 
     private void Start()
     {
@@ -122,30 +124,60 @@ public class FaceController : MonoBehaviour
         initialNeckForward = neckTransform.forward;
         initialLeftEyeForward = leftEyeTransform.forward;
         initialRightEyeForward = rightEyeTransform.forward;
+        defaultMiddlePoint = Vector3.Lerp(leftEyeTransform.position, rightEyeTransform.position, 0.3f);
     }
 
     private void Update()
     {
-        GameObject objectOfInterest = attentionController.GetCurrentFocus();
+        // Check face safety regions
+        if (!amAvoiding && (faceSafetyRegionLeft.closestDistanceToEye <= minEyeDistance || faceSafetyRegionRight.closestDistanceToEye <= minEyeDistance))
+        {
+            amAvoiding = true;
+            faceAnimator.enabled = false;
+        }
 
-        // Rotate eyes towards the target
-        SetRotation(leftEyeTransform, objectOfInterest, initialLeftEyeForward, eyeMovementSpeed);
-        SetRotation(rightEyeTransform, objectOfInterest, initialRightEyeForward, eyeMovementSpeed);
+        /*if (amAvoiding && faceSafetyRegionLeft.closestDistanceToEye > minEyeDistance && faceSafetyRegionRight.closestDistanceToEye > minEyeDistance)
+        {
+            amAvoiding = false;
+            faceAnimator.enabled = true;
+        }*/
+        
+        if (!amAvoiding)
+        {
+            GameObject objectOfInterest = attentionController.GetCurrentFocus();
 
-        // Clamp eye rotations
-        ClampRotation(leftEyeTransform, eyeXRotationLimit, eyeYRotationLimit, eyeZRotationLimit);
-        ClampRotation(rightEyeTransform, eyeXRotationLimit, eyeYRotationLimit, eyeZRotationLimit);
+            // Rotate eyes towards the target
+            SetRotation(leftEyeTransform, objectOfInterest, initialLeftEyeForward, eyeMovementSpeed);
+            SetRotation(rightEyeTransform, objectOfInterest, initialRightEyeForward, eyeMovementSpeed);
 
-        // Rotate neck towards eyes middle point
-        AnimateNeck();
+            // Clamp eye rotations
+            ClampRotation(leftEyeTransform, eyeXRotationLimit, eyeYRotationLimit, eyeZRotationLimit);
+            ClampRotation(rightEyeTransform, eyeXRotationLimit, eyeYRotationLimit, eyeZRotationLimit);
 
-        // Clamp neck rotation
-        ClampRotation(neckTransform, neckXRotationLimit, neckYRotationLimit, neckZRotationLimit);
+            // Rotate neck towards eyes middle point
+            Vector3 middlePoint = (leftEyeTransform.forward + rightEyeTransform.forward).normalized;
+            SetRotation(neckTransform, attentionController.GetCurrentFocus(), initialNeckForward, middlePoint, neckMovementSpeed);
 
-        // Animate eye blendhsapes according to gaze direction
-        AnimateEyeBlendShapes();
+            // Clamp neck rotation
+            ClampRotation(neckTransform, neckXRotationLimit, neckYRotationLimit, neckZRotationLimit);
 
-        AnimateSquintBlendShapes();
+            // Animate eye blendhsapes according to gaze direction
+            AnimateGazeBlendShapes();
+        }
+        else
+        {
+            AnimateSquintBlendShapes();
+            Vector3 middlePoint = Vector3.Lerp(leftEyeTransform.position, rightEyeTransform.position, 0.3f);
+            Vector3 direction = (attentionController.GetCurrentFocus().transform.position - middlePoint + neckTransform.position).normalized;
+
+            //float singleStep = neckMovementSpeed * Time.deltaTime;
+            //Vector3 newDirection = Vector3.RotateTowards(neckTransform.forward, -direction, singleStep, 0.0f);
+            neckTransform.rotation = Quaternion.LookRotation(-direction);
+            //Debug.DrawRay(neckTransform.position, newDirection, Color.red);
+            Debug.DrawRay(middlePoint, direction, Color.blue);
+            Debug.DrawRay(neckTransform.position, -direction, Color.red);
+            ClampRotation(neckTransform, neckXRotationLimit, neckYRotationLimit, neckZRotationLimit);
+        }
     }
 
     private void SetRotation(Transform objectTransform, GameObject objectOfInterest, Vector3 initialForward, float movementSpeed)
@@ -188,7 +220,7 @@ public class FaceController : MonoBehaviour
         return false;*/
     }
 
-    private void AnimateEyeBlendShapes()
+    private void AnimateGazeBlendShapes()
     {
         Vector3 localLeftEyeRotation = leftEyeTransform.localEulerAngles;
         float xLeftEyeRotation = localLeftEyeRotation.x > 180 ? localLeftEyeRotation.x - 360 : localLeftEyeRotation.x;
@@ -213,47 +245,38 @@ public class FaceController : MonoBehaviour
         if (faceSafetyRegionLeft.closestObstacle == null)
         {
             faceMeshRenderer.SetBlendShapeWeight(EyeSquintLeftBlendShapeIndex, 0f);
+            faceMeshRenderer.SetBlendShapeWeight(EyeBlinkingLeftBlendShapeIndex, 0f);
             faceMeshRenderer.SetBlendShapeWeight(BrowDownLeftBlendShapeIndex, 0f);
             //faceMeshRenderer.SetBlendShapeWeight(MouthUpperUpLeftBlendShapeIndex, 0f);
             faceMeshRenderer.SetBlendShapeWeight(MouthSmileLeftBlendShapeIndex, 0f);
+            faceAnimator.enabled = true;
         }
         if (faceSafetyRegionRight.closestObstacle == null)
         {
             faceMeshRenderer.SetBlendShapeWeight(EyeSquintRightBlendShapeIndex, 0f);
+            faceMeshRenderer.SetBlendShapeWeight(EyeBlinkingRightBlendShapeIndex, 0f);
             faceMeshRenderer.SetBlendShapeWeight(BrowDownRightBlendShapeIndex, 0f);
             //faceMeshRenderer.SetBlendShapeWeight(MouthUpperUpRightBlendShapeIndex, 0f);
             faceMeshRenderer.SetBlendShapeWeight(MouthSmileRightBlendShapeIndex, 0f);
+            faceAnimator.enabled = true;
         }
         if (faceSafetyRegionLeft.closestDistanceToEye < minEyeDistance)
         {
+            faceAnimator.enabled = false;
             faceMeshRenderer.SetBlendShapeWeight(EyeSquintLeftBlendShapeIndex, 100f - NormalizeBlendshapeValue(faceSafetyRegionLeft.closestDistanceToEye, minEyeDistance, maxEyeDistance));
+            faceMeshRenderer.SetBlendShapeWeight(EyeBlinkingLeftBlendShapeIndex, (100f - NormalizeBlendshapeValue(faceSafetyRegionLeft.closestDistanceToEye, minEyeDistance, maxEyeDistance))/2);
             faceMeshRenderer.SetBlendShapeWeight(BrowDownLeftBlendShapeIndex, 100f - NormalizeBlendshapeValue(faceSafetyRegionLeft.closestDistanceToEye, minEyeDistance, maxEyeDistance));
             //faceMeshRenderer.SetBlendShapeWeight(MouthUpperUpLeftBlendShapeIndex, (100f - NormalizeBlendshapeValue(faceSafetyRegionLeft.closestDistanceToEye, minEyeDistance, maxEyeDistance))/2);
             faceMeshRenderer.SetBlendShapeWeight(MouthSmileLeftBlendShapeIndex, (100f - NormalizeBlendshapeValue(faceSafetyRegionLeft.closestDistanceToEye, minEyeDistance, maxEyeDistance))/2);
         }
         if (faceSafetyRegionRight.closestDistanceToEye < minEyeDistance)
         {
+            faceAnimator.enabled = false;
             faceMeshRenderer.SetBlendShapeWeight(EyeSquintRightBlendShapeIndex, 100f - NormalizeBlendshapeValue(faceSafetyRegionRight.closestDistanceToEye, minEyeDistance, maxEyeDistance));
+            faceMeshRenderer.SetBlendShapeWeight(EyeBlinkingRightBlendShapeIndex, (100f - NormalizeBlendshapeValue(faceSafetyRegionRight.closestDistanceToEye, minEyeDistance, maxEyeDistance))/2);
             faceMeshRenderer.SetBlendShapeWeight(BrowDownRightBlendShapeIndex, 100f - NormalizeBlendshapeValue(faceSafetyRegionRight.closestDistanceToEye, minEyeDistance, maxEyeDistance));
             //faceMeshRenderer.SetBlendShapeWeight(MouthUpperUpRightBlendShapeIndex, (100f - NormalizeBlendshapeValue(faceSafetyRegionRight.closestDistanceToEye, minEyeDistance, maxEyeDistance))/2);
             faceMeshRenderer.SetBlendShapeWeight(MouthSmileRightBlendShapeIndex, (100f - NormalizeBlendshapeValue(faceSafetyRegionRight.closestDistanceToEye, minEyeDistance, maxEyeDistance))/2);
-        }
-    }
-
-    private void AnimateNeck()
-    {
-        Vector3 middlePoint = (leftEyeTransform.forward + rightEyeTransform.forward).normalized;
-
-        if ((faceSafetyRegionLeft.closestObstacle != null || faceSafetyRegionRight.closestObstacle != null) && (faceSafetyRegionLeft.closestDistanceToEye < minEyeDistance || faceSafetyRegionRight.closestDistanceToEye < minEyeDistance))
-        {
-            GameObject closestObstacle = faceSafetyRegionLeft.closestObstacle == null ? faceSafetyRegionRight.closestObstacle : faceSafetyRegionLeft.closestObstacle;
-            float singleStep = neckMovementSpeed * Time.deltaTime;
-            Vector3 newDirection = Vector3.RotateTowards(middlePoint, closestObstacle.transform.position, singleStep, 0.0f);
-            neckTransform.rotation = Quaternion.LookRotation(-newDirection);
-        }
-        else
-        {
-            SetRotation(neckTransform, attentionController.GetCurrentFocus(), initialNeckForward, middlePoint, neckMovementSpeed);
         }
     }
 

@@ -10,14 +10,14 @@ public class AttentionController : MonoBehaviour
     private SaliencyController saliencyController;
     [SerializeField]
     private FrustrumLineOfSight frustrumLineOfSight;
-    [SerializeField]
+    /*[SerializeField]
     private SafetyRegionLeft safetyRegionLeft;
     [SerializeField]
     private SafetyRegionRight safetyRegionRight;
     [SerializeField]
     private FaceSafetyRegion faceSafetyRegionLeft;
     [SerializeField]
-    private FaceSafetyRegion faceSafetyRegionRight;
+    private FaceSafetyRegion faceSafetyRegionRight;*/
 
     [Header("Attention Settings")]
     [SerializeField]
@@ -25,7 +25,7 @@ public class AttentionController : MonoBehaviour
     [SerializeField]
     private bool focusOnSalientRegions = true;
     [SerializeField]
-    private float focusTime = 2f;    
+    private float focusTimeMin = 0.4f, focusTimeMax = 0.8f; // Values for exploring behavior    
     [SerializeField]
     private GameObject currentFocus = null;
     [SerializeField]
@@ -58,13 +58,13 @@ public class AttentionController : MonoBehaviour
         if (focusOnSalientRegions)
             salientObjects = saliencyController.GetSalientObjects();
         
-        if (focusOnSafetyRegions)
+        /*if (focusOnSafetyRegions)
         {
             if (safetyRegionLeft!=null && safetyRegionLeft.targetObstacle.obstacle!=null) safetyRegionObjects.Add(safetyRegionLeft.targetObstacle.obstacle.gameObject);
             if (safetyRegionRight!=null && safetyRegionRight.targetObstacle.obstacle!=null) safetyRegionObjects.Add(safetyRegionRight.targetObstacle.obstacle.gameObject);
             if (faceSafetyRegionLeft!=null && faceSafetyRegionLeft.closestObstacle!=null) safetyRegionObjects.Add(faceSafetyRegionLeft.closestObstacle);
             if (faceSafetyRegionRight!=null && faceSafetyRegionRight.closestObstacle!=null) safetyRegionObjects.Add(faceSafetyRegionRight.closestObstacle);
-        }
+        }*/
         
         UpdateCurrentObjects();
 
@@ -102,7 +102,7 @@ public class AttentionController : MonoBehaviour
         if (currentObjects.Count() > 0) currentFocus = currentObjects[0];
 
         // Debug.Log("Currently focusing on: "+(currentFocus != null ? currentFocus.gameObject.name : "null"));
-        focusTimer = focusTime;
+        focusTimer = UnityEngine.Random.Range(focusTimeMin, focusTimeMax);
     }
 
     private void UpdateCurrentObjects()
