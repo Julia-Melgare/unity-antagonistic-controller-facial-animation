@@ -19,11 +19,17 @@ public class FaceController : MonoBehaviour
     [SerializeField]
     private Transform rightEyeTransform;
     [SerializeField]
-    private float eyeXRotationLimit = 25f;
+    private float eyeXRotationLimit = 55f;
     [SerializeField]
-    private float eyeYRotationLimit = 25f;
+    private float eyeYRotationLimit = 55f;
     [SerializeField]
-    private float eyeZRotationLimit = 25f;
+    private float eyeZRotationLimit = 55f;
+    [SerializeField]
+    private float eyeXComfortableRotationLimit = 25f;
+    [SerializeField]
+    private float eyeYComfortableRotationLimit = 25f;
+    [SerializeField]
+    private float eyeZComfortableRotationLimit = 25f;
     [SerializeField]
     private float eyeMovementSpeed = 2f;
 
@@ -154,12 +160,23 @@ public class FaceController : MonoBehaviour
             ClampRotation(leftEyeTransform, eyeXRotationLimit, eyeYRotationLimit, eyeZRotationLimit);
             ClampRotation(rightEyeTransform, eyeXRotationLimit, eyeYRotationLimit, eyeZRotationLimit);
 
-            // Rotate neck towards eyes middle point
-            Vector3 middlePoint = (leftEyeTransform.forward + rightEyeTransform.forward).normalized;
-            SetRotation(neckTransform, attentionController.GetCurrentFocus(), initialNeckForward, middlePoint, neckMovementSpeed);
+            if (SurpassedRotationConstraints(leftEyeTransform, eyeXComfortableRotationLimit, eyeYComfortableRotationLimit, eyeZComfortableRotationLimit) || SurpassedRotationConstraints(leftEyeTransform, eyeXComfortableRotationLimit, eyeYComfortableRotationLimit, eyeZComfortableRotationLimit))
+            {
+                // Rotate neck towards eyes middle point
+                Vector3 middlePoint = (leftEyeTransform.forward + rightEyeTransform.forward).normalized;
+                float singleStep = neckMovementSpeed * Time.deltaTime;
+                Vector3 newDirection = Vector3.RotateTowards(neckTransform.forward, middlePoint, singleStep, 0.0f);
+                neckTransform.rotation = Quaternion.LookRotation(newDirection);
+                // Clamp neck rotation
+                ClampRotation(neckTransform, neckXRotationLimit, neckYRotationLimit, neckZRotationLimit);
+            }
 
-            // Clamp neck rotation
-            ClampRotation(neckTransform, neckXRotationLimit, neckYRotationLimit, neckZRotationLimit);
+            if (objectOfInterest == null)
+            {
+                SetRotation(neckTransform, objectOfInterest, initialRightEyeForward, eyeMovementSpeed);
+            }
+
+            
 
             // Animate eye blendhsapes according to gaze direction
             AnimateGazeBlendShapes();
@@ -172,7 +189,7 @@ public class FaceController : MonoBehaviour
 
             //float singleStep = neckMovementSpeed * Time.deltaTime;
             //Vector3 newDirection = Vector3.RotateTowards(neckTransform.forward, -direction, singleStep, 0.0f);
-            neckTransform.rotation = Quaternion.LookRotation(-direction);
+            //neckTransform.rotation = Quaternion.LookRotation(-direction);
             //Debug.DrawRay(neckTransform.position, newDirection, Color.red);
             Debug.DrawRay(middlePoint, direction, Color.blue);
             Debug.DrawRay(neckTransform.position, -direction, Color.red);
@@ -218,6 +235,17 @@ public class FaceController : MonoBehaviour
         /*if(xRotation < -xRotationLimit || xRotation > xRotationLimit || yRotation < -yRotationLimit || yRotation > yRotationLimit || zRotation < -zRotationLimit || zRotation > zRotationLimit)
             return true;    
         return false;*/
+    }
+
+    private bool SurpassedRotationConstraints(Transform objectTransform, float xRotationLimit, float yRotationLimit, float zRotationLimit)
+    {
+        Vector3 localRotation = objectTransform.localEulerAngles;
+        float xRotation = localRotation.x > 180 ? localRotation.x - 360 : localRotation.x;
+        float yRotation = localRotation.y > 180 ? localRotation.y - 360 : localRotation.y;
+        float zRotation = localRotation.z > 180 ? localRotation.z - 360 : localRotation.z;
+        if(xRotation < -xRotationLimit || xRotation > xRotationLimit || yRotation < -yRotationLimit || yRotation > yRotationLimit || zRotation < -zRotationLimit || zRotation > zRotationLimit)
+            return true;    
+        return false;
     }
 
     private void AnimateGazeBlendShapes()

@@ -178,6 +178,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 884323973809061713, guid: a834f0168963b6a44a9283d73ab63eac, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5656338420393517599, guid: a834f0168963b6a44a9283d73ab63eac, type: 3}
       propertyPath: m_BlendShapeWeights.Array.data[3]
       value: 0
@@ -212,6 +216,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6086461624978598981, guid: a834f0168963b6a44a9283d73ab63eac, type: 3}
       propertyPath: focusTime
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 6086461624978598981, guid: a834f0168963b6a44a9283d73ab63eac, type: 3}
+      propertyPath: focusTimeMax
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 6086461624978598981, guid: a834f0168963b6a44a9283d73ab63eac, type: 3}
+      propertyPath: focusTimeMin
       value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 6086461624978598981, guid: a834f0168963b6a44a9283d73ab63eac, type: 3}
@@ -293,6 +305,18 @@ PrefabInstance:
     - target: {fileID: 8731453604925911308, guid: a834f0168963b6a44a9283d73ab63eac, type: 3}
       propertyPath: eyeMovementSpeed
       value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 8731453604925911308, guid: a834f0168963b6a44a9283d73ab63eac, type: 3}
+      propertyPath: eyeXRotationLimit
+      value: 55
+      objectReference: {fileID: 0}
+    - target: {fileID: 8731453604925911308, guid: a834f0168963b6a44a9283d73ab63eac, type: 3}
+      propertyPath: eyeYRotationLimit
+      value: 55
+      objectReference: {fileID: 0}
+    - target: {fileID: 8731453604925911308, guid: a834f0168963b6a44a9283d73ab63eac, type: 3}
+      propertyPath: eyeZRotationLimit
+      value: 55
       objectReference: {fileID: 0}
     - target: {fileID: 8731453604925911308, guid: a834f0168963b6a44a9283d73ab63eac, type: 3}
       propertyPath: neckMovementSpeed

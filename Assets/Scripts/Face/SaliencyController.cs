@@ -10,8 +10,6 @@ public class SaliencyController : MonoBehaviour
     [SerializeField]
     private Camera auxiliaryAgentCamera;
     [SerializeField]
-    private RawImage saliencyMapOutput;
-    [SerializeField]
     private InferenceClient inferenceClient;
 
     [Header("Saliency Map Settings")]
@@ -25,14 +23,19 @@ public class SaliencyController : MonoBehaviour
     [Range(0.0f, 1.0f)]
     private float saliencyValueThreshold = 0.5f;
 
-    [Header("Debug")]
+    [Header("Debug/Visualization")]
+    [SerializeField]
+    private RawImage saliencyMapOutput;
+    [SerializeField]
+    private RawImage visionFrameImage;
     [SerializeField]
     private bool debugSaliencyRaycast = false;
+    private Texture2D previousVisionFrame;
+    private Texture2D currentVisionFrame;
 
 
     private float scanInterval; 
     private float scanTimer;
-
     private byte[] saliencyMapBytes;
     
     void Start()
@@ -47,6 +50,7 @@ public class SaliencyController : MonoBehaviour
         if (scanTimer < 0)
         {
             scanTimer += scanInterval;
+            previousVisionFrame = currentVisionFrame;
             InferSaliencyMap();
             UpdateAuxiliaryCamera();
             if (saliencyMapBytes!=null)
@@ -124,6 +128,8 @@ public class SaliencyController : MonoBehaviour
         image.ReadPixels(new Rect(0, 0, agentCamera.targetTexture.width, agentCamera.targetTexture.height), 0, 0);
         image.Apply();
 
+        currentVisionFrame = image;
+
         // Encode to PNG
         byte[] bytes = image.EncodeToPNG();
 
@@ -138,6 +144,7 @@ public class SaliencyController : MonoBehaviour
         Texture2D saliencyMapTexture = new Texture2D(2, 2);
         ImageConversion.LoadImage(saliencyMapTexture, rawData);
         saliencyMapOutput.texture = saliencyMapTexture;
+        visionFrameImage.texture = previousVisionFrame;
     }
 
     private void UpdateAuxiliaryCamera()

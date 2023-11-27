@@ -38,6 +38,7 @@ Transform:
   - {fileID: 3791974257848749456}
   - {fileID: 5052450158759345206}
   - {fileID: 4607705790404016620}
+  - {fileID: 1203754435037084854}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -78,9 +79,12 @@ MonoBehaviour:
   faceMeshRenderer: {fileID: 5656338420393517599}
   leftEyeTransform: {fileID: 7435236622474090325}
   rightEyeTransform: {fileID: 7952963345548195245}
-  eyeXRotationLimit: 25
-  eyeYRotationLimit: 25
-  eyeZRotationLimit: 25
+  eyeXRotationLimit: 55
+  eyeYRotationLimit: 55
+  eyeZRotationLimit: 55
+  eyeXComfortableRotationLimit: 25
+  eyeYComfortableRotationLimit: 25
+  eyeZComfortableRotationLimit: 25
   eyeMovementSpeed: 1.5
   blinkIntervalMin: 0.2
   blinkIntervalMax: 3
@@ -106,13 +110,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   saliencyController: {fileID: 884323973809061713}
   frustrumLineOfSight: {fileID: 7856600383182948550}
-  safetyRegionLeft: {fileID: 0}
-  safetyRegionRight: {fileID: 0}
-  faceSafetyRegionLeft: {fileID: 8896361891826307433}
-  faceSafetyRegionRight: {fileID: 880753386943309096}
   focusOnSafetyRegions: 1
   focusOnSalientRegions: 1
-  focusTime: 2
+  focusTimeMin: 0.4
+  focusTimeMax: 0.8
   currentFocus: {fileID: 0}
   objectsFocusedOn: 
   currentObjects: []
@@ -131,6 +132,7 @@ MonoBehaviour:
   agentCamera: {fileID: 2621118056989290313}
   auxiliaryAgentCamera: {fileID: 0}
   saliencyMapOutput: {fileID: 0}
+  visionFrameImage: {fileID: 0}
   inferenceClient: {fileID: 2728485655539910894}
   scanFrequency: 5
   scanLayerMask:
@@ -243,6 +245,81 @@ SkinnedMeshRenderer:
     m_Center: {x: -0.04689803, y: 0.1902714, z: 0.04250638}
     m_Extent: {x: 0.02902857, y: 0.036323577, z: 0.035961952}
   m_DirtyAABB: 0
+--- !u!1 &451722205713587770
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1203754435037084854}
+  - component: {fileID: 5331167045342284837}
+  m_Layer: 0
+  m_Name: FaceCamera
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1203754435037084854
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 451722205713587770}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0.683}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 796606709438301115}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+--- !u!20 &5331167045342284837
+Camera:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 451722205713587770}
+  m_Enabled: 1
+  serializedVersion: 2
+  m_ClearFlags: 1
+  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_projectionMatrixMode: 1
+  m_GateFitMode: 2
+  m_FOVAxisMode: 0
+  m_SensorSize: {x: 36, y: 24}
+  m_LensShift: {x: 0, y: 0}
+  m_FocalLength: 50
+  m_NormalizedViewPortRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+  near clip plane: 0.3
+  far clip plane: 1000
+  field of view: 60
+  orthographic: 0
+  orthographic size: 5
+  m_Depth: 0
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_RenderingPath: -1
+  m_TargetTexture: {fileID: 8400000, guid: 62e390da2b331824baa4559fecac4618, type: 2}
+  m_TargetDisplay: 0
+  m_TargetEye: 3
+  m_HDR: 1
+  m_AllowMSAA: 1
+  m_AllowDynamicResolution: 0
+  m_ForceIntoRT: 0
+  m_OcclusionCulling: 1
+  m_StereoConvergence: 10
+  m_StereoSeparation: 0.022
 --- !u!1 &1160357008516528474
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 
 public class AttentionController : MonoBehaviour
@@ -35,6 +36,10 @@ public class AttentionController : MonoBehaviour
     [SerializeField]
     private List<GameObject> currentObjects;
 
+    [Header("Debug/Visualization")]
+    [SerializeField]
+    private TextMeshProUGUI currentFocusDebugText;
+
     private List<GameObject> lineOfSightObjects;
     private List<GameObject> salientObjects;
     private List<GameObject> safetyRegionObjects;
@@ -54,6 +59,8 @@ public class AttentionController : MonoBehaviour
 
     private void Update()
     {
+        currentFocusDebugText.text = "Current focus: "+(currentFocus != null ? currentFocus.gameObject.name : "none");
+        
         lineOfSightObjects = frustrumLineOfSight.GetObjects();
         if (focusOnSalientRegions)
             salientObjects = saliencyController.GetSalientObjects();
@@ -74,32 +81,13 @@ public class AttentionController : MonoBehaviour
             return;
         }
 
-        // Collider salientObstacle = null;
-        // Collider safetyRegionObstacle = null;
-        // if (focusOnSalientRegions)
-        // {
-        //     salientObstacle = saliencyController.GetSalientObject();
-        // }
+        if (currentFocus!=null) objectsFocusedOn.Add(currentFocus.gameObject.GetInstanceID());
 
-        // if (focusOnSafetyRegions)
-        // {
-        //     if (safetyRegionLeft.targetObstacle.obstacle != null && safetyRegionRight.targetObstacle.obstacle != null)
-        //         safetyRegionObstacle = safetyRegionLeft.targetObstacle.distance < safetyRegionRight.targetObstacle.distance ? safetyRegionLeft.targetObstacle.obstacle : safetyRegionRight.targetObstacle.obstacle;
-        //     else
-        //         safetyRegionObstacle = safetyRegionLeft.targetObstacle.obstacle ?? safetyRegionRight.targetObstacle.obstacle;
-        // }
-
-        // // Find nearest obstacle
-        // Collider nearestObstacle;
-        // if (focusOnSalientRegions && focusOnSafetyRegions)
-        //     nearestObstacle = safetyRegionObstacle != null ? safetyRegionObstacle : salientObstacle;
-        // else
-        //     nearestObstacle = focusOnSalientRegions ? salientObstacle : safetyRegionObstacle;
-
-        // Update current focus
-        // if (currentFocus!=null) objectsFocusedOn.Add(currentFocus.gameObject.GetInstanceID());
         currentFocus = null;
-        if (currentObjects.Count() > 0) currentFocus = currentObjects[0];
+        if (currentObjects.Count() > 0)
+        {
+            currentFocus = currentObjects[0];
+        } 
 
         // Debug.Log("Currently focusing on: "+(currentFocus != null ? currentFocus.gameObject.name : "null"));
         focusTimer = UnityEngine.Random.Range(focusTimeMin, focusTimeMax);
@@ -109,18 +97,30 @@ public class AttentionController : MonoBehaviour
     {
         var currentObjectsSet = new HashSet<GameObject>();
         foreach(GameObject obj in lineOfSightObjects)
-            currentObjectsSet.Add(obj);
+        {
+            if (!objectsFocusedOn.Contains(obj.GetInstanceID()))
+                currentObjectsSet.Add(obj);
+        }
+            
 
         if (focusOnSalientRegions)
         {
             foreach(GameObject obj in salientObjects)
-                currentObjectsSet.Add(obj);
+            {
+                if (!objectsFocusedOn.Contains(obj.GetInstanceID()))
+                    currentObjectsSet.Add(obj);
+            }
+                
         }
         
         if (focusOnSafetyRegions)
         {
             foreach(GameObject obj in safetyRegionObjects)
-                currentObjectsSet.Add(obj);
+            {
+                if (!objectsFocusedOn.Contains(obj.GetInstanceID()))
+                    currentObjectsSet.Add(obj);
+            }
+                
         }
         
         currentObjects = new List<GameObject>(currentObjectsSet.ToList());        
