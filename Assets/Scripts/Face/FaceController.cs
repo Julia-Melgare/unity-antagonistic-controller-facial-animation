@@ -31,7 +31,7 @@ public class FaceController : MonoBehaviour
     [SerializeField]
     private float eyeZComfortableRotationLimit = 25f;
     [SerializeField]
-    private float eyeMovementSpeed = 2f;
+    private float eyeMovementSpeed = 1.74533f; //100 degrees in radians;
 
     private Vector3 initialLeftEyeForward;
     private Vector3 initialRightEyeForward;

@@ -39,6 +39,7 @@ Transform:
   - {fileID: 5052450158759345206}
   - {fileID: 4607705790404016620}
   - {fileID: 1203754435037084854}
+  - {fileID: 4887449329705479525}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -85,7 +86,7 @@ MonoBehaviour:
   eyeXComfortableRotationLimit: 25
   eyeYComfortableRotationLimit: 25
   eyeZComfortableRotationLimit: 25
-  eyeMovementSpeed: 1.5
+  eyeMovementSpeed: 1.74533
   blinkIntervalMin: 0.2
   blinkIntervalMax: 3
   neckTransform: {fileID: 6731555250141816126}
@@ -110,13 +111,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   saliencyController: {fileID: 884323973809061713}
   frustrumLineOfSight: {fileID: 7856600383182948550}
-  focusOnSafetyRegions: 1
+  pathLookAheadTransform: {fileID: 582165278449637405}
+  lookAtPathWeight: 78.8
+  lookAtObjectsWeight: 21.2
+  focusTimeMin: 0.5
+  focusTimeMax: 3
+  lookAtPathTimeMin: 0.2
+  lookAtPathTimeMax: 1
   focusOnSalientRegions: 1
-  focusTimeMin: 0.4
-  focusTimeMax: 0.8
   currentFocus: {fileID: 0}
   objectsFocusedOn: 
   currentObjects: []
+  currentFocusDebugText: {fileID: 0}
 --- !u!114 &884323973809061713
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -131,8 +137,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   agentCamera: {fileID: 2621118056989290313}
   auxiliaryAgentCamera: {fileID: 0}
-  saliencyMapOutput: {fileID: 0}
-  visionFrameImage: {fileID: 0}
   inferenceClient: {fileID: 2728485655539910894}
   scanFrequency: 5
   scanLayerMask:
@@ -140,6 +144,8 @@ MonoBehaviour:
     m_Bits: 3959
   salientObjects: []
   saliencyValueThreshold: 0.5
+  saliencyMapOutput: {fileID: 0}
+  visionFrameImage: {fileID: 0}
   debugSaliencyRaycast: 0
 --- !u!114 &2728485655539910894
 MonoBehaviour:
@@ -320,6 +326,37 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
+--- !u!1 &582165278449637405
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4887449329705479525}
+  m_Layer: 0
+  m_Name: Path
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4887449329705479525
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 582165278449637405}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0.802}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 796606709438301115}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1160357008516528474
 GameObject:
   m_ObjectHideFlags: 0

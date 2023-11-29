@@ -48,8 +48,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rigidBody: {fileID: 7206820198953490939}
-  leftFootTransform: {fileID: 1263167014746299052}
-  rightFootTransform: {fileID: 6112856959359794130}
 --- !u!1001 &742875166841546871
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1555,6 +1553,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8731453604925911308, guid: a834f0168963b6a44a9283d73ab63eac, type: 3}
       propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8731453604925911308, guid: a834f0168963b6a44a9283d73ab63eac, type: 3}
+      propertyPath: blinkIntervalMax
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8731453604925911308, guid: a834f0168963b6a44a9283d73ab63eac, type: 3}
+      propertyPath: blinkIntervalMin
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8731453604925911308, guid: a834f0168963b6a44a9283d73ab63eac, type: 3}

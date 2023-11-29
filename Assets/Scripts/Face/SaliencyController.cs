@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.UI;
 
 public class SaliencyController : MonoBehaviour
@@ -65,7 +67,7 @@ public class SaliencyController : MonoBehaviour
     {
         // Find index of highest value in map
         Color[] saliencyMapPixels = (saliencyMapOutput.texture as Texture2D).GetPixels();
-        var saliencyPoints = new List<Vector3>();
+        var saliencyPoints = new Dictionary<Vector3, float>();
         for (int i = 0; i < saliencyMapPixels.Length; i++)
         {
             float grayscaleValue = saliencyMapPixels[i].grayscale;
@@ -76,21 +78,22 @@ public class SaliencyController : MonoBehaviour
                 int height = agentCamera.targetTexture.height;
                 int matrix_i = i / width;
                 int matrix_j = i % width;
-                saliencyPoints.Add(new Vector3(matrix_j, matrix_i, 0));
+                saliencyPoints.Add(new Vector3(matrix_j, matrix_i, 0), grayscaleValue);
                 if(debugSaliencyRaycast)
                     saliencyMapPixels[i] = Color.red; // Highlight pixel for visualization purposes
             } 
         }        
         // Get world coordinates from camera and raycast for objects
-        var salientObjectsSet = new HashSet<GameObject>();
+        var salientObjectsDict = new Dictionary<GameObject, float>();
         foreach (var screenPoint in saliencyPoints)
         {
-            Ray ray = auxiliaryAgentCamera.ScreenPointToRay(screenPoint);
+            Ray ray = auxiliaryAgentCamera.ScreenPointToRay(screenPoint.Key);
             RaycastHit[] hits = Physics.RaycastAll(ray, Mathf.Infinity, scanLayerMask);
             foreach (RaycastHit hit in hits)
-                salientObjectsSet.Add(hit.collider.gameObject);                      
+                salientObjectsDict.TryAdd(hit.collider.gameObject, screenPoint.Value);
+                                    
         }
-        salientObjects = new List<GameObject>(salientObjectsSet.ToList());
+        salientObjects = new List<GameObject>(salientObjectsDict.OrderBy(x => x.Value).ToDictionary(x => x.Key, x => x.Value).Keys);
         if (debugSaliencyRaycast)
         {
             Texture2D newTexture = new Texture2D(360, 360);
