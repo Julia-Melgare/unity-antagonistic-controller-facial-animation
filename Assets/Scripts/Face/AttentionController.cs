@@ -35,6 +35,7 @@ public class AttentionController : MonoBehaviour
     private float lookAtPathTimeMin = 0.2f, lookAtPathTimeMax = 0.5f; // Values for exploring behavior
     [SerializeField]
     private float memoryTime = 20f;
+
     [SerializeField]
     private bool focusOnSalientRegions = true;
 
@@ -42,7 +43,7 @@ public class AttentionController : MonoBehaviour
     private GameObject currentFocus = null;
     [SerializeField]
     private List<int> objectsFocusedOn;
-    private bool amFocusing = false;
+    private bool focusing = false;
 
     [SerializeField]
     private List<GameObject> currentObjects;
@@ -71,12 +72,14 @@ public class AttentionController : MonoBehaviour
     private void Update()
     {
         if (currentFocusDebugText != null) currentFocusDebugText.text = "Current focus: "+(currentFocus != null ? currentFocus.gameObject.name : "none");
+        // Check if there's a moving object
+        //if (frustrumLineOfSight.GetObjects()[0])
         // If the agent is already focusing on something, return
-        if (amFocusing) return;
+        if (focusing) return;
 
         // Decide if agent will look at path or at salient objects
         float decision = Random.Range(0, 100);
-        Debug.Log(decision);
+        //Debug.Log(decision);
         if (decision <= lookAtPathWeight)
         {
             // Focus on the path
@@ -85,6 +88,30 @@ public class AttentionController : MonoBehaviour
         }
 
         // Focus on the objects
+        lineOfSightObjects = frustrumLineOfSight.GetObjects();
+        if (focusOnSalientRegions)
+            salientObjects = saliencyController.GetSalientObjects();
+        
+        /*if (focusOnSafetyRegions)
+        {
+            if (safetyRegionLeft!=null && safetyRegionLeft.targetObstacle.obstacle!=null) safetyRegionObjects.Add(safetyRegionLeft.targetObstacle.obstacle.gameObject);
+            if (safetyRegionRight!=null && safetyRegionRight.targetObstacle.obstacle!=null) safetyRegionObjects.Add(safetyRegionRight.targetObstacle.obstacle.gameObject);
+            if (faceSafetyRegionLeft!=null && faceSafetyRegionLeft.closestObstacle!=null) safetyRegionObjects.Add(faceSafetyRegionLeft.closestObstacle);
+            if (faceSafetyRegionRight!=null && faceSafetyRegionRight.closestObstacle!=null) safetyRegionObjects.Add(faceSafetyRegionRight.closestObstacle);
+        }*/
+        
+        UpdateCurrentObjects();
+
+        if (currentObjects.Count() > 0)
+        {
+            currentFocus = currentObjects[0];
+            focusing = true;
+        }
+        else
+        {
+            focusing = false;
+            yield break;
+        }
         StartCoroutine(FocusOnObject(UnityEngine.Random.Range(focusTimeMin, focusTimeMax)));
     }
 
@@ -120,47 +147,32 @@ public class AttentionController : MonoBehaviour
         currentObjects = new List<GameObject>(currentObjectsSet.ToList());        
     }
 
+    private void OnFastMovement(GameObject movingObj)
+    {
+        if (!focusing)
+        {
+            StartCoroutine(FocusOnObject())
+        }
+    }
+
     private IEnumerator FocusOnPath(float fixationTime)
     {
         currentFocus = null; //TODO: Focus on actual path transform
-        amFocusing = true;
+        focusing = true;
         yield return new WaitForSeconds(fixationTime);
-        amFocusing = false;
+        focusing = false;
         yield return null;
     }
 
-    private IEnumerator FocusOnObject(float fixationTime)
+    private IEnumerator FocusOnObject(GameObject obj, float fixationTime)
     {
-        lineOfSightObjects = frustrumLineOfSight.GetObjects();
-        if (focusOnSalientRegions)
-            salientObjects = saliencyController.GetSalientObjects();
-        
-        /*if (focusOnSafetyRegions)
-        {
-            if (safetyRegionLeft!=null && safetyRegionLeft.targetObstacle.obstacle!=null) safetyRegionObjects.Add(safetyRegionLeft.targetObstacle.obstacle.gameObject);
-            if (safetyRegionRight!=null && safetyRegionRight.targetObstacle.obstacle!=null) safetyRegionObjects.Add(safetyRegionRight.targetObstacle.obstacle.gameObject);
-            if (faceSafetyRegionLeft!=null && faceSafetyRegionLeft.closestObstacle!=null) safetyRegionObjects.Add(faceSafetyRegionLeft.closestObstacle);
-            if (faceSafetyRegionRight!=null && faceSafetyRegionRight.closestObstacle!=null) safetyRegionObjects.Add(faceSafetyRegionRight.closestObstacle);
-        }*/
-        
-        UpdateCurrentObjects();
-
-        if (currentObjects.Count() > 0)
-        {
-            currentFocus = currentObjects[0];
-            amFocusing = true;
-        }
-        else
-        {
-            amFocusing = false;
-            yield break;
-        }
-        
+        currentFocus = obj;
+        focusing = true;        
         yield return new WaitForSeconds(fixationTime);
         int currentFocusID = currentFocus.gameObject.GetInstanceID();
         objectsFocusedOn.Add(currentFocusID);
         StartCoroutine(ForgetObject(currentFocusID, memoryTime));
-        amFocusing = false;
+        focusing = false;
         yield return null;
     }
 
@@ -173,5 +185,10 @@ public class AttentionController : MonoBehaviour
     public GameObject GetCurrentFocus()
     {
         return currentFocus;
+    }
+
+    private void OnEnable()
+    {
+        //frustrumLineOfSight.onFastMovement
     }
 }

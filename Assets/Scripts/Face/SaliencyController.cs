@@ -93,7 +93,7 @@ public class SaliencyController : MonoBehaviour
                 salientObjectsDict.TryAdd(hit.collider.gameObject, screenPoint.Value);
                                     
         }
-        salientObjects = new List<GameObject>(salientObjectsDict.OrderBy(x => x.Value).ToDictionary(x => x.Key, x => x.Value).Keys);
+        salientObjects = new List<GameObject>(salientObjectsDict.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value).Keys);
         if (debugSaliencyRaycast)
         {
             Texture2D newTexture = new Texture2D(360, 360);

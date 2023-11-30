@@ -176,8 +176,6 @@ public class FaceController : MonoBehaviour
                 SetRotation(neckTransform, objectOfInterest, initialRightEyeForward, eyeMovementSpeed);
             }
 
-            
-
             // Animate eye blendhsapes according to gaze direction
             AnimateGazeBlendShapes();
         }

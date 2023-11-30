@@ -1,9 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using UnityEditor;
 using UnityEngine;
 
 public class FrustrumLineOfSight : MonoBehaviour
 {
+    [Header("LOS Settings")]
     [SerializeField] 
     private float distance = 10;
     [SerializeField] 
@@ -11,21 +14,29 @@ public class FrustrumLineOfSight : MonoBehaviour
     [SerializeField] 
     private float height = 6;
     [SerializeField] 
-    private Color meshColor = Color.yellow;
-    [SerializeField] 
     private int scanFrequency = 30;
     [SerializeField] 
     private LayerMask layers;
     [SerializeField] 
     private LayerMask occlusionLayers;
+    [SerializeField]
+    private float fastMovementThreshold = 0.5f;
     [SerializeField] 
     private List<GameObject> objects = new List<GameObject>();
+
+    [Header("Debug/Visualization Settings")]
+    [SerializeField] 
+    private Color meshColor = Color.yellow;
 
     private Collider[] colliders = new Collider[50];
     private Mesh mesh;
     private int count;
     private float scanInterval;
     private float scanTimer;
+
+
+    public delegate GameObject OnFastMovement();
+    public event OnFastMovement onFastMovement;
 
     void Start()
     {
@@ -48,14 +59,18 @@ public class FrustrumLineOfSight : MonoBehaviour
         count = Physics.OverlapSphereNonAlloc(transform.position, distance, colliders, layers, QueryTriggerInteraction.Collide);
 
         objects.Clear();
+        var objectSpeedDict = new Dictionary<GameObject, float>();
         for (int i = 0; i < count; i++)
         {
             GameObject obj = colliders[i].gameObject;
             if (IsInSight(obj) && IsMoving(obj))
             {
-                objects.Add(obj);
+                float objSpeed = GetObjectSpeed(obj);
+                if (objSpeed >= fastMovementThreshold) onFastMovement?.Invoke();
+                objectSpeedDict.Add(obj, objSpeed);
             }
         }
+        objects = new List<GameObject>(objectSpeedDict.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value).Keys);
     }
 
     public List<GameObject> GetObjects()
@@ -96,6 +111,20 @@ public class FrustrumLineOfSight : MonoBehaviour
         return false;
     }
 
+    public float GetObjectSpeed(GameObject obj)
+    {
+        var rigidbody = obj.GetComponent<Rigidbody>();
+        if (rigidbody != null && rigidbody.velocity.magnitude > 0) return rigidbody.velocity.magnitude;
+
+        var movingObj = obj.GetComponent<MovingObject>();
+        if (movingObj != null) return movingObj.velocity.magnitude; 
+
+        var animator = obj.GetComponent<Animator>();
+        if (animator != null && animator.isActiveAndEnabled) return 0f;
+
+        return 0f;
+    }
+
     public int Filter(GameObject[] buffer, string layerName)
     {
         int layer = LayerMask.NameToLayer(layerName);
@@ -108,6 +137,7 @@ public class FrustrumLineOfSight : MonoBehaviour
         return count;
     }
 
+    #region EditorVisualization
     private Mesh CreateWedgeMesh()
     {
         Mesh mesh = new Mesh();
@@ -204,4 +234,5 @@ public class FrustrumLineOfSight : MonoBehaviour
 
         Gizmos.DrawWireSphere(transform.position, distance);
     }
+    #endregion
 }

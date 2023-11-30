@@ -4,9 +4,16 @@ using UnityEngine;
 
 public class MovingObject : MonoBehaviour
 {
-    public Transform lastTransform; 
-    void LateUpdate()
+    public Vector3 velocity;
+    private Vector3 lastPosition; 
+    
+    void Start()
     {
-        lastTransform = gameObject.transform;
+        lastPosition = transform.position;
+    }
+    void Update()
+    {
+        velocity = transform.position - lastPosition;
+        lastPosition = transform.position;
     }
 }
