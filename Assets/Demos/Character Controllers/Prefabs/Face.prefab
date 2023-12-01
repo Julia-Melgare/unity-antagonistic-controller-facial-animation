@@ -118,6 +118,7 @@ MonoBehaviour:
   focusTimeMax: 3
   lookAtPathTimeMin: 0.2
   lookAtPathTimeMax: 1
+  memoryTime: 20
   focusOnSalientRegions: 1
   currentFocus: {fileID: 0}
   objectsFocusedOn: 
@@ -748,15 +749,16 @@ MonoBehaviour:
   distance: 10
   angle: 130
   height: 6
-  meshColor: {r: 0.015686274, g: 0.9622341, b: 1, a: 0.3529412}
-  scanFrequency: 30
+  scanFrequency: 5
   layers:
     serializedVersion: 2
     m_Bits: 3703
   occlusionLayers:
     serializedVersion: 2
     m_Bits: 0
+  fastMovementThreshold: 0.5
   objects: []
+  meshColor: {r: 0.015686274, g: 0.9622341, b: 1, a: 0.3529412}
 --- !u!1 &5736172082614536476
 GameObject:
   m_ObjectHideFlags: 0
