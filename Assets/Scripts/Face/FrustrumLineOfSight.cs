@@ -35,7 +35,7 @@ public class FrustrumLineOfSight : MonoBehaviour
     private float scanTimer;
 
 
-    public delegate GameObject OnFastMovement();
+    public delegate void OnFastMovement(GameObject movingObj);
     public event OnFastMovement onFastMovement;
 
     void Start()
@@ -66,7 +66,7 @@ public class FrustrumLineOfSight : MonoBehaviour
             if (IsInSight(obj) && IsMoving(obj))
             {
                 float objSpeed = GetObjectSpeed(obj);
-                if (objSpeed >= fastMovementThreshold) onFastMovement?.Invoke();
+                if (objSpeed >= fastMovementThreshold) onFastMovement?.Invoke(obj);
                 objectSpeedDict.Add(obj, objSpeed);
             }
         }

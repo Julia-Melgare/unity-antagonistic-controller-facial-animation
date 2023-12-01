@@ -56,6 +56,8 @@ public class AttentionController : MonoBehaviour
     private List<GameObject> salientObjects;
     //private List<GameObject> safetyRegionObjects;
 
+    private Coroutine currentFocusRoutine;
+
     private void Start()
     {
         saliencyController.enabled = focusOnSalientRegions;
@@ -72,8 +74,7 @@ public class AttentionController : MonoBehaviour
     private void Update()
     {
         if (currentFocusDebugText != null) currentFocusDebugText.text = "Current focus: "+(currentFocus != null ? currentFocus.gameObject.name : "none");
-        // Check if there's a moving object
-        //if (frustrumLineOfSight.GetObjects()[0])
+
         // If the agent is already focusing on something, return
         if (focusing) return;
 
@@ -83,11 +84,12 @@ public class AttentionController : MonoBehaviour
         if (decision <= lookAtPathWeight)
         {
             // Focus on the path
-            StartCoroutine(FocusOnPath(UnityEngine.Random.Range(lookAtPathTimeMin, lookAtPathTimeMax)));
+            currentFocusRoutine = StartCoroutine(FocusOnPath(UnityEngine.Random.Range(lookAtPathTimeMin, lookAtPathTimeMax)));
             return;
         }
 
         // Focus on the objects
+
         lineOfSightObjects = frustrumLineOfSight.GetObjects();
         if (focusOnSalientRegions)
             salientObjects = saliencyController.GetSalientObjects();
@@ -104,15 +106,8 @@ public class AttentionController : MonoBehaviour
 
         if (currentObjects.Count() > 0)
         {
-            currentFocus = currentObjects[0];
-            focusing = true;
-        }
-        else
-        {
-            focusing = false;
-            yield break;
-        }
-        StartCoroutine(FocusOnObject(UnityEngine.Random.Range(focusTimeMin, focusTimeMax)));
+            currentFocusRoutine = StartCoroutine(FocusOnObject(currentObjects[0], UnityEngine.Random.Range(focusTimeMin, focusTimeMax)));
+        }        
     }
 
     private void UpdateCurrentObjects()
@@ -151,8 +146,18 @@ public class AttentionController : MonoBehaviour
     {
         if (!focusing)
         {
-            StartCoroutine(FocusOnObject())
+            StartCoroutine(FocusOnObject(movingObj, UnityEngine.Random.Range(focusTimeMin, focusTimeMax)));
+            return;
         }
+        StopCoroutine(currentFocusRoutine);
+        focusing = false;
+        if (currentFocus != null) //TODO: check if it's NOT the path transform (if it's an object)
+        {
+            int currentFocusID = currentFocus.gameObject.GetInstanceID();
+            objectsFocusedOn.Add(currentFocusID);
+            StartCoroutine(ForgetObject(currentFocusID, memoryTime));
+        }
+        StartCoroutine(FocusOnObject(movingObj, UnityEngine.Random.Range(focusTimeMin, focusTimeMax)));
     }
 
     private IEnumerator FocusOnPath(float fixationTime)
@@ -189,6 +194,11 @@ public class AttentionController : MonoBehaviour
 
     private void OnEnable()
     {
-        //frustrumLineOfSight.onFastMovement
+        frustrumLineOfSight.onFastMovement += OnFastMovement;
+    }
+
+    private void OnDisable()
+    {
+        frustrumLineOfSight.onFastMovement -= OnFastMovement;
     }
 }
