@@ -151,7 +151,7 @@ public class AttentionController : MonoBehaviour
         }
         StopCoroutine(currentFocusRoutine);
         focusing = false;
-        if (currentFocus != null) //TODO: check if it's NOT the path transform (if it's an object)
+        if (currentFocus != null && currentFocus.GetInstanceID() != pathLookAheadTransform.gameObject.GetInstanceID())
         {
             int currentFocusID = currentFocus.gameObject.GetInstanceID();
             objectsFocusedOn.Add(currentFocusID);
@@ -162,7 +162,7 @@ public class AttentionController : MonoBehaviour
 
     private IEnumerator FocusOnPath(float fixationTime)
     {
-        currentFocus = null; //TODO: Focus on actual path transform
+        currentFocus = pathLookAheadTransform;
         focusing = true;
         yield return new WaitForSeconds(fixationTime);
         focusing = false;
@@ -174,7 +174,7 @@ public class AttentionController : MonoBehaviour
         currentFocus = obj;
         focusing = true;        
         yield return new WaitForSeconds(fixationTime);
-        int currentFocusID = currentFocus.gameObject.GetInstanceID();
+        int currentFocusID = obj.gameObject.GetInstanceID();
         objectsFocusedOn.Add(currentFocusID);
         StartCoroutine(ForgetObject(currentFocusID, memoryTime));
         focusing = false;
@@ -190,6 +190,11 @@ public class AttentionController : MonoBehaviour
     public GameObject GetCurrentFocus()
     {
         return currentFocus;
+    }
+
+    public bool isFocusingOnPath()
+    {
+        return currentFocus != null && currentFocus.GetInstanceID() == pathLookAheadTransform.gameObject.GetInstanceID();
     }
 
     private void OnEnable()

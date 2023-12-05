@@ -67,7 +67,7 @@ public class FrustrumLineOfSight : MonoBehaviour
             {
                 float objSpeed = GetObjectSpeed(obj);
                 if (objSpeed >= fastMovementThreshold) onFastMovement?.Invoke(obj);
-                objectSpeedDict.Add(obj, objSpeed);
+                objectSpeedDict.TryAdd(obj, objSpeed);
             }
         }
         objects = new List<GameObject>(objectSpeedDict.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value).Keys);

@@ -160,10 +160,11 @@ public class FaceController : MonoBehaviour
             ClampRotation(leftEyeTransform, eyeXRotationLimit, eyeYRotationLimit, eyeZRotationLimit);
             ClampRotation(rightEyeTransform, eyeXRotationLimit, eyeYRotationLimit, eyeZRotationLimit);
 
+            Vector3 middlePoint = (leftEyeTransform.forward + rightEyeTransform.forward).normalized;
+            
             if (SurpassedRotationConstraints(leftEyeTransform, eyeXComfortableRotationLimit, eyeYComfortableRotationLimit, eyeZComfortableRotationLimit) || SurpassedRotationConstraints(leftEyeTransform, eyeXComfortableRotationLimit, eyeYComfortableRotationLimit, eyeZComfortableRotationLimit))
             {
                 // Rotate neck towards eyes middle point
-                Vector3 middlePoint = (leftEyeTransform.forward + rightEyeTransform.forward).normalized;
                 float singleStep = neckMovementSpeed * Time.deltaTime;
                 Vector3 newDirection = Vector3.RotateTowards(neckTransform.forward, middlePoint, singleStep, 0.0f);
                 neckTransform.rotation = Quaternion.LookRotation(newDirection);
@@ -171,9 +172,10 @@ public class FaceController : MonoBehaviour
                 ClampRotation(neckTransform, neckXRotationLimit, neckYRotationLimit, neckZRotationLimit);
             }
 
-            if (objectOfInterest == null)
+            if (attentionController.isFocusingOnPath())
             {
-                SetRotation(neckTransform, objectOfInterest, initialRightEyeForward, eyeMovementSpeed);
+                // If I'm focusing on path, neck will follow direction too
+                SetRotation(neckTransform, objectOfInterest, initialNeckForward, middlePoint, neckMovementSpeed);
             }
 
             // Animate eye blendhsapes according to gaze direction
@@ -183,14 +185,14 @@ public class FaceController : MonoBehaviour
         {
             AnimateSquintBlendShapes();
             Vector3 middlePoint = Vector3.Lerp(leftEyeTransform.position, rightEyeTransform.position, 0.3f);
-            Vector3 direction = (attentionController.GetCurrentFocus().transform.position - middlePoint + neckTransform.position).normalized;
+            //Vector3 direction = (attentionController.GetCurrentFocus().transform.position - middlePoint + neckTransform.position).normalized;
 
             //float singleStep = neckMovementSpeed * Time.deltaTime;
             //Vector3 newDirection = Vector3.RotateTowards(neckTransform.forward, -direction, singleStep, 0.0f);
             //neckTransform.rotation = Quaternion.LookRotation(-direction);
             //Debug.DrawRay(neckTransform.position, newDirection, Color.red);
-            Debug.DrawRay(middlePoint, direction, Color.blue);
-            Debug.DrawRay(neckTransform.position, -direction, Color.red);
+            //Debug.DrawRay(middlePoint, direction, Color.blue);
+            //Debug.DrawRay(neckTransform.position, -direction, Color.red);
             ClampRotation(neckTransform, neckXRotationLimit, neckYRotationLimit, neckZRotationLimit);
         }
     }
@@ -209,7 +211,6 @@ public class FaceController : MonoBehaviour
     private void SetRotation(Transform objectTransform, GameObject objectOfInterest, Vector3 initialForward, Vector3 targetRotation, float movementSpeed)
     {
         Vector3 targetDirection = transform.forward + new Vector3(0, initialForward.y, 0);
-
         if (objectOfInterest != null) targetDirection = targetRotation;
         float singleStep = movementSpeed * Time.deltaTime;
         Vector3 newDirection = Vector3.RotateTowards(objectTransform.forward, targetDirection, singleStep, 0.0f);

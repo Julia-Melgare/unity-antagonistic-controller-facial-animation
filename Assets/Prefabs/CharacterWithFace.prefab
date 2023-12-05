@@ -508,6 +508,17 @@ Animator:
   m_CorrespondingSourceObject: {fileID: 7948006507343720851, guid: e8d5f3e51995c4d449568aea1da77f90, type: 3}
   m_PrefabInstance: {fileID: 742875166841546871}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &7206820198953490937 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7948006507343720846, guid: e8d5f3e51995c4d449568aea1da77f90, type: 3}
+  m_PrefabInstance: {fileID: 742875166841546871}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 216de74b8ecf499468d3aa31e367c757, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!54 &7206820198953490939 stripped
 Rigidbody:
   m_CorrespondingSourceObject: {fileID: 7948006507343720844, guid: e8d5f3e51995c4d449568aea1da77f90, type: 3}
@@ -1523,6 +1534,10 @@ PrefabInstance:
       propertyPath: m_NormalizedViewPortRect.height
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4050098393839830736, guid: a834f0168963b6a44a9283d73ab63eac, type: 3}
+      propertyPath: characterController
+      value: 
+      objectReference: {fileID: 7206820198953490937}
     - target: {fileID: 6086461624978598981, guid: a834f0168963b6a44a9283d73ab63eac, type: 3}
       propertyPath: safetyRegionLeft
       value: 
