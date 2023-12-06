@@ -910,7 +910,6 @@ GameObject:
   - component: {fileID: 6472238169143897481}
   - component: {fileID: 4672894747926322562}
   - component: {fileID: 3163377552741094479}
-  - component: {fileID: 3632679850083751697}
   - component: {fileID: 4050098393839830736}
   m_Layer: 3
   m_Name: PathTarget
@@ -984,19 +983,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!135 &3632679850083751697
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7956864818503304366}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.49999994
-  m_Center: {x: -0.00000095367386, y: -0.00000047683713, z: 0.0000019073484}
 --- !u!114 &4050098393839830736
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1011,11 +997,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pathTrajectory: {fileID: 0}
   positionUnits: 1
-  characterController: {fileID: 0}
   faceTransform: {fileID: 796606709438301115}
   maxMoveSpeed: 100
   stepsAhead: 7
-  currentPosInPath: 0
 --- !u!1 &8133712424524173436
 GameObject:
   m_ObjectHideFlags: 0

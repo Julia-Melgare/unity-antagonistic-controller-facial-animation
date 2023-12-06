@@ -9,6 +9,7 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using Cinemachine;
 using UnityEngine;
 
 [RequireComponent(typeof(Animator))]
@@ -18,6 +19,7 @@ public class RigidBodyController : MonoBehaviour
 
     private Rigidbody _body;
     private Animator _anim;
+    private float currentPosInPath = 0f;
 
     #endregion
 
@@ -35,6 +37,8 @@ public class RigidBodyController : MonoBehaviour
     public float rotationSpeed = 280f;
     public bool blockCamera = false;
     public bool moveForwardOnly = false;
+    public bool followPath = false;
+    public CinemachinePath pathTrajectory;
 
     [Header("Motion - Debug")]
     public Vector3 _inputs = Vector3.zero;
@@ -68,7 +72,7 @@ public class RigidBodyController : MonoBehaviour
 
         if (_body.isKinematic)
         {
-            transform.position += moveDirection * moveSpeed * offsetKinematicMovement * inputMagnitude * Time.deltaTime;
+            transform.position += moveDirection * moveSpeed * offsetKinematicMovement * inputMagnitude * Time.deltaTime;            
 
             _velocity.y += Physics.gravity.y * Time.fixedDeltaTime;
 
@@ -79,35 +83,51 @@ public class RigidBodyController : MonoBehaviour
 
     private void Update()
     {
-        // User-input
-        _inputs = Vector3.zero;
-        _inputs.x = Input.GetAxis("Horizontal");
-        _inputs.z = Input.GetAxis("Vertical");
-
-        // Direction of the character with respect to the input (e.g. W = (0,0,1))
-        moveDirection = Vector3.forward * _inputs.z + Vector3.right * _inputs.x;
-
-        // Rotate with respect to the camera: Calculate camera projection on ground -> Change direction to be with respect to camera
-        Vector3 projectedCameraForward = Vector3.ProjectOnPlane(Camera.main.transform.forward, Vector3.up);
-        Quaternion rotationToCamera = Quaternion.LookRotation(projectedCameraForward, Vector3.up);
-        moveDirection = rotationToCamera * moveDirection;
-
-        // How to rotate the character: In shooter mode, the character rotates such that always points to the forward of the camera
-        if (shooterCameraMode)
+        if (followPath && pathTrajectory != null)
         {
-            if (_inputs != Vector3.zero)
-            {
-                if (!blockCamera)
-                    transform.rotation = Quaternion.RotateTowards(transform.rotation, rotationToCamera, rotationSpeed * Time.deltaTime);
-            }
+            Vector3 positionInPath = GetPositionInPath(currentPosInPath + moveSpeed * Time.deltaTime);
+            moveDirection = transform.position - positionInPath;
+            moveDirection.y = 0;
+            Debug.DrawRay(transform.position, moveDirection, Color.blue);
+
+            Quaternion rotationToMoveDirection = Quaternion.LookRotation(moveDirection, Vector3.up);
+            //transform.rotation = Quaternion.RotateTowards(transform.rotation, rotationToMoveDirection, rotationSpeed * Time.deltaTime);
+
+            _inputs = Vector3.zero;
+            _inputs.x = 1 * Mathf.Sign(moveDirection.x);
+            _inputs.y = 1 * Mathf.Sign(moveDirection.y);
         }
         else
         {
-            if (_inputs != Vector3.zero && !moveForwardOnly)
+            // User-input
+            _inputs = Vector3.zero;
+            _inputs.x = Input.GetAxis("Horizontal");
+            _inputs.z = Input.GetAxis("Vertical");
+            // Direction of the character with respect to the input (e.g. W = (0,0,1))
+            moveDirection = Vector3.forward * _inputs.z + Vector3.right * _inputs.x;
+
+            // Rotate with respect to the camera: Calculate camera projection on ground -> Change direction to be with respect to camera
+            Vector3 projectedCameraForward = Vector3.ProjectOnPlane(Camera.main.transform.forward, Vector3.up);
+            Quaternion rotationToCamera = Quaternion.LookRotation(projectedCameraForward, Vector3.up);
+            moveDirection = rotationToCamera * moveDirection;
+
+            // How to rotate the character: In shooter mode, the character rotates such that always points to the forward of the camera
+            if (shooterCameraMode)
             {
-                Quaternion rotationToMoveDirection = Quaternion.LookRotation(moveDirection, Vector3.up);
-                if (!blockCamera)
-                    transform.rotation = Quaternion.RotateTowards(transform.rotation, rotationToMoveDirection, rotationSpeed * Time.deltaTime);
+                if (_inputs != Vector3.zero)
+                {
+                    if (!blockCamera)
+                        transform.rotation = Quaternion.RotateTowards(transform.rotation, rotationToCamera, rotationSpeed * Time.deltaTime);
+                }
+            }
+            else
+            {
+                if (_inputs != Vector3.zero && !moveForwardOnly)
+                {
+                    Quaternion rotationToMoveDirection = Quaternion.LookRotation(moveDirection, Vector3.up);
+                    if (!blockCamera)
+                        transform.rotation = Quaternion.RotateTowards(transform.rotation, rotationToMoveDirection, rotationSpeed * Time.deltaTime);
+                }
             }
         }
 
@@ -149,6 +169,16 @@ public class RigidBodyController : MonoBehaviour
             _anim.SetFloat("InputMagnitude", inputMagnitude, 0.0f, Time.deltaTime);
             _anim.SetFloat("SpeedAnimation", moveSpeed, 0.0f, Time.deltaTime);
         }
+    }
+
+    private Vector3 GetPositionInPath(float distanceAlongPath)
+    {
+        if (pathTrajectory != null)
+        {
+            currentPosInPath = pathTrajectory.StandardizeUnit(distanceAlongPath, CinemachinePathBase.PositionUnits.Distance);
+            return pathTrajectory.EvaluatePositionAtUnit(currentPosInPath, CinemachinePathBase.PositionUnits.Distance);
+        }
+        return Vector3.zero;
     }
     
     #endregion
