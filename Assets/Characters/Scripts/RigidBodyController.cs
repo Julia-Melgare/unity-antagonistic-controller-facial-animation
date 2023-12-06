@@ -20,6 +20,7 @@ public class RigidBodyController : MonoBehaviour
     private Rigidbody _body;
     private Animator _anim;
     private float currentPosInPath = 0f;
+    private Vector3 positionInPath;
 
     #endregion
 
@@ -63,6 +64,7 @@ public class RigidBodyController : MonoBehaviour
         // Retrieve components
         _body = GetComponent<Rigidbody>();
         _anim = GetComponent<Animator>();
+        positionInPath = GetPositionInPath(currentPosInPath + moveSpeed * inputMagnitude * Time.deltaTime);
     }
 
     void FixedUpdate()
@@ -72,8 +74,7 @@ public class RigidBodyController : MonoBehaviour
 
         if (_body.isKinematic)
         {
-            transform.position += moveDirection * moveSpeed * offsetKinematicMovement * inputMagnitude * Time.deltaTime;            
-
+            transform.position += moveDirection * moveSpeed * offsetKinematicMovement * inputMagnitude * Time.deltaTime;
             _velocity.y += Physics.gravity.y * Time.fixedDeltaTime;
 
             if (_isGrounded && _velocity.y < 0)
@@ -85,17 +86,25 @@ public class RigidBodyController : MonoBehaviour
     {
         if (followPath && pathTrajectory != null)
         {
-            Vector3 positionInPath = GetPositionInPath(currentPosInPath + moveSpeed * Time.deltaTime);
-            moveDirection = transform.position - positionInPath;
-            moveDirection.y = 0;
-            Debug.DrawRay(transform.position, moveDirection, Color.blue);
+            Vector3 newPositionInPath = GetPositionInPath(currentPosInPath + moveSpeed * 5f * Time.deltaTime);
+            float difference = Vector3.Distance(newPositionInPath, positionInPath);
+            if (difference > 0)
+            {
+                positionInPath = newPositionInPath;
+                moveDirection = (positionInPath - transform.position).normalized;
+                moveDirection.y = 0;
+            }
+            else
+            {
+                moveDirection = Vector3.zero;
+            }
 
             Quaternion rotationToMoveDirection = Quaternion.LookRotation(moveDirection, Vector3.up);
-            //transform.rotation = Quaternion.RotateTowards(transform.rotation, rotationToMoveDirection, rotationSpeed * Time.deltaTime);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, rotationToMoveDirection, rotationSpeed * Time.deltaTime);
 
             _inputs = Vector3.zero;
-            _inputs.x = 1 * Mathf.Sign(moveDirection.x);
-            _inputs.y = 1 * Mathf.Sign(moveDirection.y);
+            _inputs.x = moveDirection.x;
+            _inputs.z = moveDirection.z;
         }
         else
         {
