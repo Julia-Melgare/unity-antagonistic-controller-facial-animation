@@ -1538,6 +1538,10 @@ PrefabInstance:
       propertyPath: characterController
       value: 
       objectReference: {fileID: 7206820198953490937}
+    - target: {fileID: 4050098393839830736, guid: a834f0168963b6a44a9283d73ab63eac, type: 3}
+      propertyPath: rigidBodyController
+      value: 
+      objectReference: {fileID: 7206820198953490937}
     - target: {fileID: 6086461624978598981, guid: a834f0168963b6a44a9283d73ab63eac, type: 3}
       propertyPath: safetyRegionLeft
       value: 

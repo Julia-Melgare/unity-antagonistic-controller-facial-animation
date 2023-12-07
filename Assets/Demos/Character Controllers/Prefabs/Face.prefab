@@ -997,9 +997,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pathTrajectory: {fileID: 0}
   positionUnits: 1
-  faceTransform: {fileID: 796606709438301115}
+  eyeTransform: {fileID: 7435236622474090325}
+  rigidBodyController: {fileID: 0}
   maxMoveSpeed: 100
+  maxStepsAhead: 9
+  minStepsAhead: 2
   stepsAhead: 7
+  height: 3
 --- !u!1 &8133712424524173436
 GameObject:
   m_ObjectHideFlags: 0

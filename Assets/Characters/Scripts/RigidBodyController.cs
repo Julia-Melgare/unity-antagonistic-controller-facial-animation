@@ -54,6 +54,7 @@ public class RigidBodyController : MonoBehaviour
 
     [Header("Ground - Debug")]
     public bool _isGrounded = true;
+    public float groundSlopeAngle = 0f;
 
     #endregion
 
@@ -71,6 +72,7 @@ public class RigidBodyController : MonoBehaviour
     {
         // Check if grounded
         _isGrounded = Physics.CheckSphere(_groundChecker.position, GroundDistance, Ground, QueryTriggerInteraction.Ignore);
+        CheckGround(transform.position + Vector3.up*GroundDistance);
 
         if (_body.isKinematic)
         {
@@ -177,6 +179,20 @@ public class RigidBodyController : MonoBehaviour
         {
             _anim.SetFloat("InputMagnitude", inputMagnitude, 0.0f, Time.deltaTime);
             _anim.SetFloat("SpeedAnimation", moveSpeed, 0.0f, Time.deltaTime);
+        }
+    }
+
+    public void CheckGround(Vector3 origin)
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(origin, Vector3.down + transform.forward, out hit, 10f, Ground))
+        {
+            Debug.Log("hit: "+hit.point);
+            Debug.Log("gameObject: "+hit.collider.gameObject.name);
+            groundSlopeAngle = Vector3.Angle(hit.normal, Vector3.up);
+            Vector3 temp = Vector3.Cross(hit.normal, Vector3.down);
+            Vector3 groundSlopeDir = Vector3.Cross(temp, hit.normal);
+            Debug.DrawRay(origin, groundSlopeDir*100f, Color.green);
         }
     }
 
