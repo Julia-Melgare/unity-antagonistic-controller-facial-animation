@@ -39,11 +39,14 @@ public class SaliencyController : MonoBehaviour
     private float scanInterval; 
     private float scanTimer;
     private byte[] saliencyMapBytes;
+
+    private Dictionary<GameObject, float> salientObjectsDict;
     
     void Start()
     {
         scanInterval = 1.0f / scanFrequency;
         auxiliaryAgentCamera.enabled = false;
+        salientObjectsDict = new Dictionary<GameObject, float>();
     }
     void Update()
     {
@@ -84,7 +87,7 @@ public class SaliencyController : MonoBehaviour
             } 
         }        
         // Get world coordinates from camera and raycast for objects
-        var salientObjectsDict = new Dictionary<GameObject, float>();
+        salientObjectsDict = new Dictionary<GameObject, float>();
         foreach (var screenPoint in saliencyPoints)
         {
             Ray ray = auxiliaryAgentCamera.ScreenPointToRay(screenPoint.Key);
@@ -106,6 +109,11 @@ public class SaliencyController : MonoBehaviour
     public List<GameObject> GetSalientObjects()
     {
         return salientObjects;
+    }
+
+    public float GetObjectSaliency(GameObject obj)
+    {
+        return salientObjectsDict.GetValueOrDefault(obj, .95f);
     }
 
     private void InferSaliencyMap()

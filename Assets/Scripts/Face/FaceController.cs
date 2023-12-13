@@ -172,7 +172,7 @@ public class FaceController : MonoBehaviour
                 ClampRotation(neckTransform, neckXRotationLimit, neckYRotationLimit, neckZRotationLimit);
             }
 
-            if (attentionController.isFocusingOnPath())
+            if (attentionController.IsFocusingOnPath())
             {
                 // If I'm focusing on path, neck will follow direction too
                 SetRotation(neckTransform, objectOfInterest, initialNeckForward, middlePoint, neckMovementSpeed);
@@ -205,7 +205,7 @@ public class FaceController : MonoBehaviour
         float singleStep = movementSpeed * Time.deltaTime;
         Vector3 newDirection = Vector3.RotateTowards(objectTransform.forward, targetDirection, singleStep, 0.0f);
         objectTransform.rotation = Quaternion.LookRotation(newDirection);
-        Debug.DrawRay(objectTransform.position, newDirection, Color.red);
+        //Debug.DrawRay(objectTransform.position, newDirection, Color.red);
     }
 
     private void SetRotation(Transform objectTransform, GameObject objectOfInterest, Vector3 initialForward, Vector3 targetRotation, float movementSpeed)
@@ -215,7 +215,7 @@ public class FaceController : MonoBehaviour
         float singleStep = movementSpeed * Time.deltaTime;
         Vector3 newDirection = Vector3.RotateTowards(objectTransform.forward, targetDirection, singleStep, 0.0f);
         objectTransform.rotation = Quaternion.LookRotation(newDirection);
-        Debug.DrawRay(objectTransform.position, newDirection, Color.red);
+        //Debug.DrawRay(objectTransform.position, newDirection, Color.red);
     }
 
     private void ClampRotation(Transform objectTransform, float xRotationLimit, float yRotationLimit, float zRotationLimit) 

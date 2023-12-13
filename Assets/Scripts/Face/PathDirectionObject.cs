@@ -26,9 +26,12 @@ public class PathDirectionObject : MonoBehaviour
     private float currentPosInPath;
     private float moveSpeed = 1f;
 
+    private Vector3 previousForward;
+
     void Start()
     {
         if (eyeTransform == null) eyeTransform = transform.parent.gameObject.transform; // if Face is not assigned, assume it's the parent object
+        previousForward = eyeTransform.forward;
     }
 
     void Update()
@@ -48,21 +51,23 @@ public class PathDirectionObject : MonoBehaviour
         if (pathTrajectory != null)
         {
             Vector3 positionInPath = GetPositionInPath(currentPosInPath + moveSpeed * Time.deltaTime);
-            transform.position = new Vector3(positionInPath.x, eyeTransform.position.y - height, positionInPath.z); // fix y to desired height
+            transform.position = new Vector3(positionInPath.x, rigidBodyController.transform.position.y, positionInPath.z); // fix y to desired height
         }
         else //Assume simple trajectory continuation
         {
-            Vector3 newPos = Vector3.MoveTowards(transform.position, eyeTransform.position + eyeTransform.forward * stepsAhead, Mathf.Abs(moveSpeed * Time.deltaTime));
-            transform.position = new Vector3(newPos.x, eyeTransform.position.y - height, newPos.z);
+            Vector3 newPos = Vector3.MoveTowards(transform.position, rigidBodyController.transform.position + (rigidBodyController.transform.forward * stepsAhead), Mathf.Abs(moveSpeed * Time.deltaTime));
+            Debug.DrawRay(eyeTransform.position, previousForward*100f, Color.magenta);
+            transform.position = new Vector3(newPos.x, rigidBodyController.transform.position.y+height, newPos.z);
         }
 
         UpdateStepsAheadValue(rigidBodyController.groundSlopeAngle);
-        //UpdateHeight(rigidBodyController.groundSlopeAngle);        
+        //UpdateHeight(rigidBodyController.groundSlopeAngle);
+        previousForward = rigidBodyController.transform.forward;        
     }
 
-    private void UpdateStepsAheadValue(float slopeAngle, float maxSlopeAngle = 30)
+    private void UpdateStepsAheadValue(float slopeAngle, float maxSlopeAngle = 45)
     {
-        stepsAhead = maxStepsAhead - (minStepsAhead + (slopeAngle * (maxStepsAhead - minStepsAhead))/maxSlopeAngle); //max slope angle is 30
+        stepsAhead = maxStepsAhead - ((slopeAngle * (maxStepsAhead - minStepsAhead))/maxSlopeAngle);
     }
     private void UpdateHeight(float slopeAngle, float maxSlopeAngle = 30)
     {

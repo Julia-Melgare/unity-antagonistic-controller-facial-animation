@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using TMPro;
 using UnityEngine;
 
@@ -13,18 +14,8 @@ public class AttentionController : MonoBehaviour
     private FrustrumLineOfSight frustrumLineOfSight;
     [SerializeField]
     private GameObject pathLookAheadTransform;
-    /*[SerializeField]
-    private SafetyRegionLeft safetyRegionLeft;
-    [SerializeField]
-    private SafetyRegionRight safetyRegionRight;
-    [SerializeField]
-    private FaceSafetyRegion faceSafetyRegionLeft;
-    [SerializeField]
-    private FaceSafetyRegion faceSafetyRegionRight;*/
 
     [Header("Attention Settings")]
-    //[SerializeField]
-    //private bool focusOnSafetyRegions = true;
     [SerializeField]
     private float lookAtPathWeight = 78.8f;
     [SerializeField]
@@ -34,15 +25,21 @@ public class AttentionController : MonoBehaviour
     [SerializeField]
     private float lookAtPathTimeMin = 0.2f, lookAtPathTimeMax = 0.5f; // Values for exploring behavior
     [SerializeField]
-    private float memoryTime = 20f;
+    private float inhibitionOfReturnTime = 20f;
 
     [SerializeField]
     private bool focusOnSalientRegions = true;
 
+    [Header("Object Decision DDM Settings")]
+    [SerializeField]
+    private float decisionThreshold = 0.3f;
+    [SerializeField]
+    private float noiseLevel = 0.01f;
+
     [SerializeField]
     private GameObject currentFocus = null;
     [SerializeField]
-    private List<int> objectsFocusedOn;
+    private Dictionary<int, float> objectsFocusedOn;
     private bool focusing = false;
 
     [SerializeField]
@@ -54,21 +51,17 @@ public class AttentionController : MonoBehaviour
 
     private List<GameObject> lineOfSightObjects;
     private List<GameObject> salientObjects;
-    //private List<GameObject> safetyRegionObjects;
 
     private Coroutine currentFocusRoutine;
 
     private void Start()
     {
         saliencyController.enabled = focusOnSalientRegions;
-        objectsFocusedOn = new List<int>();
+        objectsFocusedOn = new Dictionary<int, float>();
         currentObjects = new List<GameObject>();
         lineOfSightObjects = new List<GameObject>();
         if (focusOnSalientRegions)
-            salientObjects = new List<GameObject>();
-        
-        //if (focusOnSafetyRegions)
-        //    safetyRegionObjects = new List<GameObject>();     
+            salientObjects = new List<GameObject>();    
     }
 
     private void Update()
@@ -89,25 +82,41 @@ public class AttentionController : MonoBehaviour
         }
 
         // Focus on the objects
-
         lineOfSightObjects = frustrumLineOfSight.GetObjects();
         if (focusOnSalientRegions)
             salientObjects = saliencyController.GetSalientObjects();
-        
-        /*if (focusOnSafetyRegions)
-        {
-            if (safetyRegionLeft!=null && safetyRegionLeft.targetObstacle.obstacle!=null) safetyRegionObjects.Add(safetyRegionLeft.targetObstacle.obstacle.gameObject);
-            if (safetyRegionRight!=null && safetyRegionRight.targetObstacle.obstacle!=null) safetyRegionObjects.Add(safetyRegionRight.targetObstacle.obstacle.gameObject);
-            if (faceSafetyRegionLeft!=null && faceSafetyRegionLeft.closestObstacle!=null) safetyRegionObjects.Add(faceSafetyRegionLeft.closestObstacle);
-            if (faceSafetyRegionRight!=null && faceSafetyRegionRight.closestObstacle!=null) safetyRegionObjects.Add(faceSafetyRegionRight.closestObstacle);
-        }*/
         
         UpdateCurrentObjects();
 
         if (currentObjects.Count() > 0)
         {
-            currentFocusRoutine = StartCoroutine(FocusOnObject(currentObjects[0], UnityEngine.Random.Range(focusTimeMin, focusTimeMax)));
+            //TODO: Use DDM here to pick object instead of using currentObjects[0]
+            currentFocusRoutine = StartCoroutine(FocusOnObject(DecideFocusObject(), UnityEngine.Random.Range(focusTimeMin, focusTimeMax)));
         }        
+    }
+
+    private GameObject DecideFocusObject(int triesUntilConvergence = 10)
+    {
+        Dictionary<GameObject, float> driftPerObject = new Dictionary<GameObject, float>();
+        foreach (GameObject obj in currentObjects)
+        {
+            driftPerObject.Add(obj, 0f);
+        }
+        for (int i = 0; i <= triesUntilConvergence; i++)
+        {
+            foreach (GameObject obj in currentObjects)
+            {
+                driftPerObject[obj] += ((saliencyController.GetObjectSaliency(obj) + frustrumLineOfSight.GetObjectSpeed(obj)) * (inhibitionOfReturnTime - objectsFocusedOn.GetValueOrDefault(obj.GetInstanceID(), 0f)) * Time.deltaTime) + Random.Range(0, noiseLevel);
+                //Debug.Log("[DDM] (Try "+i+") "+obj.name+": "+driftPerObject[obj]);
+            }
+            var max = driftPerObject.OrderByDescending(x => x.Value).First();
+            if (max.Value >= decisionThreshold)
+            {
+                //Debug.Log("[DDM] (Try "+i+") Choosing object "+max.Key.name);
+                return max.Key;
+            }                
+        }
+        return currentObjects[0];
     }
 
     private void UpdateCurrentObjects()
@@ -115,7 +124,6 @@ public class AttentionController : MonoBehaviour
         var currentObjectsSet = new HashSet<GameObject>();
         foreach(GameObject obj in lineOfSightObjects)
         {
-            if (!objectsFocusedOn.Contains(obj.GetInstanceID()))
                 currentObjectsSet.Add(obj);
         }
             
@@ -124,20 +132,10 @@ public class AttentionController : MonoBehaviour
         {
             foreach(GameObject obj in salientObjects)
             {
-                if (!objectsFocusedOn.Contains(obj.GetInstanceID()))
                     currentObjectsSet.Add(obj);
             }
                 
         }
-        
-        /*if (focusOnSafetyRegions)
-        {
-            foreach(GameObject obj in safetyRegionObjects)
-            {
-                if (!objectsFocusedOn.Contains(obj.GetInstanceID()))
-                    currentObjectsSet.Add(obj);
-            }                
-        }*/
         
         currentObjects = new List<GameObject>(currentObjectsSet.ToList());        
     }
@@ -154,8 +152,8 @@ public class AttentionController : MonoBehaviour
         if (currentFocus != null && currentFocus.GetInstanceID() != pathLookAheadTransform.gameObject.GetInstanceID())
         {
             int currentFocusID = currentFocus.gameObject.GetInstanceID();
-            objectsFocusedOn.Add(currentFocusID);
-            StartCoroutine(ForgetObject(currentFocusID, memoryTime));
+            objectsFocusedOn.TryAdd(currentFocusID, inhibitionOfReturnTime);
+            StartCoroutine(ForgetObject(currentFocusID, inhibitionOfReturnTime));
         }
         StartCoroutine(FocusOnObject(movingObj, UnityEngine.Random.Range(focusTimeMin, focusTimeMax)));
     }
@@ -175,15 +173,19 @@ public class AttentionController : MonoBehaviour
         focusing = true;        
         yield return new WaitForSeconds(fixationTime);
         int currentFocusID = obj.gameObject.GetInstanceID();
-        objectsFocusedOn.Add(currentFocusID);
-        StartCoroutine(ForgetObject(currentFocusID, memoryTime));
+        objectsFocusedOn.TryAdd(currentFocusID, inhibitionOfReturnTime);
+        StartCoroutine(ForgetObject(currentFocusID, inhibitionOfReturnTime));
         focusing = false;
         yield return null;
     }
 
-    private IEnumerator ForgetObject(int objectID, float memoryTime)
+    private IEnumerator ForgetObject(int objectID, float IORTime)
     {
-        yield return new WaitForSeconds(memoryTime);
+        while (objectsFocusedOn[objectID] > 0 && objectsFocusedOn[objectID] <= IORTime)
+        {
+            objectsFocusedOn[objectID] -= 1;
+            yield return new WaitForSeconds(1f);
+        }
         objectsFocusedOn.Remove(objectID);
     }
 
@@ -192,7 +194,7 @@ public class AttentionController : MonoBehaviour
         return currentFocus;
     }
 
-    public bool isFocusingOnPath()
+    public bool IsFocusingOnPath()
     {
         return currentFocus != null && currentFocus.GetInstanceID() == pathLookAheadTransform.gameObject.GetInstanceID();
     }

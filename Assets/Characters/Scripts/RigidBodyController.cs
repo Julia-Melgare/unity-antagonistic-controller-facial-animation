@@ -88,7 +88,7 @@ public class RigidBodyController : MonoBehaviour
     {
         if (followPath && pathTrajectory != null)
         {
-            Vector3 newPositionInPath = GetPositionInPath(currentPosInPath + moveSpeed * 5f * Time.deltaTime);
+            Vector3 newPositionInPath = GetPositionInPath(currentPosInPath + moveSpeed * 6.5f * Time.deltaTime);
             float difference = Vector3.Distance(newPositionInPath, positionInPath);
             if (difference > 0)
             {
@@ -187,12 +187,7 @@ public class RigidBodyController : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(origin, Vector3.down + transform.forward, out hit, 10f, Ground))
         {
-            Debug.Log("hit: "+hit.point);
-            Debug.Log("gameObject: "+hit.collider.gameObject.name);
             groundSlopeAngle = Vector3.Angle(hit.normal, Vector3.up);
-            Vector3 temp = Vector3.Cross(hit.normal, Vector3.down);
-            Vector3 groundSlopeDir = Vector3.Cross(temp, hit.normal);
-            Debug.DrawRay(origin, groundSlopeDir*100f, Color.green);
         }
     }
 

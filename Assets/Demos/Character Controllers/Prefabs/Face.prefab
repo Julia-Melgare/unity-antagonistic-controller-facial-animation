@@ -118,10 +118,11 @@ MonoBehaviour:
   focusTimeMax: 3
   lookAtPathTimeMin: 0.2
   lookAtPathTimeMax: 1
-  memoryTime: 20
+  inhibitionOfReturnTime: 20
   focusOnSalientRegions: 1
+  decisionThreshold: 0.3
+  noiseLevel: 0.01
   currentFocus: {fileID: 0}
-  objectsFocusedOn: 
   currentObjects: []
   currentFocusDebugText: {fileID: 0}
 --- !u!114 &884323973809061713
@@ -139,12 +140,12 @@ MonoBehaviour:
   agentCamera: {fileID: 2621118056989290313}
   auxiliaryAgentCamera: {fileID: 0}
   inferenceClient: {fileID: 2728485655539910894}
-  scanFrequency: 5
+  scanFrequency: 1
   scanLayerMask:
     serializedVersion: 2
-    m_Bits: 3959
+    m_Bits: 3639
   salientObjects: []
-  saliencyValueThreshold: 0.5
+  saliencyValueThreshold: 0.95
   saliencyMapOutput: {fileID: 0}
   visionFrameImage: {fileID: 0}
   debugSaliencyRaycast: 0
@@ -276,8 +277,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 451722205713587770}
-  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 0, y: 0, z: 0.683}
+  m_LocalRotation: {x: 0.001208068, y: 0.99834657, z: -0.052719712, w: 0.022878049}
+  m_LocalPosition: {x: -0.09579694, y: 0.023818713, z: 10.062529}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -307,11 +308,11 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.3
-  far clip plane: 1000
-  field of view: 60
+  near clip plane: 0.1
+  far clip plane: 5000
+  field of view: 40
   orthographic: 0
-  orthographic size: 5
+  orthographic size: 10
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -715,9 +716,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7943d43dd2ef1514cb93077529b99d35, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  distance: 10
-  angle: 130
-  height: 6
+  distance: 20
+  angle: 55
+  height: 8.18
   scanFrequency: 5
   layers:
     serializedVersion: 2
@@ -881,7 +882,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 90
+  field of view: 60
   orthographic: 0
   orthographic size: 5
   m_Depth: 1
@@ -1000,10 +1001,10 @@ MonoBehaviour:
   eyeTransform: {fileID: 7435236622474090325}
   rigidBodyController: {fileID: 0}
   maxMoveSpeed: 100
-  maxStepsAhead: 9
-  minStepsAhead: 2
+  maxStepsAhead: 15.5
+  minStepsAhead: 4
   stepsAhead: 7
-  height: 3
+  height: 1
 --- !u!1 &8133712424524173436
 GameObject:
   m_ObjectHideFlags: 0
