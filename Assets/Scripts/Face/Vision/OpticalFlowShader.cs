@@ -61,7 +61,7 @@ public class OpticalFlowShader : MonoBehaviour
         previous = new RenderTexture(opticalFlowWidth, opticalFlowHeight, 0);
     }
 
-    public void ComputeOpticalFlow(RenderTexture previous, RenderTexture current, RenderTexture output)
+    public RenderTexture ComputeOpticalFlow(RenderTexture previous, RenderTexture current)
     {
         Graphics.Blit(previous, this.previous, rtScale, rtOffset);
         Graphics.Blit(current, this.current, rtScale, rtOffset);
@@ -69,7 +69,7 @@ public class OpticalFlowShader : MonoBehaviour
         compute.SetFloat("_Threshold", threshold);
         compute.SetVector("_Scale", scale);
         compute.Dispatch(kernelHandle, Mathf.CeilToInt((float)opticalFlow.width / 32), Mathf.CeilToInt((float)opticalFlow.height / 32), 1);
-        Graphics.Blit(opticalFlow, output);
+        return opticalFlow;
     }
 
     private void OnDisable()

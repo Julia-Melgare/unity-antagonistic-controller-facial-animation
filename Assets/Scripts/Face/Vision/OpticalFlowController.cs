@@ -14,6 +14,9 @@ public class OpticalFlowController : MonoBehaviour
     [SerializeField]
     private Camera peripheralCamRightAux;
 
+    [SerializeField]
+    private OpticalFlowShader opticalFlowShader;
+
     private RenderTexture prevLeftImg;
     private RenderTexture prevRightImg;
 
@@ -27,6 +30,7 @@ public class OpticalFlowController : MonoBehaviour
     void Update()
     {
         // Compute Optical Flow left
+        //opticalFlowShader.ComputeOpticalFlow()
         // Compute Optical Flow Right
         
     }
