@@ -8,7 +8,8 @@ public class OpticalFlowShader : MonoBehaviour
     [Header("OpticalFlow Params")]
     [Tooltip("Defines the scale resolution from the source")] public int resolution = 1;
     private int kernelHandle;
-    [Tooltip("Defines the compute Shader to use for Optical flow")] private ComputeShader compute;
+    [Tooltip("Defines the compute Shader to use for Optical flow")] public ComputeShader opticalFlowComputeShader;
+    private ComputeShader compute;
     private RenderTexture opticalFlow;
     [HideInInspector] public int opticalFlowWidth;
     [HideInInspector] public int opticalFlowHeight;
@@ -44,7 +45,7 @@ public class OpticalFlowShader : MonoBehaviour
         opticalFlow.Create();
 
         //Bind variable to CS
-        compute = Instantiate(compute);
+        compute = Instantiate(opticalFlowComputeShader);
         kernelHandle = compute.FindKernel("CSMain");
         compute.SetTexture(kernelHandle, "_OpticalFlowMap", opticalFlow);
         compute.SetVector("_Size", new Vector2((float)opticalFlow.width, (float)opticalFlow.height));
@@ -61,10 +62,12 @@ public class OpticalFlowShader : MonoBehaviour
         previous = new RenderTexture(opticalFlowWidth, opticalFlowHeight, 0);
     }
 
-    public RenderTexture ComputeOpticalFlow(RenderTexture previous, RenderTexture current)
+    public RenderTexture ComputeOpticalFlow(Texture2D previous, RenderTexture current)
     {
-        Graphics.Blit(previous, this.previous, rtScale, rtOffset);
-        Graphics.Blit(current, this.current, rtScale, rtOffset);
+        Graphics.Blit(previous, this.previous);
+
+        Graphics.Blit(current, this.current);
+
         compute.SetFloat("_Lambda", lambda);
         compute.SetFloat("_Threshold", threshold);
         compute.SetVector("_Scale", scale);
