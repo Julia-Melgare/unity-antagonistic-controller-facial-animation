@@ -87,6 +87,7 @@ public class SaliencyController : MonoBehaviour
             } 
         }        
         // Get world coordinates from camera and raycast for objects
+        saliencyPoints = saliencyPoints.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
         salientObjectsDict = new Dictionary<GameObject, float>();
         foreach (var screenPoint in saliencyPoints)
         {

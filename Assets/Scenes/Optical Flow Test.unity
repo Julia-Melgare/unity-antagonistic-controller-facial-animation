@@ -2692,7 +2692,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 218573684}
-  m_LocalRotation: {x: -0.00000000919681, y: -0.000000044703484, z: -0.000000007450581, w: 1}
+  m_LocalRotation: {x: -0.0000000019790605, y: -0.000000014901161, z: 0.00000007543713, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2737,7 +2737,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.4448498, y: 1}
+    m_SensorSize: {x: 1.4450964, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -3593,7 +3593,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 242457294}
-  m_LocalRotation: {x: -0.009605249, y: 0.9819032, z: -0.051851407, w: -0.18189357}
+  m_LocalRotation: {x: -0.009605099, y: 0.98190403, z: -0.05185143, w: -0.18188916}
   m_LocalPosition: {x: -18.898912, y: -2.5925941, z: 80.14647}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -3634,7 +3634,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.4448498, y: 1}
+    m_SensorSize: {x: 1.4450964, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -6017,7 +6017,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 452316733}
-  m_LocalRotation: {x: 0.018183194, y: 0.026066184, z: -0.003241119, w: 0.99948967}
+  m_LocalRotation: {x: 0.018183202, y: 0.02607064, z: -0.0032415902, w: 0.9994895}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -6062,7 +6062,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.4448498, y: 1}
+    m_SensorSize: {x: 1.4450964, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -24317,7 +24317,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1740854210}
-  m_LocalRotation: {x: -0.018135214, y: 0.026166692, z: -0.0022921255, w: 0.9994905}
+  m_LocalRotation: {x: -0.018135205, y: 0.026171165, z: -0.0022924321, w: 0.9994904}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -24362,7 +24362,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.4448498, y: 1}
+    m_SensorSize: {x: 1.4450964, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -26631,9 +26631,17 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1702696593372497745, guid: f2d81aab5e097974f8d1d5b6fc4fa9e9, type: 3}
+      propertyPath: lookAtPathWeight
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1702696593372497745, guid: f2d81aab5e097974f8d1d5b6fc4fa9e9, type: 3}
       propertyPath: currentFocusDebugText
       value: 
       objectReference: {fileID: 1296138596}
+    - target: {fileID: 1702696593372497745, guid: f2d81aab5e097974f8d1d5b6fc4fa9e9, type: 3}
+      propertyPath: opticalFlowController
+      value: 
+      objectReference: {fileID: 1876730746}
     - target: {fileID: 1874701739627824797, guid: f2d81aab5e097974f8d1d5b6fc4fa9e9, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.094
@@ -27025,8 +27033,8 @@ MonoBehaviour:
   opticalFlowComputeShader: {fileID: 7200000, guid: 695c389037325154f80dd4f3c1297b2a, type: 3}
   opticalFlowWidth: 0
   opticalFlowHeight: 0
-  lambda: 0.05
-  threshold: 0.05
+  lambda: 0.03
+  threshold: 0.03
   scale: {x: 5, y: 5}
   current: {fileID: 0}
   previous: {fileID: 0}
@@ -27046,12 +27054,19 @@ MonoBehaviour:
   peripheralCamLeftAux: {fileID: 1528249869}
   peripheralCamRight: {fileID: 1876730743}
   peripheralCamRightAux: {fileID: 765134022}
+  opticalFlowShader: {fileID: 1876730745}
+  scanLayerMask:
+    serializedVersion: 2
+    m_Bits: 3639
+  movementValueThreshold: 0.6
+  objectsLeft: []
+  objectsRight: []
   debug: 1
+  debugMovementRaycast: 0
   opticalFlowLeftImg: {fileID: 1698433122}
   opticalFlowRightImg: {fileID: 583678746}
   previousLeftImg: {fileID: 632167048}
   previousRightImg: {fileID: 1837302857}
-  opticalFlowShader: {fileID: 1876730745}
 --- !u!1 &1880489324
 GameObject:
   m_ObjectHideFlags: 0

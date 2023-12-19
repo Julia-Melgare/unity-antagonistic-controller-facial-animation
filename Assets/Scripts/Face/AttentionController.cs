@@ -11,7 +11,7 @@ public class AttentionController : MonoBehaviour
     [SerializeField]
     private SaliencyController saliencyController;
     [SerializeField]
-    private FrustrumLineOfSight frustrumLineOfSight;
+    private OpticalFlowController opticalFlowController;
     [SerializeField]
     private GameObject pathLookAheadTransform;
 
@@ -49,7 +49,8 @@ public class AttentionController : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI currentFocusDebugText;
 
-    private List<GameObject> lineOfSightObjects;
+    private List<GameObject> peripheralObjectsLeft;
+    private List<GameObject> peripheralObjectsRight;
     private List<GameObject> salientObjects;
 
     private Coroutine currentFocusRoutine;
@@ -59,7 +60,7 @@ public class AttentionController : MonoBehaviour
         saliencyController.enabled = focusOnSalientRegions;
         objectsFocusedOn = new Dictionary<int, float>();
         currentObjects = new List<GameObject>();
-        lineOfSightObjects = new List<GameObject>();
+        peripheralObjectsLeft = new List<GameObject>();
         if (focusOnSalientRegions)
             salientObjects = new List<GameObject>();    
     }
@@ -82,9 +83,10 @@ public class AttentionController : MonoBehaviour
         }
 
         // Focus on the objects
-        lineOfSightObjects = frustrumLineOfSight.GetObjects();
+        peripheralObjectsLeft = opticalFlowController.objectsLeft;
+        peripheralObjectsRight = opticalFlowController.objectsRight;
         if (focusOnSalientRegions)
-            salientObjects = saliencyController.GetSalientObjects();
+            salientObjects = saliencyController.salientObjects;
         
         UpdateCurrentObjects();
 
@@ -106,7 +108,7 @@ public class AttentionController : MonoBehaviour
         {
             foreach (GameObject obj in currentObjects)
             {
-                driftPerObject[obj] += ((saliencyController.GetObjectSaliency(obj) + frustrumLineOfSight.GetObjectSpeed(obj)) * (inhibitionOfReturnTime - objectsFocusedOn.GetValueOrDefault(obj.GetInstanceID(), 0f)) * Time.deltaTime) + Random.Range(0, noiseLevel);
+                driftPerObject[obj] += ((saliencyController.GetObjectSaliency(obj) + opticalFlowController.GetObjectMovementLeft(obj)) * (inhibitionOfReturnTime - objectsFocusedOn.GetValueOrDefault(obj.GetInstanceID(), 0f)) * Time.deltaTime) + Random.Range(0, noiseLevel);
                 //Debug.Log("[DDM] (Try "+i+") "+obj.name+": "+driftPerObject[obj]);
             }
             var max = driftPerObject.OrderByDescending(x => x.Value).First();
@@ -122,7 +124,7 @@ public class AttentionController : MonoBehaviour
     private void UpdateCurrentObjects()
     {
         var currentObjectsSet = new HashSet<GameObject>();
-        foreach(GameObject obj in lineOfSightObjects)
+        foreach(GameObject obj in peripheralObjectsLeft)
         {
                 currentObjectsSet.Add(obj);
         }
@@ -199,13 +201,13 @@ public class AttentionController : MonoBehaviour
         return currentFocus != null && currentFocus.GetInstanceID() == pathLookAheadTransform.gameObject.GetInstanceID();
     }
 
-    private void OnEnable()
+    /*private void OnEnable()
     {
-        frustrumLineOfSight.onFastMovement += OnFastMovement;
+        opticalFlowController.onFastMovement += OnFastMovement;
     }
 
     private void OnDisable()
     {
-        frustrumLineOfSight.onFastMovement -= OnFastMovement;
-    }
+        opticalFlowController.onFastMovement -= OnFastMovement;
+    }*/
 }
