@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using Voxus;
+using Voxus.Random;
 
 public class AttentionController : MonoBehaviour
 {
@@ -18,9 +20,9 @@ public class AttentionController : MonoBehaviour
     [SerializeField]
     private float lookAtPathWeight = 78.8f;
     [SerializeField]
-    private float focusTimeMin = 0.5f, focusTimeMax = 3f; // Values for exploring behavior
+    private float focusTimeMean = 1.8692f, focusTimeStd = 0.9988f; // Exploratory: mean = 1.8692f, std = 0.9988f; Goal-driven: mean = 0.12128f, std = 0.06778f
     [SerializeField]
-    private float lookAtPathTimeMin = 0.2f, lookAtPathTimeMax = 0.5f; // Values for exploring behavior
+    private float lookAtPathTimeMin = 0.2f, lookAtPathTimeMax = 0.5f;
     [SerializeField]
     private float inhibitionOfReturnTime = 20f;
 
@@ -56,6 +58,8 @@ public class AttentionController : MonoBehaviour
 
     private Coroutine currentFocusRoutine;
 
+    private RandomGaussian fixationTimeDistribution;
+
     private void Start()
     {
         saliencyController.enabled = focusOnSalientRegions;
@@ -63,7 +67,8 @@ public class AttentionController : MonoBehaviour
         currentObjects = new List<GameObject>();
         lineOfSightObjects = new List<GameObject>();
         if (focusOnSalientRegions)
-            salientObjects = new List<GameObject>();    
+            salientObjects = new List<GameObject>();
+        fixationTimeDistribution = new RandomGaussian(focusTimeStd, focusTimeMean); 
     }
 
     private void Update()
@@ -79,7 +84,9 @@ public class AttentionController : MonoBehaviour
             if (objectDecisionTimer <= 0) // Time is up, take object that converged the most
             {
                 isChoosingObject = false;
-                currentFocusRoutine = StartCoroutine(FocusOnObject(driftPerObject.OrderByDescending(x => x.Value).First().Key, UnityEngine.Random.Range(focusTimeMin, focusTimeMax)));
+                var fixationTime = fixationTimeDistribution.Get();
+                //Debug.Log("fixation time: "+fixationTime+"s");
+                currentFocusRoutine = StartCoroutine(FocusOnObject(driftPerObject.OrderByDescending(x => x.Value).First().Key, fixationTime));
                 return;
             }
             // Keep computing decision normally
@@ -121,7 +128,9 @@ public class AttentionController : MonoBehaviour
         if (objDecision != null)
         {
             isChoosingObject = false;
-            currentFocusRoutine = StartCoroutine(FocusOnObject(objDecision, UnityEngine.Random.Range(focusTimeMin, focusTimeMax)));
+            var fixationTime = fixationTimeDistribution.Get();
+            //Debug.Log("fixation time: "+fixationTime+"s");
+            currentFocusRoutine = StartCoroutine(FocusOnObject(objDecision, fixationTime));
         }
         else
         {
@@ -172,12 +181,14 @@ public class AttentionController : MonoBehaviour
 
     private void OnFastMovement(GameObject movingObj)
     {
+        var fixationTime = fixationTimeDistribution.Get();
+        //Debug.Log("fixation time: "+fixationTime+"s");
         if (!isFocusing)
         {
-            StartCoroutine(FocusOnObject(movingObj, UnityEngine.Random.Range(focusTimeMin, focusTimeMax)));
+            StartCoroutine(FocusOnObject(movingObj, fixationTime));
             return;
         }
-        StopCoroutine(currentFocusRoutine);
+        if (currentFocusRoutine != null) StopCoroutine(currentFocusRoutine);
         isFocusing = false;
         if (currentFocus != null && currentFocus.GetInstanceID() != pathLookAheadTransform.gameObject.GetInstanceID())
         {
@@ -185,7 +196,7 @@ public class AttentionController : MonoBehaviour
             objectsFocusedOn.TryAdd(currentFocusID, inhibitionOfReturnTime);
             StartCoroutine(ForgetObject(currentFocusID, inhibitionOfReturnTime));
         }
-        StartCoroutine(FocusOnObject(movingObj, UnityEngine.Random.Range(focusTimeMin, focusTimeMax)));
+        StartCoroutine(FocusOnObject(movingObj, fixationTime));
     }
 
     private IEnumerator FocusOnPath(float fixationTime)

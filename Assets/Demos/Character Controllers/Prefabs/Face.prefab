@@ -93,7 +93,7 @@ MonoBehaviour:
   neckXRotationLimit: 45
   neckYRotationLimit: 45
   neckZRotationLimit: 30
-  neckMovementSpeed: 1
+  neckMovementSpeed: 1.5
   faceSafetyRegionLeft: {fileID: 8896361891826307433}
   faceSafetyRegionRight: {fileID: 880753386943309096}
   minEyeDistance: 0.2
@@ -113,8 +113,8 @@ MonoBehaviour:
   frustrumLineOfSight: {fileID: 7856600383182948550}
   pathLookAheadTransform: {fileID: 7956864818503304366}
   lookAtPathWeight: 78.8
-  focusTimeMin: 0.5
-  focusTimeMax: 3
+  focusTimeMean: 1.8692
+  focusTimeStd: 0.9988
   lookAtPathTimeMin: 0.2
   lookAtPathTimeMax: 1
   inhibitionOfReturnTime: 20
