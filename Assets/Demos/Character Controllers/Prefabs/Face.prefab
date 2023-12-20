@@ -113,7 +113,6 @@ MonoBehaviour:
   frustrumLineOfSight: {fileID: 7856600383182948550}
   pathLookAheadTransform: {fileID: 7956864818503304366}
   lookAtPathWeight: 78.8
-  lookAtObjectsWeight: 21.2
   focusTimeMin: 0.5
   focusTimeMax: 3
   lookAtPathTimeMin: 0.2
@@ -122,6 +121,7 @@ MonoBehaviour:
   focusOnSalientRegions: 1
   decisionThreshold: 0.3
   noiseLevel: 0.01
+  maxDecisionTime: 0.2
   currentFocus: {fileID: 0}
   currentObjects: []
   currentFocusDebugText: {fileID: 0}
@@ -716,10 +716,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7943d43dd2ef1514cb93077529b99d35, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  distance: 20
+  distance: 40
   angle: 55
   height: 8.18
-  scanFrequency: 5
+  scanFrequency: 60
   layers:
     serializedVersion: 2
     m_Bits: 3703
