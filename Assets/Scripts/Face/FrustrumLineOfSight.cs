@@ -107,7 +107,7 @@ public class FrustrumLineOfSight : MonoBehaviour
         if (rigidbody != null && rigidbody.velocity.magnitude > 0) return true;
 
         var movingObj = obj.GetComponent<MovingObject>();
-        if (movingObj != null && movingObj.velocity.magnitude > 0) return true;
+        if (movingObj != null && movingObj.transformVelocity.magnitude > 0) return true;
 
         var animator = obj.GetComponent<Animator>();
         if (animator != null && animator.isActiveAndEnabled) return true;
@@ -121,7 +121,7 @@ public class FrustrumLineOfSight : MonoBehaviour
         if (rigidbody != null && rigidbody.velocity.magnitude > 0) return rigidbody.velocity.magnitude;
 
         var movingObj = obj.GetComponent<MovingObject>();
-        if (movingObj != null) return movingObj.velocity.magnitude; 
+        if (movingObj != null) return movingObj.transformVelocity.magnitude; 
 
         var animator = obj.GetComponent<Animator>();
         if (animator != null && animator.isActiveAndEnabled) return .3f;
