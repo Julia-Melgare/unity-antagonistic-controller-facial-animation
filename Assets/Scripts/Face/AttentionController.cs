@@ -84,9 +84,10 @@ public class AttentionController : MonoBehaviour
             if (objectDecisionTimer <= 0) // Time is up, take object that converged the most
             {
                 isChoosingObject = false;
-                var fixationTime = fixationTimeDistribution.Get();
-                //Debug.Log("fixation time: "+fixationTime+"s");
-                currentFocusRoutine = StartCoroutine(FocusOnObject(driftPerObject.OrderByDescending(x => x.Value).First().Key, fixationTime));
+                var fixationTime = Mathf.Abs(fixationTimeDistribution.Get());
+                var objDecision = driftPerObject.OrderByDescending(x => x.Value).First().Key;
+                Debug.Log("[Attention] Focusing on object "+objDecision.name+" for "+fixationTime+"s");
+                currentFocusRoutine = StartCoroutine(FocusOnObject(objDecision, fixationTime));
                 return;
             }
             // Keep computing decision normally
@@ -128,8 +129,8 @@ public class AttentionController : MonoBehaviour
         if (objDecision != null)
         {
             isChoosingObject = false;
-            var fixationTime = fixationTimeDistribution.Get();
-            //Debug.Log("fixation time: "+fixationTime+"s");
+            var fixationTime = Mathf.Abs(fixationTimeDistribution.Get());
+            Debug.Log("[Attention] Focusing on object "+objDecision.name+" for "+fixationTime+"s");
             currentFocusRoutine = StartCoroutine(FocusOnObject(objDecision, fixationTime));
         }
         else
@@ -181,8 +182,8 @@ public class AttentionController : MonoBehaviour
 
     private void OnFastMovement(GameObject movingObj)
     {
-        var fixationTime = fixationTimeDistribution.Get();
-        //Debug.Log("fixation time: "+fixationTime+"s");
+        var fixationTime = Mathf.Abs(fixationTimeDistribution.Get());
+        Debug.Log("fixation time: "+fixationTime+"s");
         if (!isFocusing)
         {
             StartCoroutine(FocusOnObject(movingObj, fixationTime));
@@ -214,20 +215,21 @@ public class AttentionController : MonoBehaviour
         isFocusing = true;        
         yield return new WaitForSeconds(fixationTime);
         int currentFocusID = obj.gameObject.GetInstanceID();
-        objectsFocusedOn.TryAdd(currentFocusID, inhibitionOfReturnTime);
-        StartCoroutine(ForgetObject(currentFocusID, inhibitionOfReturnTime));
+        if (objectsFocusedOn.TryAdd(currentFocusID, inhibitionOfReturnTime))
+            StartCoroutine(ForgetObject(currentFocusID, inhibitionOfReturnTime));
         isFocusing = false;
         yield return null;
     }
 
     private IEnumerator ForgetObject(int objectID, float IORTime)
-    {
+    {        
         while (objectsFocusedOn[objectID] > 0 && objectsFocusedOn[objectID] <= IORTime)
         {
-            objectsFocusedOn[objectID] -= 1;
+            objectsFocusedOn[objectID] -= 1f;
             yield return new WaitForSeconds(1f);
         }
         objectsFocusedOn.Remove(objectID);
+        yield return null;
     }
 
     public GameObject GetCurrentFocus()

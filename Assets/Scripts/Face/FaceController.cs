@@ -138,8 +138,8 @@ public class FaceController : MonoBehaviour
         // Check face safety regions
         if (!amAvoiding && (faceSafetyRegionLeft.closestDistanceToEye <= minEyeDistance || faceSafetyRegionRight.closestDistanceToEye <= minEyeDistance))
         {
-            amAvoiding = true;
-            faceAnimator.enabled = false;
+            //amAvoiding = true;
+            //faceAnimator.enabled = false;
         }
 
         /*if (amAvoiding && faceSafetyRegionLeft.closestDistanceToEye > minEyeDistance && faceSafetyRegionRight.closestDistanceToEye > minEyeDistance)

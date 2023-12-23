@@ -66,7 +66,11 @@ public class FrustrumLineOfSight : MonoBehaviour
             if (IsInSight(obj) && IsMoving(obj))
             {
                 float objSpeed = GetObjectSpeed(obj);
-                if (objSpeed >= fastMovementThreshold) onFastMovement?.Invoke(obj);
+                if (objSpeed >= fastMovementThreshold)
+                {
+                    Debug.Log("[Fustrum] Detected fast moving object: "+obj.name+" speed: "+objSpeed);
+                    onFastMovement?.Invoke(obj);
+                } 
                 objectSpeedDict.TryAdd(obj, objSpeed);
             }
         }

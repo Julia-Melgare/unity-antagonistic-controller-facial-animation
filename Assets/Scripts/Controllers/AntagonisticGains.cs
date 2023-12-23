@@ -24,14 +24,14 @@ public class AntagonisticGains : MonoBehaviour
 
     [Header("Antagonistic Control - Left")]
     //[Range(0.5f, 8f)] public float stiffnessMultiplierLeft;
-    [UPyPlot.UPyPlotController.UPyProbe]
+    //[UPyPlot.UPyPlotController.UPyProbe]
     [Range(0.05f, 1f)] public float stiffnessMultiplierLeft;
     public float realMassLeft;
     public float expectedMassLeft;
 
     [Header("Antagonistic Control - Right")]
     //[Range(0.5f, 8f)] public float stiffnessMultiplierRight;
-    [UPyPlot.UPyPlotController.UPyProbe]
+    //[UPyPlot.UPyPlotController.UPyProbe]
     [Range(0.05f, 1f)] public float stiffnessMultiplierRight;
     public float realMassRight;
     public float expectedMassRight;
