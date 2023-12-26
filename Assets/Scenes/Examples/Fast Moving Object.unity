@@ -499,6 +499,7 @@ MonoBehaviour:
   rigidBody: {fileID: 50420017}
   animator: {fileID: 50420020}
   motionState: 0
+  stateUpdateTime: 0.9
   transformVelocity: {x: 0, y: 0, z: 0}
 --- !u!1 &53361557
 GameObject:
@@ -5123,7 +5124,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 452316733}
-  m_LocalRotation: {x: 0.018183213, y: 0.026071608, z: -0.0032417038, w: 0.9994895}
+  m_LocalRotation: {x: 0.018183196, y: 0.026071608, z: -0.003241703, w: 0.9994895}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0

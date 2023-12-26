@@ -117,7 +117,7 @@ MonoBehaviour:
   focusTimeStd: 0.9988
   lookAtPathTimeMin: 0.2
   lookAtPathTimeMax: 1
-  inhibitionOfReturnTime: 20
+  inhibitionOfReturnTime: 0.9
   focusOnSalientRegions: 1
   decisionThreshold: 0.3
   noiseLevel: 0.01
@@ -1014,6 +1014,7 @@ MonoBehaviour:
   positionUnits: 1
   eyeTransform: {fileID: 7435236622474090325}
   rigidBodyController: {fileID: 0}
+  terrain: {fileID: 0}
   Ground:
     serializedVersion: 2
     m_Bits: 64

@@ -24,7 +24,7 @@ public class AttentionController : MonoBehaviour
     [SerializeField]
     private float lookAtPathTimeMin = 0.2f, lookAtPathTimeMax = 0.5f;
     [SerializeField]
-    private float inhibitionOfReturnTime = 20f;
+    private float inhibitionOfReturnTime = 0.9f;
 
     [SerializeField]
     private bool focusOnSalientRegions = true;
@@ -57,9 +57,8 @@ public class AttentionController : MonoBehaviour
     private Dictionary<GameObject, float> driftPerObject;
 
     private Coroutine currentFocusRoutine;
-
     private RandomGaussian fixationTimeDistribution;
-
+    
     private void Start()
     {
         saliencyController.enabled = focusOnSalientRegions;
@@ -117,7 +116,7 @@ public class AttentionController : MonoBehaviour
             }
             objectDecisionTimer = maxDecisionTime;
             ChooseObjectStep();
-        }        
+        }     
     }
 
     private void ChooseObjectStep()
