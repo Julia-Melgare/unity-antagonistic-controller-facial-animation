@@ -24,13 +24,13 @@ public class BalancePole : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.DrawRay(root.position, Quaternion.Euler(new Vector3(targetAngle, 0f, 0f)) * Vector3.up * 10f, Color.green);
+        //Debug.DrawRay(root.position, Quaternion.Euler(new Vector3(targetAngle, 0f, 0f)) * Vector3.up * 10f, Color.green);
 
-        Debug.DrawRay(root.position, transform.up * 10f, Color.blue);
+        //Debug.DrawRay(root.position, transform.up * 10f, Color.blue);
 
-        Debug.DrawRay(_rb.worldCenterOfMass, Quaternion.Euler(- _joint.angle, 0f, 0f) * -transform.up * 10f, Color.black);
+        //Debug.DrawRay(_rb.worldCenterOfMass, Quaternion.Euler(- _joint.angle, 0f, 0f) * -transform.up * 10f, Color.black);
 
-        Debug.DrawLine(root.position, _rb.worldCenterOfMass, Color.yellow);
+        //Debug.DrawLine(root.position, _rb.worldCenterOfMass, Color.yellow);
     }
 
     // Update is called once per frame

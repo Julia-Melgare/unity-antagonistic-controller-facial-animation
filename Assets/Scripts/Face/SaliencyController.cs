@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.UI;
 
 public class SaliencyController : MonoBehaviour
@@ -9,8 +11,6 @@ public class SaliencyController : MonoBehaviour
     private Camera agentCamera;
     [SerializeField]
     private Camera auxiliaryAgentCamera;
-    [SerializeField]
-    private RawImage saliencyMapOutput;
     [SerializeField]
     private InferenceClient inferenceClient;
 
@@ -25,20 +25,28 @@ public class SaliencyController : MonoBehaviour
     [Range(0.0f, 1.0f)]
     private float saliencyValueThreshold = 0.5f;
 
-    [Header("Debug")]
+    [Header("Debug/Visualization")]
+    [SerializeField]
+    private RawImage saliencyMapOutput;
+    [SerializeField]
+    private RawImage visionFrameImage;
     [SerializeField]
     private bool debugSaliencyRaycast = false;
+    private Texture2D previousVisionFrame;
+    private Texture2D currentVisionFrame;
 
 
     private float scanInterval; 
     private float scanTimer;
-
     private byte[] saliencyMapBytes;
+
+    private Dictionary<GameObject, float> salientObjectsDict;
     
     void Start()
     {
         scanInterval = 1.0f / scanFrequency;
         auxiliaryAgentCamera.enabled = false;
+        salientObjectsDict = new Dictionary<GameObject, float>();
     }
     void Update()
     {
@@ -47,6 +55,7 @@ public class SaliencyController : MonoBehaviour
         if (scanTimer < 0)
         {
             scanTimer += scanInterval;
+            previousVisionFrame = currentVisionFrame;
             InferSaliencyMap();
             UpdateAuxiliaryCamera();
             if (saliencyMapBytes!=null)
@@ -61,7 +70,7 @@ public class SaliencyController : MonoBehaviour
     {
         // Find index of highest value in map
         Color[] saliencyMapPixels = (saliencyMapOutput.texture as Texture2D).GetPixels();
-        var saliencyPoints = new List<Vector3>();
+        var saliencyPoints = new Dictionary<Vector3, float>();
         for (int i = 0; i < saliencyMapPixels.Length; i++)
         {
             float grayscaleValue = saliencyMapPixels[i].grayscale;
@@ -72,21 +81,22 @@ public class SaliencyController : MonoBehaviour
                 int height = agentCamera.targetTexture.height;
                 int matrix_i = i / width;
                 int matrix_j = i % width;
-                saliencyPoints.Add(new Vector3(matrix_j, matrix_i, 0));
+                saliencyPoints.Add(new Vector3(matrix_j, matrix_i, 0), grayscaleValue);
                 if(debugSaliencyRaycast)
                     saliencyMapPixels[i] = Color.red; // Highlight pixel for visualization purposes
             } 
         }        
         // Get world coordinates from camera and raycast for objects
-        var salientObjectsSet = new HashSet<GameObject>();
+        salientObjectsDict = new Dictionary<GameObject, float>();
         foreach (var screenPoint in saliencyPoints)
         {
-            Ray ray = auxiliaryAgentCamera.ScreenPointToRay(screenPoint);
+            Ray ray = auxiliaryAgentCamera.ScreenPointToRay(screenPoint.Key);
             RaycastHit[] hits = Physics.RaycastAll(ray, Mathf.Infinity, scanLayerMask);
             foreach (RaycastHit hit in hits)
-                salientObjectsSet.Add(hit.collider.gameObject);                      
+                salientObjectsDict.TryAdd(hit.collider.gameObject, screenPoint.Value);
+                                    
         }
-        salientObjects = new List<GameObject>(salientObjectsSet.ToList());
+        salientObjects = new List<GameObject>(salientObjectsDict.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value).Keys);
         if (debugSaliencyRaycast)
         {
             Texture2D newTexture = new Texture2D(360, 360);
@@ -99,6 +109,11 @@ public class SaliencyController : MonoBehaviour
     public List<GameObject> GetSalientObjects()
     {
         return salientObjects;
+    }
+
+    public float GetObjectSaliency(GameObject obj)
+    {
+        return salientObjectsDict.GetValueOrDefault(obj, .95f);
     }
 
     private void InferSaliencyMap()
@@ -124,6 +139,8 @@ public class SaliencyController : MonoBehaviour
         image.ReadPixels(new Rect(0, 0, agentCamera.targetTexture.width, agentCamera.targetTexture.height), 0, 0);
         image.Apply();
 
+        currentVisionFrame = image;
+
         // Encode to PNG
         byte[] bytes = image.EncodeToPNG();
 
@@ -138,6 +155,7 @@ public class SaliencyController : MonoBehaviour
         Texture2D saliencyMapTexture = new Texture2D(2, 2);
         ImageConversion.LoadImage(saliencyMapTexture, rawData);
         saliencyMapOutput.texture = saliencyMapTexture;
+        visionFrameImage.texture = previousVisionFrame;
     }
 
     private void UpdateAuxiliaryCamera()

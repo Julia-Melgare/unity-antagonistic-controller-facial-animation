@@ -28,16 +28,16 @@ public class BalancePoleAntagonistic : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.DrawRay(root.position, Quaternion.Euler(new Vector3(eqAngle, 0f, 0f)) * Vector3.up * 2f, Color.green);
+        //Debug.DrawRay(root.position, Quaternion.Euler(new Vector3(eqAngle, 0f, 0f)) * Vector3.up * 2f, Color.green);
 
-        Debug.DrawRay(this.transform.position, transform.up * 1.5f, Color.blue);
+        //Debug.DrawRay(this.transform.position, transform.up * 1.5f, Color.blue);
 
-        Debug.DrawRay(_rb.worldCenterOfMass, Quaternion.Euler(-_joint.angle, 0, 0f) * -_rb.transform.up * 2f, Color.black);
+        //Debug.DrawRay(_rb.worldCenterOfMass, Quaternion.Euler(-_joint.angle, 0, 0f) * -_rb.transform.up * 2f, Color.black);
 
-        Debug.DrawRay(root.position, Quaternion.Euler(new Vector3(maxAngle, 0f, 0f)) * Vector3.up * 2f, Color.red);
-        Debug.DrawRay(root.position, Quaternion.Euler(new Vector3(minAngle, 0f, 0f)) * Vector3.up * 2f, Color.red);
+        //Debug.DrawRay(root.position, Quaternion.Euler(new Vector3(maxAngle, 0f, 0f)) * Vector3.up * 2f, Color.red);
+        //Debug.DrawRay(root.position, Quaternion.Euler(new Vector3(minAngle, 0f, 0f)) * Vector3.up * 2f, Color.red);
 
-        Debug.DrawLine(root.position, _rb.worldCenterOfMass, Color.yellow);
+        //Debug.DrawLine(root.position, _rb.worldCenterOfMass, Color.yellow);
     }
 
     // Update is called once per frame
