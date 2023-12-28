@@ -261,7 +261,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1023123339751841860}
-  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.00000002370749, y: 0.10321808, z: 0.031424288}
   m_LocalScale: {x: 1, y: 0.99999994, z: 1}
   m_ConstrainProportionsScale: 0
@@ -870,7 +870,7 @@ Transform:
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 5115235982267684150}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &1782908843374900844
 MeshFilter:
@@ -955,11 +955,11 @@ MonoBehaviour:
   Ground:
     serializedVersion: 2
     m_Bits: 64
-  maxMoveSpeed: 100
+  maxMoveSpeed: 10
   maxStepsAhead: 15.5
   minStepsAhead: 4
   stepsAhead: 7
-  height: 1
+  heightOffset: 3
 --- !u!1 &2770658072135690517
 GameObject:
   m_ObjectHideFlags: 0
@@ -1258,12 +1258,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3585733634679618309}
-  m_LocalRotation: {x: -0.008572376, y: -0.047618687, z: -0.00040864194, w: 0.9988287}
-  m_LocalPosition: {x: -0.009358934, y: -1.6238843, z: 0.03957693}
-  m_LocalScale: {x: 0.92, y: 0.9199998, z: 0.91999984}
+  m_LocalRotation: {x: -0.0085723605, y: -0.047618695, z: -0.00040864144, w: 0.99882877}
+  m_LocalPosition: {x: -0.009359257, y: -1.473559, z: 0.047506094}
+  m_LocalScale: {x: 0.91999996, y: 0.9199998, z: 0.9199999}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 5115235982267684150}
+  m_Father: {fileID: 1775596437219225846}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: -21.8, y: 0, z: 0}
 --- !u!114 &1439549073265928360
@@ -1430,15 +1430,16 @@ MonoBehaviour:
   faceMeshRenderer: {fileID: 8853990256640980592}
   leftEyeTransform: {fileID: 4045441931158533424}
   rightEyeTransform: {fileID: 4045441930588977727}
-  eyeXRotationLimit: 55
-  eyeYRotationLimit: 55
-  eyeZRotationLimit: 55
+  eyeXRotationLimit: 45
+  eyeYRotationLimit: 45
+  eyeZRotationLimit: 45
   eyeXComfortableRotationLimit: 25
   eyeYComfortableRotationLimit: 25
   eyeZComfortableRotationLimit: 25
   eyeMovementSpeed: 1.74533
   blinkIntervalMin: 1
   blinkIntervalMax: 5
+  headTransform: {fileID: 6641876916658304500}
   neckTransform: {fileID: 5115235982267684150}
   neckXRotationLimit: 45
   neckYRotationLimit: 45
@@ -1662,7 +1663,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4045441931158533425}
-  m_LocalRotation: {x: 0.000000014901158, y: 6.462347e-27, z: 1.18656e-19, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.038587473, y: 0.08199098, z: 0.05900528}
   m_LocalScale: {x: 100.000046, y: 100.000046, z: 100.000046}
   m_ConstrainProportionsScale: 1
@@ -1859,7 +1860,7 @@ Transform:
   m_Children:
   - {fileID: 555008177928152616}
   m_Father: {fileID: 1775596437219225846}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4917975539800081427
 GameObject:
@@ -2339,6 +2340,7 @@ Transform:
   m_Children:
   - {fileID: 794369249306096615}
   - {fileID: 160147518506054346}
+  - {fileID: 5617079913560265293}
   - {fileID: 5115235982267684150}
   - {fileID: 7641817203506188968}
   m_Father: {fileID: 6092371321332089595}
@@ -2736,10 +2738,9 @@ Transform:
   m_Children:
   - {fileID: 6641876916658304500}
   - {fileID: 5207936125494532387}
-  - {fileID: 5617079913560265293}
   - {fileID: 4177915009889305455}
   m_Father: {fileID: 1775596437219225846}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7066274753346714245
 GameObject:

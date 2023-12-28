@@ -5033,6 +5033,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Sintel_HEAD_07
       objectReference: {fileID: 0}
+    - target: {fileID: 4045441931158533424, guid: 430adf3e4167dd54480ec046cd371e09, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4045441931158533424, guid: 430adf3e4167dd54480ec046cd371e09, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4045441931158533424, guid: 430adf3e4167dd54480ec046cd371e09, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4588874990155896788, guid: 430adf3e4167dd54480ec046cd371e09, type: 3}
       propertyPath: m_RootOrder
       value: 1
