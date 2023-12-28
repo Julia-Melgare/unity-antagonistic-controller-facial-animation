@@ -136,7 +136,7 @@ public class FaceController : MonoBehaviour
     private void Update()
     {
         // Check face safety regions
-        if (!amAvoiding && (faceSafetyRegionLeft.closestDistanceToEye <= minEyeDistance || faceSafetyRegionRight.closestDistanceToEye <= minEyeDistance))
+        //if (!amAvoiding && (faceSafetyRegionLeft.closestDistanceToEye <= minEyeDistance || faceSafetyRegionRight.closestDistanceToEye <= minEyeDistance))
         {
             //amAvoiding = true;
             //faceAnimator.enabled = false;
@@ -183,7 +183,7 @@ public class FaceController : MonoBehaviour
         }
         else
         {
-            AnimateSquintBlendShapes();
+            //AnimateSquintBlendShapes();
             Vector3 middlePoint = Vector3.Lerp(leftEyeTransform.position, rightEyeTransform.position, 0.3f);
             //Vector3 direction = (attentionController.GetCurrentFocus().transform.position - middlePoint + neckTransform.position).normalized;
 
