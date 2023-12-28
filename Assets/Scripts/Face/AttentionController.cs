@@ -116,6 +116,11 @@ public class AttentionController : MonoBehaviour
             }
             objectDecisionTimer = maxDecisionTime;
             ChooseObjectStep();
+        }
+        else
+        {
+            //There is no object to look at
+            isChoosingObject = false;
         }     
     }
 

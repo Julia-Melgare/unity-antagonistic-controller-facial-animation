@@ -559,7 +559,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eeb78103a92fad34196648647e89b9aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  velocity: {x: 0, y: 0, z: 0}
+  rigidBody: {fileID: 0}
+  animator: {fileID: 0}
+  motionState: 0
+  stateUpdateTime: 0.9
 --- !u!1 &46161833
 GameObject:
   m_ObjectHideFlags: 0
@@ -14599,7 +14602,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eeb78103a92fad34196648647e89b9aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  velocity: {x: 0, y: 0, z: 0}
+  rigidBody: {fileID: 0}
+  animator: {fileID: 0}
+  motionState: 0
+  stateUpdateTime: 0.9
 --- !u!1 &1132271454
 GameObject:
   m_ObjectHideFlags: 0
@@ -28946,7 +28952,7 @@ Terrain:
   m_DrawTreesAndFoliage: 1
   m_StaticShadowCaster: 0
   m_ReflectionProbeUsage: 1
-  m_MaterialTemplate: {fileID: 10652, guid: 0000000000000000f000000000000000, type: 0}
+  m_MaterialTemplate: {fileID: 2100000, guid: 594ea882c5a793440b60ff72d896021e, type: 2}
   m_BakeLightProbesForTrees: 1
   m_PreserveTreePrototypeLayers: 0
   m_DeringLightProbesForTrees: 1

@@ -42,7 +42,47 @@ ModelImporter:
   - first:
       74: -3620749446476180427
     second: Armature|test_pose
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Iris
+    second: {fileID: 2100000, guid: 5aefd86eade8d48489f585634a79214e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material
+    second: {fileID: 2100000, guid: 26ca6c963a1b0a94aa7c479cba2feeee, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Pupila
+    second: {fileID: 2100000, guid: ec694a932d9044847a161a0bdcb3e115, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Skin
+    second: {fileID: 2100000, guid: d66f84985a5602445b35d40cd810d173, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: hair
+    second: {fileID: 2100000, guid: f3aa25d35e9a00e4288e0261b204bda1, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: hair.001
+    second: {fileID: 2100000, guid: 5a75dc14c26aa0d48b94be249c7f8638, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: inside_mouth.teeth
+    second: {fileID: 2100000, guid: 20ae9bdf80c939e4c8d2aca859939efd, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: sintel_eye
+    second: {fileID: 2100000, guid: e25d469f153aed14b8aa194ff45d9136, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

@@ -838,10 +838,10 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -1164907014493675412, guid: 4367279b1d9d0124c8f4c14dbc4dc0f9, type: 3}
-  - {fileID: -7342116873349380112, guid: 4367279b1d9d0124c8f4c14dbc4dc0f9, type: 3}
-  - {fileID: 4835078630258379571, guid: 4367279b1d9d0124c8f4c14dbc4dc0f9, type: 3}
-  - {fileID: -972631315819378086, guid: 4367279b1d9d0124c8f4c14dbc4dc0f9, type: 3}
+  - {fileID: 2100000, guid: f34e201bf451bbd40b50a9040eeff4dd, type: 2}
+  - {fileID: 2100000, guid: 1763bae6a56bc794090c3c848acba51d, type: 2}
+  - {fileID: 2100000, guid: d66f84985a5602445b35d40cd810d173, type: 2}
+  - {fileID: 2100000, guid: 485a616eee4ebd3428b14e863cae5a68, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -4291,8 +4291,8 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 1842850253668023773, guid: 4367279b1d9d0124c8f4c14dbc4dc0f9, type: 3}
-  - {fileID: 4835078630258379571, guid: 4367279b1d9d0124c8f4c14dbc4dc0f9, type: 3}
+  - {fileID: 2100000, guid: 1147738b7a725b446a28aaff418d6a66, type: 2}
+  - {fileID: 2100000, guid: d66f84985a5602445b35d40cd810d173, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -5032,6 +5032,18 @@ PrefabInstance:
     - target: {fileID: 3811494239223336302, guid: 430adf3e4167dd54480ec046cd371e09, type: 3}
       propertyPath: m_Name
       value: Sintel_HEAD_07
+      objectReference: {fileID: 0}
+    - target: {fileID: 4045441931158533424, guid: 430adf3e4167dd54480ec046cd371e09, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4045441931158533424, guid: 430adf3e4167dd54480ec046cd371e09, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4045441931158533424, guid: 430adf3e4167dd54480ec046cd371e09, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4588874990155896788, guid: 430adf3e4167dd54480ec046cd371e09, type: 3}
       propertyPath: m_RootOrder

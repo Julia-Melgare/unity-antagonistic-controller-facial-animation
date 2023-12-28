@@ -25,7 +25,8 @@ public class PathDirectionObject : MonoBehaviour
     private float minStepsAhead = 2f;
 
     public float stepsAhead = 7f;
-    public float height = 3f;
+    public float heightOffset = 3f;
+    private float height = 3f;
 
     private float currentPosInPath;
     private float moveSpeed = 1f;
@@ -56,7 +57,7 @@ public class PathDirectionObject : MonoBehaviour
         if (pathTrajectory != null)
         {
             Vector3 positionInPath = GetPositionInPath(currentPosInPath + moveSpeed * Time.deltaTime);
-            transform.position = new Vector3(positionInPath.x, height, positionInPath.z); // fix y to desired height
+            transform.position = new Vector3(positionInPath.x, height + heightOffset, positionInPath.z); // fix y to desired height
         }
         else //Assume simple trajectory continuation
         {

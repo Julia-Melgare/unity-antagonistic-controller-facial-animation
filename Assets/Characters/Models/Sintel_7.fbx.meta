@@ -6,7 +6,67 @@ ModelImporter:
   - first:
       74: -4791504522942941401
     second: Armature|Armature|mixamo.com|Layer0
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Iris
+    second: {fileID: 2100000, guid: 5aefd86eade8d48489f585634a79214e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material.001
+    second: {fileID: 2100000, guid: cac487743ec2d9b419d739c3a2f8da27, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material.004
+    second: {fileID: 2100000, guid: deffc1aa8109e064cadbfc65e6b0135d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Pupila
+    second: {fileID: 2100000, guid: 91aa6d21e694e3446a3da851d90a042e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Skin
+    second: {fileID: 2100000, guid: 8b256b33bf119bd4ebfc045998bd3570, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: hair
+    second: {fileID: 2100000, guid: f7e2c5c62297fc6459fee65eb18292b2, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: hair.001
+    second: {fileID: 2100000, guid: fb654c4855a0d974695b4e27b171b0b4, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: inside_mouth.teeth.001
+    second: {fileID: 2100000, guid: 49bec633448e77a49af7737efb461d6b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: leatherBoots
+    second: {fileID: 2100000, guid: 2bb01d1fe69820646b9e4704d26a5466, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: leatherGloves
+    second: {fileID: 2100000, guid: cf47923532875f74186eef7393dafb76, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: leatherPants
+    second: {fileID: 2100000, guid: e70ead71ba89df64297b8b18dbcf1283, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: sintel_eye
+    second: {fileID: 2100000, guid: 0c8ab86532a49984c84daa75467a00d8, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
