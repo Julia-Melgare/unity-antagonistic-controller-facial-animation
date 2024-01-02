@@ -48,7 +48,7 @@ public class SaliencyController : MonoBehaviour
         scanInterval = 1.0f / scanFrequency;
         auxiliaryAgentCamera.enabled = false;
         salientObjectsDict = new Dictionary<GameObject, float>();
-        saliencyMapOutput = new Texture2D(2, 2);
+        saliencyMapOutput = new Texture2D(360, 360);
     }
     void Update()
     {
@@ -76,6 +76,7 @@ public class SaliencyController : MonoBehaviour
         for (int i = 0; i < saliencyMapPixels.Length; i++)
         {
             float grayscaleValue = saliencyMapPixels[i].grayscale;
+            //Debug.Log("[Saliency] grayscale value: "+grayscaleValue);
             if (grayscaleValue >= saliencyValueThreshold)
             {
                 // Convert array index to matrix indexes
@@ -154,8 +155,10 @@ public class SaliencyController : MonoBehaviour
 
     private void UpdateSaliencyMap(byte[] rawData)
     {
-        Texture2D saliencyMapOutput = new Texture2D(2, 2);
-        ImageConversion.LoadImage(saliencyMapOutput, rawData);
+        Texture2D temp = new Texture2D(2, 2);
+        ImageConversion.LoadImage(temp, rawData);
+        saliencyMapOutput.SetPixels(temp.GetPixels());
+        saliencyMapOutput.Apply();
         if (saliencyMapImage != null) saliencyMapImage.texture = saliencyMapOutput;
         if (visionFrameImage != null) visionFrameImage.texture = previousVisionFrame;
     }

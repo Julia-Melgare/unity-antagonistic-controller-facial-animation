@@ -399,7 +399,7 @@ public class IKFeetPlacement : MonoBehaviour
 
             return;
         }
-
+        Debug.Log("[Feet IK] Didn't work");
         feetIKPositions = Vector3.zero; // If we reach this, it didn't work
     }
 

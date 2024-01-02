@@ -238,7 +238,7 @@ public class AttentionController : MonoBehaviour
 
     public GameObject GetCurrentFocus()
     {
-        return currentFocus;
+        return currentFocus ?? pathLookAheadTransform;
     }
 
     public bool IsFocusingOnPath()

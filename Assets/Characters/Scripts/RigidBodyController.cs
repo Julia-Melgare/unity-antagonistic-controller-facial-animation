@@ -40,6 +40,7 @@ public class RigidBodyController : MonoBehaviour
     public bool moveForwardOnly = false;
     public bool followPath = false;
     public CinemachinePath pathTrajectory;
+    public float pathFollowSpeedModifier = 0.5f;
 
     [Header("Motion - Debug")]
     public Vector3 _inputs = Vector3.zero;
@@ -76,7 +77,7 @@ public class RigidBodyController : MonoBehaviour
 
         if (_body.isKinematic)
         {
-            transform.position += moveDirection * moveSpeed * offsetKinematicMovement * inputMagnitude * Time.deltaTime;
+            transform.position += moveDirection * moveSpeed * inputMagnitude * Time.deltaTime;
             _velocity.y += Physics.gravity.y * Time.fixedDeltaTime;
 
             if (_isGrounded && _velocity.y < 0)
@@ -88,7 +89,7 @@ public class RigidBodyController : MonoBehaviour
     {
         if (followPath && pathTrajectory != null)
         {
-            Vector3 newPositionInPath = GetPositionInPath(currentPosInPath + moveSpeed * 6.5f * Time.deltaTime);
+            Vector3 newPositionInPath = GetPositionInPath(currentPosInPath + moveSpeed * pathFollowSpeedModifier * offsetKinematicMovement * Time.deltaTime);
             float difference = Vector3.Distance(newPositionInPath, positionInPath);
             if (difference > 0)
             {
