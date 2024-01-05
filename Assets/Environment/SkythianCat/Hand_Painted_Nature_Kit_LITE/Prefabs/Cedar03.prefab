@@ -11,6 +11,8 @@ GameObject:
   - component: {fileID: 4196199969613490}
   - component: {fileID: 33265709180256148}
   - component: {fileID: 23339686187338838}
+  - component: {fileID: 4862636553663415337}
+  - component: {fileID: 2673665833040936324}
   m_Layer: 0
   m_Name: Cedar03
   m_TagString: Untagged
@@ -52,7 +54,7 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
+  m_StaticShadowCaster: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -84,3 +86,31 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!136 &4862636553663415337
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1276113068307054}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.6069541
+  m_Height: 11.937236
+  m_Direction: 1
+  m_Center: {x: 0, y: 5.059221, z: 0}
+--- !u!136 &2673665833040936324
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1276113068307054}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 4
+  m_Height: 8.19
+  m_Direction: 1
+  m_Center: {x: 0, y: 6.94, z: 0}

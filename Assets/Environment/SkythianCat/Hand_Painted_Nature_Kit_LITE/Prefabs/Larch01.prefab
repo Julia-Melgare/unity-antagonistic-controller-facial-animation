@@ -11,6 +11,8 @@ GameObject:
   - component: {fileID: 4568260420906790}
   - component: {fileID: 33730199074784402}
   - component: {fileID: 23429048093195576}
+  - component: {fileID: 7266820574687539476}
+  - component: {fileID: 1409508459566011402}
   m_Layer: 0
   m_Name: Larch01
   m_TagString: Untagged
@@ -52,7 +54,7 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
+  m_StaticShadowCaster: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -84,3 +86,31 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!136 &7266820574687539476
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1977261233423868}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.6933553
+  m_Height: 16.331425
+  m_Direction: 1
+  m_Center: {x: 0.042203665, y: 7.4195976, z: 9.359085e-15}
+--- !u!136 &1409508459566011402
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1977261233423868}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 5.7258973
+  m_Height: 11.451795
+  m_Direction: 1
+  m_Center: {x: 1.3637859e-22, y: 9.62351, z: -9.705195e-15}

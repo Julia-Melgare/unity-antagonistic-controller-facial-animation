@@ -19,7 +19,9 @@ public class FaceController : MonoBehaviour
     [SerializeField]
     private Transform rightEyeTransform;
     [SerializeField]
-    private float eyeXRotationLimit = 55f;
+    private float eyeXUpRotationLimit = 55f;
+    [SerializeField]
+    private float eyeXDownRotationLimit = 55f;
     [SerializeField]
     private float eyeYRotationLimit = 55f;
     [SerializeField]
@@ -31,7 +33,9 @@ public class FaceController : MonoBehaviour
     [SerializeField]
     private float eyeZComfortableRotationLimit = 25f;
     [SerializeField]
-    private float eyeMovementSpeed = 1.74533f; //100 degrees in radians;
+    private float eyeSaccadeSpeed = 13.9626f; //800 degrees in radians;
+    [SerializeField]
+    private float eyePursuitSpeed = 1.74533f; //100 degrees in radians;
 
     private Vector3 initialLeftEyeForward;
     private Vector3 initialRightEyeForward;
@@ -111,7 +115,7 @@ public class FaceController : MonoBehaviour
     [SerializeField]
     private float neckZRotationLimit = 30f;
     [SerializeField]
-    private float neckMovementSpeed = 1.5f;
+    private float neckMovementSpeed = 3.14159f; // 180 degrees in radians
 
     [Header("Safety Regions Settings")]
     [SerializeField]
@@ -139,6 +143,8 @@ public class FaceController : MonoBehaviour
 
     private void Update()
     {
+        float currentFixationTime = attentionController.GetCurrentFixationTime();
+        float eyeMovementSpeed = currentFixationTime > 0.2f ? eyePursuitSpeed : eyeSaccadeSpeed;
         // Check face safety regions
         //if (!amAvoiding && (faceSafetyRegionLeft.closestDistanceToEye <= minEyeDistance || faceSafetyRegionRight.closestDistanceToEye <= minEyeDistance))
         {
@@ -161,37 +167,36 @@ public class FaceController : MonoBehaviour
             SetRotation(rightEyeTransform, objectOfInterest, eyeMovementSpeed);
 
             // Clamp eye rotations
-            ClampRotation(leftEyeTransform, eyeXRotationLimit, eyeYRotationLimit, eyeZRotationLimit);
-            ClampRotation(rightEyeTransform, eyeXRotationLimit, eyeYRotationLimit, eyeZRotationLimit);
+            ClampRotation(leftEyeTransform, eyeXUpRotationLimit, eyeXDownRotationLimit, eyeYRotationLimit, eyeZRotationLimit);
+            ClampRotation(rightEyeTransform, eyeXUpRotationLimit, eyeXDownRotationLimit, eyeYRotationLimit, eyeZRotationLimit);
 
             Vector3 middlePoint = (leftEyeTransform.forward + rightEyeTransform.forward).normalized;
             
-            if (SurpassedRotationConstraints(leftEyeTransform, eyeXComfortableRotationLimit, eyeYComfortableRotationLimit, eyeZComfortableRotationLimit) || SurpassedRotationConstraints(leftEyeTransform, eyeXComfortableRotationLimit, eyeYComfortableRotationLimit, eyeZComfortableRotationLimit) && !attentionController.IsFocusingOnPath())
+            if ((SurpassedRotationConstraints(leftEyeTransform, eyeXComfortableRotationLimit, eyeYComfortableRotationLimit, eyeZComfortableRotationLimit) || SurpassedRotationConstraints(leftEyeTransform, eyeXComfortableRotationLimit, eyeYComfortableRotationLimit, eyeZComfortableRotationLimit)) && attentionController.GetCurrentFixationTime() > 0.2f)
             {
                 // Rotate neck towards eyes middle point
                 SetRotation(neckTransform, middlePoint, neckMovementSpeed);
                 // Clamp neck rotation
-                ClampRotation(neckTransform, neckXRotationLimit, neckYRotationLimit, neckZRotationLimit);
+                ClampRotation(neckTransform, -neckXRotationLimit, neckXRotationLimit, neckYRotationLimit, neckZRotationLimit);
 
                 // Head will copy neck rotation
                 float singleStep = neckMovementSpeed * Time.deltaTime;
                 headTransform.rotation = Quaternion.RotateTowards(headTransform.rotation, neckTransform.rotation, singleStep);
                 // Clamp head rotation
-                ClampRotation(headTransform, neckXRotationLimit, neckYRotationLimit, neckZRotationLimit);
+                ClampRotation(headTransform, -neckXRotationLimit, neckXRotationLimit, neckYRotationLimit, neckZRotationLimit);
             }
 
             if (attentionController.IsFocusingOnPath())
             {
                 // If I'm focusing on path, neck will follow direction too
-                //SetRotation(neckTransform, middlePoint, initialNeckForward, neckMovementSpeed);
-                // Rotate neck towards eyes middle point
-                float singleStep = neckMovementSpeed * Time.deltaTime;
-                Vector3 newDirection = Vector3.RotateTowards(neckTransform.forward, middlePoint, singleStep, 0.0f);
-                neckTransform.rotation = Quaternion.LookRotation(newDirection);
+                SetRotation(neckTransform, objectOfInterest, neckMovementSpeed);
                 // Clamp neck rotation
-                ClampRotation(neckTransform, neckXRotationLimit, neckYRotationLimit, neckZRotationLimit);
+                ClampRotation(neckTransform, -neckXRotationLimit, neckXRotationLimit, neckYRotationLimit, neckZRotationLimit);
+                // Head will copy neck rotation
+                float singleStep = neckMovementSpeed * Time.deltaTime;
                 headTransform.rotation = Quaternion.RotateTowards(headTransform.rotation, neckTransform.rotation, singleStep);
-                //SetRotation(headTransform, initialHeadForward, initialHeadForward, neckMovementSpeed/1.5f);
+                // Clamp head rotation
+                ClampRotation(headTransform, -neckXRotationLimit, neckXRotationLimit, neckYRotationLimit, neckZRotationLimit);
             }
 
             // Animate eye blendhsapes according to gaze direction
@@ -230,7 +235,7 @@ public class FaceController : MonoBehaviour
         //Debug.DrawRay(objectTransform.position, newDirection, Color.red);
     }
 
-    private void ClampRotation(Transform objectTransform, float xRotationLimit, float yRotationLimit, float zRotationLimit) 
+    private void ClampRotation(Transform objectTransform, float xUpRotationLimit, float xDownRotationLimit, float yRotationLimit, float zRotationLimit) 
     {
         Vector3 localRotation = objectTransform.localEulerAngles;
         float xRotation = localRotation.x > 180 ? localRotation.x - 360 : localRotation.x;
@@ -238,7 +243,7 @@ public class FaceController : MonoBehaviour
         float zRotation = localRotation.z > 180 ? localRotation.z - 360 : localRotation.z;
         objectTransform.localEulerAngles = new Vector3
             (
-                Mathf.Clamp(xRotation, -xRotationLimit, xRotationLimit),
+                Mathf.Clamp(xRotation, xUpRotationLimit, xDownRotationLimit),
                 Mathf.Clamp(yRotation, -yRotationLimit, yRotationLimit),
                 Mathf.Clamp(zRotation, -zRotationLimit, zRotationLimit)
             );
@@ -273,9 +278,9 @@ public class FaceController : MonoBehaviour
         int xRightEyeBlendShapeIndex = Mathf.Sign(xRightEyeRotation) < 0 ? EyeLookUpRightBlendShapeIndex : EyeLookDownRightBlendShapeIndex;
         int yRightEyeBlendShapeIndex = Mathf.Sign(yRightEyeRotation) < 0 ? EyeLookOutRightBlendShapeIndex : EyeLookInRightBlendShapeIndex;
 
-        faceMeshRenderer.SetBlendShapeWeight(xLeftEyeBlendShapeIndex, NormalizeBlendshapeValue(xLeftEyeRotation, eyeXRotationLimit));
+        faceMeshRenderer.SetBlendShapeWeight(xLeftEyeBlendShapeIndex, NormalizeBlendshapeValue(xLeftEyeRotation, eyeXUpRotationLimit));
         faceMeshRenderer.SetBlendShapeWeight(yLeftEyeBlendShapeIndex, NormalizeBlendshapeValue(yLeftEyeRotation, eyeYRotationLimit));
-        faceMeshRenderer.SetBlendShapeWeight(xRightEyeBlendShapeIndex, NormalizeBlendshapeValue(xRightEyeRotation, eyeXRotationLimit));
+        faceMeshRenderer.SetBlendShapeWeight(xRightEyeBlendShapeIndex, NormalizeBlendshapeValue(xRightEyeRotation, eyeXUpRotationLimit));
         faceMeshRenderer.SetBlendShapeWeight(yRightEyeBlendShapeIndex, NormalizeBlendshapeValue(yRightEyeRotation, eyeYRotationLimit));
     }
 

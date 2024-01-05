@@ -3,6 +3,7 @@ using AsyncIO;
 using NetMQ;
 using NetMQ.Sockets;
 using UnityEngine;
+using UnityEngine.Profiling;
 
 public class InferenceRequester : RunAbleThread
 {
@@ -17,6 +18,7 @@ public class InferenceRequester : RunAbleThread
     private int failThreshold = 3;
     protected override void Run()
     {
+        Profiler.BeginThreadProfiling("NetMQ", "InferenceRequester");
         ForceDotNet.Force();
         using (RequestSocket client = new RequestSocket())
         {

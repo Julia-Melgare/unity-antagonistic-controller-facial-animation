@@ -1,9 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.ExceptionServices;
 using TMPro;
 using UnityEngine;
-using Voxus;
 using Voxus.Random;
 
 public class AttentionController : MonoBehaviour
@@ -39,6 +39,7 @@ public class AttentionController : MonoBehaviour
 
     [SerializeField]
     private GameObject currentFocus = null;
+    private float currentFixationTime = 0f;
     [SerializeField]
     private Dictionary<int, float> objectsFocusedOn;
     private bool isFocusing = false;
@@ -150,12 +151,12 @@ public class AttentionController : MonoBehaviour
                 driftPerObject[obj] += ((saliencyController.GetObjectSaliency(obj) + frustrumLineOfSight.GetObjectSpeed(obj)) * (inhibitionOfReturnTime - objectsFocusedOn.GetValueOrDefault(obj.GetInstanceID(), 0f)) * Time.deltaTime) + Random.Range(0, noiseLevel);
             else
                 driftPerObject[obj] *= 0.9f;
-            Debug.Log("[DDM] ("+(maxDecisionTime - objectDecisionTimer)+"s) "+obj.name+": "+driftPerObject[obj]);
+            //Debug.Log("[DDM] ("+(maxDecisionTime - objectDecisionTimer)+"s) "+obj.name+": "+driftPerObject[obj]);
         }
         var max = driftPerObject.OrderByDescending(x => x.Value).First();
         if (max.Value >= decisionThreshold)
         {
-            Debug.Log("[DDM] ("+(maxDecisionTime - objectDecisionTimer)+"s) Choosing object "+max.Key.name);
+            //Debug.Log("[DDM] ("+(maxDecisionTime - objectDecisionTimer)+"s) Choosing object "+max.Key.name);
             return max.Key;
         }
         return null;
@@ -207,6 +208,7 @@ public class AttentionController : MonoBehaviour
     private IEnumerator FocusOnPath(float fixationTime)
     {
         currentFocus = pathLookAheadTransform;
+        currentFixationTime = fixationTime;
         isFocusing = true;
         yield return new WaitForSeconds(fixationTime);
         isFocusing = false;
@@ -216,6 +218,7 @@ public class AttentionController : MonoBehaviour
     private IEnumerator FocusOnObject(GameObject obj, float fixationTime)
     {
         currentFocus = obj;
+        currentFixationTime = fixationTime;
         isFocusing = true;        
         yield return new WaitForSeconds(fixationTime);
         int currentFocusID = obj.gameObject.GetInstanceID();
@@ -239,6 +242,11 @@ public class AttentionController : MonoBehaviour
     public GameObject GetCurrentFocus()
     {
         return currentFocus ?? pathLookAheadTransform;
+    }
+
+    public float GetCurrentFixationTime()
+    {
+        return currentFixationTime;
     }
 
     public bool IsFocusingOnPath()

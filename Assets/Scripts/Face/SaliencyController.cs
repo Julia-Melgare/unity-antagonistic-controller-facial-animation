@@ -1,8 +1,11 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Profiling;
 using UnityEngine.UI;
 
 public class SaliencyController : MonoBehaviour
@@ -48,7 +51,7 @@ public class SaliencyController : MonoBehaviour
         scanInterval = 1.0f / scanFrequency;
         auxiliaryAgentCamera.enabled = false;
         salientObjectsDict = new Dictionary<GameObject, float>();
-        saliencyMapOutput = new Texture2D(360, 360);
+        saliencyMapOutput = new Texture2D(45, 45);
     }
     void Update()
     {
@@ -76,14 +79,16 @@ public class SaliencyController : MonoBehaviour
         for (int i = 0; i < saliencyMapPixels.Length; i++)
         {
             float grayscaleValue = saliencyMapPixels[i].grayscale;
-            //Debug.Log("[Saliency] grayscale value: "+grayscaleValue);
             if (grayscaleValue >= saliencyValueThreshold)
             {
                 // Convert array index to matrix indexes
-                int width = agentCamera.targetTexture.width;
-                int height = agentCamera.targetTexture.height;
+                int width = saliencyMapOutput.width;
+                int height = saliencyMapOutput.height;
                 int matrix_i = i / width;
                 int matrix_j = i % width;
+                // Compensate size difference between camera and saliency map
+                matrix_i = matrix_i*(agentCamera.targetTexture.width/saliencyMapOutput.width);
+                matrix_j = matrix_j*(agentCamera.targetTexture.height/saliencyMapOutput.height);
                 saliencyPoints.Add(new Vector3(matrix_j, matrix_i, 0), grayscaleValue);
                 if(debugSaliencyRaycast)
                     saliencyMapPixels[i] = Color.red; // Highlight pixel for visualization purposes
@@ -96,13 +101,24 @@ public class SaliencyController : MonoBehaviour
             Ray ray = auxiliaryAgentCamera.ScreenPointToRay(screenPoint.Key);
             RaycastHit[] hits = Physics.RaycastAll(ray, Mathf.Infinity, scanLayerMask);
             foreach (RaycastHit hit in hits)
-                salientObjectsDict.TryAdd(hit.collider.gameObject, screenPoint.Value);
-                                    
+            {
+                GameObject raycastObj = hit.collider.gameObject;
+
+                if (hit.collider.GetType() == typeof(TerrainCollider))
+                {
+                    //We need to look at that specific point on the terrain instead
+                    GameObject terrainPoint = new GameObject("TerrainPoint", typeof(SelfDestruct));
+                    terrainPoint.transform.position = hit.point;
+                    raycastObj = terrainPoint;
+                }
+
+                salientObjectsDict.TryAdd(raycastObj, screenPoint.Value);
+            }                          
         }
         salientObjects = new List<GameObject>(salientObjectsDict.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value).Keys);
         if (debugSaliencyRaycast)
         {
-            Texture2D newTexture = new Texture2D(360, 360);
+            Texture2D newTexture = new Texture2D(45, 45);
             newTexture.SetPixels(saliencyMapPixels);
             newTexture.Apply();
             saliencyMapImage.texture = newTexture;
@@ -122,13 +138,8 @@ public class SaliencyController : MonoBehaviour
     private void InferSaliencyMap()
     {
         var input = GetCameraImage();
-        inferenceClient.Infer(input, output =>
-        {
-            saliencyMapBytes = output;
-        }, error =>
-        {
-            //Debug.LogError(error.Message);
-        });
+        Thread saliencyInference = new Thread(() => RunSaliencyInference(input));
+        saliencyInference.Start();
     }
 
     private byte[] GetCameraImage()
@@ -170,5 +181,17 @@ public class SaliencyController : MonoBehaviour
         auxiliaryAgentCamera.transform.rotation = agentCamera.transform.rotation;
         auxiliaryAgentCamera.transform.localScale = agentCamera.transform.localScale;
         auxiliaryAgentCamera.enabled = false;
+    }
+
+    private void RunSaliencyInference(byte[] input)
+    {
+        Profiler.BeginThreadProfiling("NetMQ", "RunSaliencyInference");
+        inferenceClient.Infer(input, output =>
+        {
+            saliencyMapBytes = output;
+        }, error =>
+        {
+            //Debug.LogError(error.Message);
+        });
     }
 }

@@ -1436,7 +1436,8 @@ MonoBehaviour:
   eyeXComfortableRotationLimit: 25
   eyeYComfortableRotationLimit: 25
   eyeZComfortableRotationLimit: 25
-  eyeMovementSpeed: 1.74533
+  eyeSaccadeSpeed: 13.9626
+  eyePursuitSpeed: 1.74533
   blinkIntervalMin: 1
   blinkIntervalMax: 5
   headTransform: {fileID: 6641876916658304500}
@@ -1444,7 +1445,7 @@ MonoBehaviour:
   neckXRotationLimit: 45
   neckYRotationLimit: 45
   neckZRotationLimit: 30
-  neckMovementSpeed: 2
+  neckMovementSpeed: 3.14159
   faceSafetyRegionLeft: {fileID: 0}
   faceSafetyRegionRight: {fileID: 0}
   minEyeDistance: 0.2
@@ -1497,7 +1498,7 @@ MonoBehaviour:
     m_Bits: 3639
   salientObjects: []
   saliencyValueThreshold: 0.95
-  saliencyMapOutput: {fileID: 0}
+  saliencyMapImage: {fileID: 0}
   visionFrameImage: {fileID: 0}
   debugSaliencyRaycast: 0
 --- !u!114 &7212299569271494567

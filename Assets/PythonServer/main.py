@@ -40,6 +40,8 @@ with tf.Session() as sess:
 
         saliency = cv2.cvtColor(saliency.squeeze(),
                                 cv2.COLOR_GRAY2BGR)
+        
+        saliency = cv2.resize(saliency, dsize=(45,45), interpolation=cv2.INTER_CUBIC)
 
         saliency = np.uint8(saliency * 255)
 
