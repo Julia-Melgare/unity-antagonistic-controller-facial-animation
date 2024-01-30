@@ -13,6 +13,9 @@ TagManager:
   - Static Obstacle
   - LeftForeArm
   - LeftArm
+  - lb_groundTarget
+  - lb_perchTarget
+  - lb_bird
   layers:
   - Default
   - TransparentFX
@@ -28,7 +31,7 @@ TagManager:
   - Arm
   - Third Person Camera
   - Face Camera
-  - 
+  - Character
   - 
   - 
   - 

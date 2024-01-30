@@ -1,0 +1,360 @@
+fileFormatVersion: 2
+guid: 96f1a751fa4105a42acb1d679c969a16
+ModelImporter:
+  serializedVersion: 19301
+  internalIDToNameTable:
+  - first:
+      1: 100000
+    second: //RootNode
+  - first:
+      1: 100002
+    second: RABBIT_
+  - first:
+      1: 100004
+    second: RABBIT_ Footsteps
+  - first:
+      1: 100006
+    second: RABBIT_ Head
+  - first:
+      1: 100008
+    second: RABBIT_ L Calf
+  - first:
+      1: 100010
+    second: RABBIT_ L Clavicle
+  - first:
+      1: 100012
+    second: RABBIT_ L Foot
+  - first:
+      1: 100014
+    second: RABBIT_ L Forearm
+  - first:
+      1: 100016
+    second: RABBIT_ L Hand
+  - first:
+      1: 100018
+    second: RABBIT_ L Thigh
+  - first:
+      1: 100020
+    second: RABBIT_ L Toe0
+  - first:
+      1: 100022
+    second: RABBIT_ L UpperArm
+  - first:
+      1: 100024
+    second: RABBIT_ Neck
+  - first:
+      1: 100026
+    second: RABBIT_ Neck1
+  - first:
+      1: 100028
+    second: RABBIT_ Pelvis
+  - first:
+      1: 100030
+    second: RABBIT_ Queue de cheval 1
+  - first:
+      1: 100032
+    second: RABBIT_ Queue de cheval 2
+  - first:
+      1: 100034
+    second: RABBIT_ R Calf
+  - first:
+      1: 100036
+    second: RABBIT_ R Clavicle
+  - first:
+      1: 100038
+    second: RABBIT_ R Foot
+  - first:
+      1: 100040
+    second: RABBIT_ R Forearm
+  - first:
+      1: 100042
+    second: RABBIT_ R Hand
+  - first:
+      1: 100044
+    second: RABBIT_ R Thigh
+  - first:
+      1: 100046
+    second: RABBIT_ R Toe0
+  - first:
+      1: 100048
+    second: RABBIT_ R UpperArm
+  - first:
+      1: 100050
+    second: RABBIT_ Spine
+  - first:
+      1: 100052
+    second: RABBIT_ Spine1
+  - first:
+      1: 100054
+    second: root
+  - first:
+      1: 100056
+    second: SK_Rabbit
+  - first:
+      1: 100058
+    second: SK_Rabbit_LOD0
+  - first:
+      1: 100060
+    second: SK_Rabbit_LOD1
+  - first:
+      1: 100062
+    second: SK_Rabbit_LOD2
+  - first:
+      1: 100064
+    second: SK_Rabbit_LOD3
+  - first:
+      4: 400000
+    second: //RootNode
+  - first:
+      4: 400002
+    second: RABBIT_
+  - first:
+      4: 400004
+    second: RABBIT_ Footsteps
+  - first:
+      4: 400006
+    second: RABBIT_ Head
+  - first:
+      4: 400008
+    second: RABBIT_ L Calf
+  - first:
+      4: 400010
+    second: RABBIT_ L Clavicle
+  - first:
+      4: 400012
+    second: RABBIT_ L Foot
+  - first:
+      4: 400014
+    second: RABBIT_ L Forearm
+  - first:
+      4: 400016
+    second: RABBIT_ L Hand
+  - first:
+      4: 400018
+    second: RABBIT_ L Thigh
+  - first:
+      4: 400020
+    second: RABBIT_ L Toe0
+  - first:
+      4: 400022
+    second: RABBIT_ L UpperArm
+  - first:
+      4: 400024
+    second: RABBIT_ Neck
+  - first:
+      4: 400026
+    second: RABBIT_ Neck1
+  - first:
+      4: 400028
+    second: RABBIT_ Pelvis
+  - first:
+      4: 400030
+    second: RABBIT_ Queue de cheval 1
+  - first:
+      4: 400032
+    second: RABBIT_ Queue de cheval 2
+  - first:
+      4: 400034
+    second: RABBIT_ R Calf
+  - first:
+      4: 400036
+    second: RABBIT_ R Clavicle
+  - first:
+      4: 400038
+    second: RABBIT_ R Foot
+  - first:
+      4: 400040
+    second: RABBIT_ R Forearm
+  - first:
+      4: 400042
+    second: RABBIT_ R Hand
+  - first:
+      4: 400044
+    second: RABBIT_ R Thigh
+  - first:
+      4: 400046
+    second: RABBIT_ R Toe0
+  - first:
+      4: 400048
+    second: RABBIT_ R UpperArm
+  - first:
+      4: 400050
+    second: RABBIT_ Spine
+  - first:
+      4: 400052
+    second: RABBIT_ Spine1
+  - first:
+      4: 400054
+    second: root
+  - first:
+      4: 400056
+    second: SK_Rabbit
+  - first:
+      4: 400058
+    second: SK_Rabbit_LOD0
+  - first:
+      4: 400060
+    second: SK_Rabbit_LOD1
+  - first:
+      4: 400062
+    second: SK_Rabbit_LOD2
+  - first:
+      4: 400064
+    second: SK_Rabbit_LOD3
+  - first:
+      43: 4300000
+    second: SK_Rabbit
+  - first:
+      43: 4300002
+    second: SK_Rabbit_LOD0
+  - first:
+      43: 4300004
+    second: SK_Rabbit_LOD1
+  - first:
+      43: 4300006
+    second: SK_Rabbit_LOD2
+  - first:
+      43: 4300008
+    second: SK_Rabbit_LOD3
+  - first:
+      74: 7400000
+    second: Take 001
+  - first:
+      95: 9500000
+    second: //RootNode
+  - first:
+      137: 13700000
+    second: SK_Rabbit
+  - first:
+      137: 13700002
+    second: SK_Rabbit_LOD0
+  - first:
+      137: 13700004
+    second: SK_Rabbit_LOD1
+  - first:
+      137: 13700006
+    second: SK_Rabbit_LOD2
+  - first:
+      137: 13700008
+    second: SK_Rabbit_LOD3
+  - first:
+      205: 20500000
+    second: //RootNode
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_Rabbit
+    second: {fileID: 2100000, guid: d9f01e9b6b2a94d44a0b50ea51540095, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_RabbitFur
+    second: {fileID: 2100000, guid: f471579265e1ebd46b6c97d7582c8780, type: 2}
+  materials:
+    materialImportMode: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 0
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 3
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages:
+    - 0.25
+    - 0.125
+    - 0.0625
+    - 0.01
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
+    importVisibility: 0
+    importBlendShapes: 1
+    importCameras: 0
+    importLights: 0
+    fileIdsGeneration: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    meshOptimizationFlags: -1
+    indexFormat: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 4
+    normalCalculationMode: 0
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 1
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  referencedClips:
+  - 0ab4cf1796eb6d448929131e8f6b6c73
+  - d1c7d0be0eb16a04e942c7aba7d3193d
+  - aa9e5ae804070e64ba950244d9f7bd0d
+  - 70e38c1ae94d22446bc680fb7e97ee6a
+  - 193552da3b7a41d4bb36faa638a1abd1
+  - 7bf07d7117943f747a3c8178a32176bf
+  - 0a5cdf4a2398b144f9cbd0c4a029d953
+  - 10440c57550ec22489b76ebc41ceac70
+  - 8f3941c8f39f42c49b8097eae27519d8
+  - 99bf3d625d2668344a984028def624ed
+  - 549ff5acae564974f81b40bbce4fce83
+  - 4b4a9f86faa5eb340986e0bbaebdad83
+  importAnimation: 1
+  humanDescription:
+    serializedVersion: 3
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    globalScale: 1
+    rootMotionBoneName: root
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 0
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
+  animationType: 2
+  humanoidOversampling: 1
+  avatarSetup: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

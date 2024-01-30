@@ -1,4 +1,3 @@
-using System;
 using Cinemachine;
 using UnityEngine;
 
@@ -92,6 +91,12 @@ public class PathDirectionObject : MonoBehaviour
         }
         return Vector3.zero;
     }
+
+    public float GetGroundSlopeAngle()
+    {
+        return rigidBodyController.groundSlopeAngle;
+    }
+
 
     private void CheckGround()
     {

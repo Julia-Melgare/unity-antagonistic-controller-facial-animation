@@ -1,0 +1,397 @@
+fileFormatVersion: 2
+guid: 4a3172407929c734ab555cd06ce2c6c7
+ModelImporter:
+  serializedVersion: 19301
+  internalIDToNameTable:
+  - first:
+      1: 100000
+    second: //RootNode
+  - first:
+      1: 100002
+    second: root
+  - first:
+      1: 100004
+    second: SK_Stag
+  - first:
+      1: 100006
+    second: STAG_
+  - first:
+      1: 100008
+    second: STAG_ Head
+  - first:
+      1: 100010
+    second: STAG_ L Calf
+  - first:
+      1: 100012
+    second: STAG_ L Clavicle
+  - first:
+      1: 100014
+    second: STAG_ L Finger0
+  - first:
+      1: 100016
+    second: STAG_ L Foot
+  - first:
+      1: 100018
+    second: STAG_ L Forearm
+  - first:
+      1: 100020
+    second: STAG_ L Hand
+  - first:
+      1: 100022
+    second: STAG_ L HorseLink
+  - first:
+      1: 100024
+    second: STAG_ L Thigh
+  - first:
+      1: 100026
+    second: STAG_ L UpperArm
+  - first:
+      1: 100028
+    second: STAG_ Neck
+  - first:
+      1: 100030
+    second: STAG_ Neck1
+  - first:
+      1: 100032
+    second: STAG_ Neck2
+  - first:
+      1: 100034
+    second: STAG_ Pelvis
+  - first:
+      1: 100036
+    second: STAG_ Ponytail1
+  - first:
+      1: 100038
+    second: STAG_ R Calf
+  - first:
+      1: 100040
+    second: STAG_ R Clavicle
+  - first:
+      1: 100042
+    second: STAG_ R Finger0
+  - first:
+      1: 100044
+    second: STAG_ R Foot
+  - first:
+      1: 100046
+    second: STAG_ R Forearm
+  - first:
+      1: 100048
+    second: STAG_ R Hand
+  - first:
+      1: 100050
+    second: STAG_ R HorseLink
+  - first:
+      1: 100052
+    second: STAG_ R Thigh
+  - first:
+      1: 100054
+    second: STAG_ R UpperArm
+  - first:
+      1: 100056
+    second: STAG_ Spine
+  - first:
+      1: 100058
+    second: STAG_ Spine1
+  - first:
+      1: 100060
+    second: STAG_ Tail
+  - first:
+      1: 100062
+    second: STAG_ Tail1
+  - first:
+      1: 100064
+    second: STAG_ Tail2
+  - first:
+      1: 100066
+    second: SK_Stag_LOD0
+  - first:
+      1: 100068
+    second: SK_Stag_LOD1
+  - first:
+      1: 100070
+    second: SK_Stag_LOD2
+  - first:
+      1: 100072
+    second: SK_Stag_LOD3
+  - first:
+      4: 400000
+    second: //RootNode
+  - first:
+      4: 400002
+    second: root
+  - first:
+      4: 400004
+    second: SK_Stag
+  - first:
+      4: 400006
+    second: STAG_
+  - first:
+      4: 400008
+    second: STAG_ Head
+  - first:
+      4: 400010
+    second: STAG_ L Calf
+  - first:
+      4: 400012
+    second: STAG_ L Clavicle
+  - first:
+      4: 400014
+    second: STAG_ L Finger0
+  - first:
+      4: 400016
+    second: STAG_ L Foot
+  - first:
+      4: 400018
+    second: STAG_ L Forearm
+  - first:
+      4: 400020
+    second: STAG_ L Hand
+  - first:
+      4: 400022
+    second: STAG_ L HorseLink
+  - first:
+      4: 400024
+    second: STAG_ L Thigh
+  - first:
+      4: 400026
+    second: STAG_ L UpperArm
+  - first:
+      4: 400028
+    second: STAG_ Neck
+  - first:
+      4: 400030
+    second: STAG_ Neck1
+  - first:
+      4: 400032
+    second: STAG_ Neck2
+  - first:
+      4: 400034
+    second: STAG_ Pelvis
+  - first:
+      4: 400036
+    second: STAG_ Ponytail1
+  - first:
+      4: 400038
+    second: STAG_ R Calf
+  - first:
+      4: 400040
+    second: STAG_ R Clavicle
+  - first:
+      4: 400042
+    second: STAG_ R Finger0
+  - first:
+      4: 400044
+    second: STAG_ R Foot
+  - first:
+      4: 400046
+    second: STAG_ R Forearm
+  - first:
+      4: 400048
+    second: STAG_ R Hand
+  - first:
+      4: 400050
+    second: STAG_ R HorseLink
+  - first:
+      4: 400052
+    second: STAG_ R Thigh
+  - first:
+      4: 400054
+    second: STAG_ R UpperArm
+  - first:
+      4: 400056
+    second: STAG_ Spine
+  - first:
+      4: 400058
+    second: STAG_ Spine1
+  - first:
+      4: 400060
+    second: STAG_ Tail
+  - first:
+      4: 400062
+    second: STAG_ Tail1
+  - first:
+      4: 400064
+    second: STAG_ Tail2
+  - first:
+      4: 400066
+    second: SK_Stag_LOD0
+  - first:
+      4: 400068
+    second: SK_Stag_LOD1
+  - first:
+      4: 400070
+    second: SK_Stag_LOD2
+  - first:
+      4: 400072
+    second: SK_Stag_LOD3
+  - first:
+      43: 4300000
+    second: SK_Stag
+  - first:
+      43: 4300002
+    second: SK_Stag_LOD0
+  - first:
+      43: 4300004
+    second: SK_Stag_LOD1
+  - first:
+      43: 4300006
+    second: SK_Stag_LOD2
+  - first:
+      43: 4300008
+    second: SK_Stag_LOD3
+  - first:
+      74: 7400000
+    second: Take 001
+  - first:
+      95: 9500000
+    second: //RootNode
+  - first:
+      137: 13700000
+    second: SK_Stag
+  - first:
+      137: 13700002
+    second: SK_Stag_LOD0
+  - first:
+      137: 13700004
+    second: SK_Stag_LOD1
+  - first:
+      137: 13700006
+    second: SK_Stag_LOD2
+  - first:
+      137: 13700008
+    second: SK_Stag_LOD3
+  - first:
+      205: 20500000
+    second: //RootNode
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_DeerStag
+    second: {fileID: 2100000, guid: 6d5af56e29086ea45a619047853dfa29, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_DeerStagFur
+    second: {fileID: 2100000, guid: 585e7a562dd6a4642a9f50bb5bef9a75, type: 2}
+  materials:
+    materialImportMode: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 0
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages:
+    - 0.25
+    - 0.125
+    - 0.0625
+    - 0.01
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
+    importVisibility: 0
+    importBlendShapes: 1
+    importCameras: 0
+    importLights: 0
+    fileIdsGeneration: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    meshOptimizationFlags: -1
+    indexFormat: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 4
+    normalCalculationMode: 0
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 1
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  referencedClips:
+  - b133c2fe39a1a4f44ade45c36e43c447
+  - e61fa962bda03b24ca230bc00cfcf4e6
+  - b0d200fdaf9f4584ab68746a91a21d76
+  - 0fc830a177ba32f4c9c7fd58fa349363
+  - c651a928426f4b44bb3efa1defe04fec
+  - 987187911f7cdfa40bda136b22794193
+  - 42d737444a88b594ca7f0251ef6f962a
+  - 8215fa7c0121f0345a6f8a07dfbef197
+  - 9ab1aaaa8b9968f42b7ef0277729d0f7
+  - 73bfa751bfd79924dab7dcd0cc393052
+  - 929a0fdfcf1b09e4c9d35fbca7140ecb
+  - 850bfbecc19c3124d945d3d3b1b5bb75
+  - b66414aa31312d44b8aa8f0214deee54
+  - c2fa2d7ef544f3349916d6e3ee929fbe
+  - 93c21dbe1f65a06449ff14acfe214440
+  - 3da1eb97261da4443bf0f103aa67ebee
+  - 6a0fa4e4b4d562947aa388c962a08ca1
+  - e92ff53cd26ee7d4caebf95fc596030e
+  - ebeb290fcb1b2294395e08fb6e383f48
+  - 625e1c6eebd4e494483e6fb486c604cf
+  - 6390b221e9b16a54cab972b8a8cc23e8
+  - 57d5d28497c8cfc42bbc564a1230833d
+  - 9e5bbaa5c3bae13488d2e398172440c3
+  - 42a03a1c1548e7444970ac90721af40a
+  - 20c77940c9f177d4a9e5e7d088417ca4
+  importAnimation: 1
+  humanDescription:
+    serializedVersion: 3
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    globalScale: 1
+    rootMotionBoneName: root
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 0
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
+  animationType: 2
+  humanoidOversampling: 1
+  avatarSetup: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -26,7 +26,7 @@ public class FrustrumLineOfSight : MonoBehaviour
     [SerializeField] 
     private Color meshColor = Color.yellow;
 
-    private Collider[] colliders = new Collider[50];
+    private Collider[] colliders = new Collider[100];
     private Mesh mesh;
     private int count;
     private float scanInterval;
@@ -55,7 +55,6 @@ public class FrustrumLineOfSight : MonoBehaviour
     private void Scan()
     {
         count = Physics.OverlapSphereNonAlloc(transform.position, distance, colliders, layers, QueryTriggerInteraction.Collide);
-
         objects.Clear();
         var objectSpeedDict = new Dictionary<GameObject, float>();
         for (int i = 0; i < count; i++)
@@ -64,9 +63,9 @@ public class FrustrumLineOfSight : MonoBehaviour
             if (IsInSight(obj) && IsMoving(obj))
             {
                 float objSpeed = GetObjectSpeed(obj);
-                if (objSpeed >= fastMovementThreshold)
+                if (objSpeed > fastMovementThreshold)
                 {
-                    Debug.Log("[Fustrum] Detected fast moving object: "+obj.name+" speed: "+objSpeed);
+                    //Debug.Log("[Fustrum] Detected fast moving object: "+obj.name+" speed: "+objSpeed);
                     onFastMovement?.Invoke(obj);
                 } 
                 objectSpeedDict.TryAdd(obj, objSpeed);
@@ -123,7 +122,7 @@ public class FrustrumLineOfSight : MonoBehaviour
                 motionSaliency = 1f;
                 break;
         }
-        return motionSaliency + movingObj.GetVelocity().sqrMagnitude;
+        return motionSaliency * movingObj.GetVelocity().sqrMagnitude;
     }
 
     public int Filter(GameObject[] buffer, string layerName)

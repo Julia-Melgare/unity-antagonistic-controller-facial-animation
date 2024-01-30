@@ -1,8 +1,6 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using Unity.Mathematics;
 using UnityEngine;
+using Voxus.Random;
 
 public class FaceController : MonoBehaviour
 {
@@ -131,6 +129,8 @@ public class FaceController : MonoBehaviour
     private bool amAvoiding = false;
     private Vector3 defaultMiddlePoint;
 
+    private RandomGaussian headAccAngleDist;
+
     private void Start()
     {
         StartCoroutine(Blink());
@@ -139,6 +139,7 @@ public class FaceController : MonoBehaviour
         initialLeftEyeForward = leftEyeTransform.forward;
         initialRightEyeForward = rightEyeTransform.forward;
         defaultMiddlePoint = Vector3.Lerp(leftEyeTransform.position, rightEyeTransform.position, 0.3f);
+        headAccAngleDist = new RandomGaussian(60, 10);
     }
 
     private void Update()
@@ -175,28 +176,30 @@ public class FaceController : MonoBehaviour
             if ((SurpassedRotationConstraints(leftEyeTransform, eyeXComfortableRotationLimit, eyeYComfortableRotationLimit, eyeZComfortableRotationLimit) || SurpassedRotationConstraints(leftEyeTransform, eyeXComfortableRotationLimit, eyeYComfortableRotationLimit, eyeZComfortableRotationLimit)) && attentionController.GetCurrentFixationTime() > 0.2f)
             {
                 // Rotate neck towards eyes middle point
-                SetRotation(neckTransform, middlePoint, neckMovementSpeed);
+                SetRotation(neckTransform, middlePoint, neckMovementSpeed/2f);
                 // Clamp neck rotation
-                ClampRotation(neckTransform, -neckXRotationLimit, neckXRotationLimit, neckYRotationLimit, neckZRotationLimit);
+                ClampRotation(neckTransform, neckXRotationLimit, neckXRotationLimit, neckYRotationLimit, neckZRotationLimit);
 
                 // Head will copy neck rotation
-                float singleStep = neckMovementSpeed * Time.deltaTime;
+                float singleStep = neckMovementSpeed/1.5f * Time.deltaTime;
                 headTransform.rotation = Quaternion.RotateTowards(headTransform.rotation, neckTransform.rotation, singleStep);
                 // Clamp head rotation
-                ClampRotation(headTransform, -neckXRotationLimit, neckXRotationLimit, neckYRotationLimit, neckZRotationLimit);
+                ClampRotation(headTransform, neckXRotationLimit, neckXRotationLimit, neckYRotationLimit, neckZRotationLimit);
             }
 
             if (attentionController.IsFocusingOnPath())
             {
                 // If I'm focusing on path, neck will follow direction too
-                SetRotation(neckTransform, objectOfInterest, neckMovementSpeed);
+                var neckDirection = objectOfInterest.transform.position - neckTransform.position;
+                neckDirection.y = initialNeckForward.y;
+                SetRotation(neckTransform, neckDirection, neckMovementSpeed/2f);
                 // Clamp neck rotation
-                ClampRotation(neckTransform, -neckXRotationLimit, neckXRotationLimit, neckYRotationLimit, neckZRotationLimit);
+                ClampRotation(neckTransform, neckXRotationLimit, neckXRotationLimit, neckYRotationLimit, neckZRotationLimit);
                 // Head will copy neck rotation
-                float singleStep = neckMovementSpeed * Time.deltaTime;
+                float singleStep = neckMovementSpeed/2f * Time.deltaTime;
                 headTransform.rotation = Quaternion.RotateTowards(headTransform.rotation, neckTransform.rotation, singleStep);
                 // Clamp head rotation
-                ClampRotation(headTransform, -neckXRotationLimit, neckXRotationLimit, neckYRotationLimit, neckZRotationLimit);
+                ClampRotation(headTransform, neckXRotationLimit, neckXRotationLimit, neckYRotationLimit, neckZRotationLimit);
             }
 
             // Animate eye blendhsapes according to gaze direction
@@ -243,14 +246,10 @@ public class FaceController : MonoBehaviour
         float zRotation = localRotation.z > 180 ? localRotation.z - 360 : localRotation.z;
         objectTransform.localEulerAngles = new Vector3
             (
-                Mathf.Clamp(xRotation, xUpRotationLimit, xDownRotationLimit),
+                Mathf.Clamp(xRotation, -xUpRotationLimit, xDownRotationLimit),
                 Mathf.Clamp(yRotation, -yRotationLimit, yRotationLimit),
                 Mathf.Clamp(zRotation, -zRotationLimit, zRotationLimit)
             );
-
-        /*if(xRotation < -xRotationLimit || xRotation > xRotationLimit || yRotation < -yRotationLimit || yRotation > yRotationLimit || zRotation < -zRotationLimit || zRotation > zRotationLimit)
-            return true;    
-        return false;*/
     }
 
     private bool SurpassedRotationConstraints(Transform objectTransform, float xRotationLimit, float yRotationLimit, float zRotationLimit)

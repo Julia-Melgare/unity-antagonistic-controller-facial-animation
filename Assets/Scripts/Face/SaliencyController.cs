@@ -20,6 +20,8 @@ public class SaliencyController : MonoBehaviour
 
     [Header("Saliency Map Settings")]
     [SerializeField]
+    private int saliencyMapSize = 16;
+    [SerializeField]
     private float scanFrequency = 30f;
     [SerializeField]
     private LayerMask scanLayerMask;
@@ -51,7 +53,7 @@ public class SaliencyController : MonoBehaviour
         scanInterval = 1.0f / scanFrequency;
         auxiliaryAgentCamera.enabled = false;
         salientObjectsDict = new Dictionary<GameObject, float>();
-        saliencyMapOutput = new Texture2D(45, 45);
+        saliencyMapOutput = new Texture2D(16, 16);
     }
     void Update()
     {
@@ -118,12 +120,11 @@ public class SaliencyController : MonoBehaviour
         salientObjects = new List<GameObject>(salientObjectsDict.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value).Keys);
         if (debugSaliencyRaycast)
         {
-            Texture2D newTexture = new Texture2D(45, 45);
+            Texture2D newTexture = new Texture2D(16, 16);
             newTexture.SetPixels(saliencyMapPixels);
             newTexture.Apply();
             saliencyMapImage.texture = newTexture;
         }
-        
     }
     public List<GameObject> GetSalientObjects()
     {
@@ -132,14 +133,20 @@ public class SaliencyController : MonoBehaviour
 
     public float GetObjectSaliency(GameObject obj)
     {
-        return salientObjectsDict.GetValueOrDefault(obj, .95f);
+        if (salientObjectsDict == null) return .5f;
+        return salientObjectsDict.GetValueOrDefault(obj, .5f);
     }
 
     private void InferSaliencyMap()
     {
         var input = GetCameraImage();
-        Thread saliencyInference = new Thread(() => RunSaliencyInference(input));
-        saliencyInference.Start();
+        inferenceClient.Infer(input, output =>
+        {
+            saliencyMapBytes = output;
+        }, error =>
+        {
+            //Debug.LogError(error.Message);
+        });
     }
 
     private byte[] GetCameraImage()
@@ -156,7 +163,7 @@ public class SaliencyController : MonoBehaviour
         currentVisionFrame = image;
 
         // Encode to PNG
-        byte[] bytes = image.EncodeToPNG();
+        byte[] bytes = image.EncodeToJPG();
 
         // Set render texture back to default
         RenderTexture.active = currentRT;
@@ -181,17 +188,5 @@ public class SaliencyController : MonoBehaviour
         auxiliaryAgentCamera.transform.rotation = agentCamera.transform.rotation;
         auxiliaryAgentCamera.transform.localScale = agentCamera.transform.localScale;
         auxiliaryAgentCamera.enabled = false;
-    }
-
-    private void RunSaliencyInference(byte[] input)
-    {
-        Profiler.BeginThreadProfiling("NetMQ", "RunSaliencyInference");
-        inferenceClient.Infer(input, output =>
-        {
-            saliencyMapBytes = output;
-        }, error =>
-        {
-            //Debug.LogError(error.Message);
-        });
     }
 }

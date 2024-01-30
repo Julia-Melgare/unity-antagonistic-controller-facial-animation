@@ -1,0 +1,394 @@
+fileFormatVersion: 2
+guid: 42ee9c8df16c70346899ee06feb1c41b
+ModelImporter:
+  serializedVersion: 19301
+  internalIDToNameTable:
+  - first:
+      1: 100000
+    second: //RootNode
+  - first:
+      1: 100002
+    second: DeerDoe_
+  - first:
+      1: 100004
+    second: DeerDoe_ Head
+  - first:
+      1: 100006
+    second: DeerDoe_ L Calf
+  - first:
+      1: 100008
+    second: DeerDoe_ L Clavicle
+  - first:
+      1: 100010
+    second: DeerDoe_ L Finger0
+  - first:
+      1: 100012
+    second: DeerDoe_ L Foot
+  - first:
+      1: 100014
+    second: DeerDoe_ L Forearm
+  - first:
+      1: 100016
+    second: DeerDoe_ L Hand
+  - first:
+      1: 100018
+    second: DeerDoe_ L HorseLink
+  - first:
+      1: 100020
+    second: DeerDoe_ L Thigh
+  - first:
+      1: 100022
+    second: DeerDoe_ L UpperArm
+  - first:
+      1: 100024
+    second: DeerDoe_ Neck
+  - first:
+      1: 100026
+    second: DeerDoe_ Neck1
+  - first:
+      1: 100028
+    second: DeerDoe_ Neck2
+  - first:
+      1: 100030
+    second: DeerDoe_ Pelvis
+  - first:
+      1: 100032
+    second: DeerDoe_ Ponytail1
+  - first:
+      1: 100034
+    second: DeerDoe_ R Calf
+  - first:
+      1: 100036
+    second: DeerDoe_ R Clavicle
+  - first:
+      1: 100038
+    second: DeerDoe_ R Finger0
+  - first:
+      1: 100040
+    second: DeerDoe_ R Foot
+  - first:
+      1: 100042
+    second: DeerDoe_ R Forearm
+  - first:
+      1: 100044
+    second: DeerDoe_ R Hand
+  - first:
+      1: 100046
+    second: DeerDoe_ R HorseLink
+  - first:
+      1: 100048
+    second: DeerDoe_ R Thigh
+  - first:
+      1: 100050
+    second: DeerDoe_ R UpperArm
+  - first:
+      1: 100052
+    second: DeerDoe_ Spine
+  - first:
+      1: 100054
+    second: DeerDoe_ Spine1
+  - first:
+      1: 100056
+    second: DeerDoe_ Tail
+  - first:
+      1: 100058
+    second: DeerDoe_ Tail1
+  - first:
+      1: 100060
+    second: DeerDoe_ Tail2
+  - first:
+      1: 100062
+    second: root
+  - first:
+      1: 100064
+    second: SK_DeerDoe
+  - first:
+      1: 100066
+    second: SK_DeerDoe_LOD0
+  - first:
+      1: 100068
+    second: SK_DeerDoe_LOD1
+  - first:
+      1: 100070
+    second: SK_DeerDoe_LOD2
+  - first:
+      1: 100072
+    second: SK_DeerDoe_LOD3
+  - first:
+      4: 400000
+    second: //RootNode
+  - first:
+      4: 400002
+    second: DeerDoe_
+  - first:
+      4: 400004
+    second: DeerDoe_ Head
+  - first:
+      4: 400006
+    second: DeerDoe_ L Calf
+  - first:
+      4: 400008
+    second: DeerDoe_ L Clavicle
+  - first:
+      4: 400010
+    second: DeerDoe_ L Finger0
+  - first:
+      4: 400012
+    second: DeerDoe_ L Foot
+  - first:
+      4: 400014
+    second: DeerDoe_ L Forearm
+  - first:
+      4: 400016
+    second: DeerDoe_ L Hand
+  - first:
+      4: 400018
+    second: DeerDoe_ L HorseLink
+  - first:
+      4: 400020
+    second: DeerDoe_ L Thigh
+  - first:
+      4: 400022
+    second: DeerDoe_ L UpperArm
+  - first:
+      4: 400024
+    second: DeerDoe_ Neck
+  - first:
+      4: 400026
+    second: DeerDoe_ Neck1
+  - first:
+      4: 400028
+    second: DeerDoe_ Neck2
+  - first:
+      4: 400030
+    second: DeerDoe_ Pelvis
+  - first:
+      4: 400032
+    second: DeerDoe_ Ponytail1
+  - first:
+      4: 400034
+    second: DeerDoe_ R Calf
+  - first:
+      4: 400036
+    second: DeerDoe_ R Clavicle
+  - first:
+      4: 400038
+    second: DeerDoe_ R Finger0
+  - first:
+      4: 400040
+    second: DeerDoe_ R Foot
+  - first:
+      4: 400042
+    second: DeerDoe_ R Forearm
+  - first:
+      4: 400044
+    second: DeerDoe_ R Hand
+  - first:
+      4: 400046
+    second: DeerDoe_ R HorseLink
+  - first:
+      4: 400048
+    second: DeerDoe_ R Thigh
+  - first:
+      4: 400050
+    second: DeerDoe_ R UpperArm
+  - first:
+      4: 400052
+    second: DeerDoe_ Spine
+  - first:
+      4: 400054
+    second: DeerDoe_ Spine1
+  - first:
+      4: 400056
+    second: DeerDoe_ Tail
+  - first:
+      4: 400058
+    second: DeerDoe_ Tail1
+  - first:
+      4: 400060
+    second: DeerDoe_ Tail2
+  - first:
+      4: 400062
+    second: root
+  - first:
+      4: 400064
+    second: SK_DeerDoe
+  - first:
+      4: 400066
+    second: SK_DeerDoe_LOD0
+  - first:
+      4: 400068
+    second: SK_DeerDoe_LOD1
+  - first:
+      4: 400070
+    second: SK_DeerDoe_LOD2
+  - first:
+      4: 400072
+    second: SK_DeerDoe_LOD3
+  - first:
+      43: 4300000
+    second: SK_DeerDoe
+  - first:
+      43: 4300002
+    second: SK_DeerDoe_LOD0
+  - first:
+      43: 4300004
+    second: SK_DeerDoe_LOD1
+  - first:
+      43: 4300006
+    second: SK_DeerDoe_LOD2
+  - first:
+      43: 4300008
+    second: SK_DeerDoe_LOD3
+  - first:
+      74: 7400000
+    second: Take 001
+  - first:
+      95: 9500000
+    second: //RootNode
+  - first:
+      137: 13700000
+    second: SK_DeerDoe
+  - first:
+      137: 13700002
+    second: SK_DeerDoe_LOD0
+  - first:
+      137: 13700004
+    second: SK_DeerDoe_LOD1
+  - first:
+      137: 13700006
+    second: SK_DeerDoe_LOD2
+  - first:
+      137: 13700008
+    second: SK_DeerDoe_LOD3
+  - first:
+      205: 20500000
+    second: //RootNode
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_DeerDoe
+    second: {fileID: 2100000, guid: 1cb8a527abeb24c4da6d6f09eb243d37, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_DeerDoeFur
+    second: {fileID: 2100000, guid: 534f1263f9444b44bbf8c0a6dc56ae53, type: 2}
+  materials:
+    materialImportMode: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 0
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 0
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages:
+    - 0.25
+    - 0.125
+    - 0.0625
+    - 0.01
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
+    importVisibility: 0
+    importBlendShapes: 1
+    importCameras: 0
+    importLights: 0
+    fileIdsGeneration: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    meshOptimizationFlags: -1
+    indexFormat: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 4
+    normalCalculationMode: 0
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 1
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  referencedClips:
+  - 84e500e7bcf26ba4792001b5f6f4392f
+  - 33ae9110a908dc0448e8c24807606e16
+  - c6f5b8eebb28ac542a86d66a72e4b00c
+  - 4f8091bb58ef3f84a8c22680644bd50b
+  - ced1ee43ead8a274f9b9d89cd9aec02c
+  - 02990329eb9b79e43ad4c70680627e4a
+  - 826c868e602a9d145bf62aa5d1b54dd3
+  - 2becd3218c3b8f64e91bc667c437103c
+  - 67ba73621491ef54a972d8cdb5f71a35
+  - 511c4c8de63fd044d817900ffed82cae
+  - e0e14ca095996ea42876f2f8cbfc334e
+  - 7d1c7433546b73540849bbfc32477da5
+  - 66c32c69b63cf8647830f8e2c332e9a6
+  - f447d3359b7cf2740a02fac86de892e5
+  - d9077945e9632014c97b05175f0a2698
+  - e51ab266dbfb4b344888614512af1540
+  - a1862f34a2f6b1a4487781292d1cd47c
+  - bb27c5c6296750f47861b3126e4e96fc
+  - 90c5ba0b1a530f14882996210167b478
+  - 4c24856408c87a04c90133d86159ce8e
+  - a206c093fd80ca64e8cf67c67d17601e
+  - 4eb99bd2da6b1f144b84f0d6b498e592
+  importAnimation: 1
+  humanDescription:
+    serializedVersion: 3
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    globalScale: 1
+    rootMotionBoneName: root
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 0
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
+  animationType: 2
+  humanoidOversampling: 1
+  avatarSetup: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
