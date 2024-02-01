@@ -122,7 +122,7 @@ public class FrustrumLineOfSight : MonoBehaviour
                 motionSaliency = 1f;
                 break;
         }
-        return motionSaliency * movingObj.GetVelocity().sqrMagnitude;
+        return motionSaliency + movingObj.GetVelocity().sqrMagnitude;
     }
 
     public int Filter(GameObject[] buffer, string layerName)

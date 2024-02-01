@@ -219,7 +219,7 @@ public class AttentionController : MonoBehaviour
 
     private float GetObjSaliencyScore(GameObject obj)
     {
-        return (saliencyController.GetObjectSaliency(obj) + frustrumLineOfSight.GetObjectSpeed(obj)) * (inhibitionOfReturnTime - objectsFocusedOn.GetValueOrDefault(obj.GetInstanceID(), 0f));
+        return (saliencyController.GetObjectSaliency(obj) * 0.5f + frustrumLineOfSight.GetObjectSpeed(obj) * 1.0f) * (inhibitionOfReturnTime - objectsFocusedOn.GetValueOrDefault(obj.GetInstanceID(), 0f));
     }
 
     private float GetMaxObjectSaliency()

@@ -133,8 +133,8 @@ public class SaliencyController : MonoBehaviour
 
     public float GetObjectSaliency(GameObject obj)
     {
-        if (salientObjectsDict == null) return .5f;
-        return salientObjectsDict.GetValueOrDefault(obj, .5f);
+        if (salientObjectsDict == null) return .95f;
+        return salientObjectsDict.GetValueOrDefault(obj, .95f);
     }
 
     private void InferSaliencyMap()

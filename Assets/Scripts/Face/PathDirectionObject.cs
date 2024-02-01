@@ -29,8 +29,6 @@ public class PathDirectionObject : MonoBehaviour
 
     private float currentPosInPath;
     private float moveSpeed = 1f;
-
-    private float userInputModifier;
     private CinemachineSmoothPath defaultCurve = null;
 
     void Start()
@@ -84,7 +82,15 @@ public class PathDirectionObject : MonoBehaviour
 
     private void UpdateDefaultCurve()
     {
-        defaultCurve.m_Waypoints[1].position.z += Input.GetAxis("Horizontal");
+        float userInput = Input.GetAxis("Horizontal");
+        if (userInput == 0)
+        {
+            defaultCurve.m_Waypoints[1].position = Vector3.MoveTowards(defaultCurve.m_Waypoints[1].position, (defaultCurve.m_Waypoints[0].position + defaultCurve.m_Waypoints[2].position)/2f, 4 * Time.deltaTime);
+        }
+        else
+        {
+            defaultCurve.m_Waypoints[1].position.z += Input.GetAxis("Horizontal");
+        }        
         defaultCurve.m_Waypoints[1].position.z = Mathf.Clamp(defaultCurve.m_Waypoints[1].position.z, 118f, 130f);
         defaultCurve.InvalidateDistanceCache();
     }
@@ -127,7 +133,7 @@ public class PathDirectionObject : MonoBehaviour
         defaultCurve.m_Waypoints[1] = middleWaypoint;
         defaultCurve.m_Waypoints[2] = endWaypoint;
         defaultCurve.m_Waypoints[0].position = rigidBodyController.transform.position;
-        defaultCurve.m_Waypoints[2].position = rigidBodyController.transform.position + (rigidBodyController.transform.forward * stepsAhead * 2f);
+        defaultCurve.m_Waypoints[2].position = rigidBodyController.transform.position + (rigidBodyController.transform.forward * maxStepsAhead * 2f);
         defaultCurve.m_Waypoints[1].position = (defaultCurve.m_Waypoints[0].position + defaultCurve.m_Waypoints[2].position)/2f;
     }
 
