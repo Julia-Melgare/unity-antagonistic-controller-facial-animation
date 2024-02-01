@@ -30,12 +30,13 @@ public class PathDirectionObject : MonoBehaviour
     private float currentPosInPath;
     private float moveSpeed = 1f;
 
-    private Vector3 previousForward;
+    private float userInputModifier;
+    private CinemachineSmoothPath defaultCurve = null;
 
     void Start()
     {
+        if (!rigidBodyController.followPath) InitializeDefaultCurve();
         if (eyeTransform == null) eyeTransform = transform.parent.gameObject.transform; // if Face is not assigned, assume it's the parent object
-        previousForward = eyeTransform.forward;
     }
 
     void Update()
@@ -53,21 +54,20 @@ public class PathDirectionObject : MonoBehaviour
             moveSpeed = 0;
         }
 
-        if (pathTrajectory != null)
+        if (rigidBodyController.followPath)
         {
             Vector3 positionInPath = GetPositionInPath(currentPosInPath + moveSpeed * Time.deltaTime);
             transform.position = new Vector3(positionInPath.x, height + heightOffset, positionInPath.z); // fix y to desired height
         }
-        else //Assume simple trajectory continuation
+        else //Assume simple trajectory estimation
         {
-            Vector3 newPos = Vector3.MoveTowards(transform.position, rigidBodyController.transform.position + (rigidBodyController.transform.forward * stepsAhead), Mathf.Abs(moveSpeed * Time.deltaTime));
-            Debug.DrawRay(eyeTransform.position, previousForward*100f, Color.magenta);
-            transform.position = new Vector3(newPos.x, height, newPos.z);
+            UpdateDefaultCurve();
+            Vector3 positionInPath = GetPositionInDefaultCurve(currentPosInPath + moveSpeed * Time.deltaTime);
+            transform.position = new Vector3(positionInPath.x, height + heightOffset, positionInPath.z);
         }
 
         UpdateStepsAheadValue(rigidBodyController.groundSlopeAngle);
         //UpdateHeight(rigidBodyController.groundSlopeAngle);
-        previousForward = rigidBodyController.transform.forward;        
     }
 
     private void UpdateStepsAheadValue(float slopeAngle, float maxSlopeAngle = 30)
@@ -82,21 +82,12 @@ public class PathDirectionObject : MonoBehaviour
         height = (maxHeight - minHeight)/2;//maxHeight - (minHeight + (slopeAngle * (maxHeight - minHeight))/maxSlopeAngle);    
     }*/
 
-    public Vector3 GetPositionInPath(float distanceAlongPath)
+    private void UpdateDefaultCurve()
     {
-        if (pathTrajectory != null)
-        {
-            currentPosInPath = pathTrajectory.StandardizeUnit(distanceAlongPath, positionUnits);
-            return pathTrajectory.EvaluatePositionAtUnit(currentPosInPath, positionUnits);
-        }
-        return Vector3.zero;
+        defaultCurve.m_Waypoints[1].position.z += Input.GetAxis("Horizontal");
+        defaultCurve.m_Waypoints[1].position.z = Mathf.Clamp(defaultCurve.m_Waypoints[1].position.z, 118f, 130f);
+        defaultCurve.InvalidateDistanceCache();
     }
-
-    public float GetGroundSlopeAngle()
-    {
-        return rigidBodyController.groundSlopeAngle;
-    }
-
 
     private void CheckGround()
     {
@@ -121,5 +112,47 @@ public class PathDirectionObject : MonoBehaviour
                 height += hit.distance;
             }
         }        
+    }
+
+    private void InitializeDefaultCurve()
+    {
+        GameObject path = new GameObject("PathTrajectory");
+        path.transform.parent = rigidBodyController.transform;
+        defaultCurve = path.AddComponent<CinemachineSmoothPath>();
+        CinemachineSmoothPath.Waypoint startWaypoint = new CinemachineSmoothPath.Waypoint();
+        CinemachineSmoothPath.Waypoint middleWaypoint = new CinemachineSmoothPath.Waypoint();
+        CinemachineSmoothPath.Waypoint endWaypoint = new CinemachineSmoothPath.Waypoint();
+        defaultCurve.m_Waypoints = new CinemachineSmoothPath.Waypoint[3];
+        defaultCurve.m_Waypoints[0] = startWaypoint;
+        defaultCurve.m_Waypoints[1] = middleWaypoint;
+        defaultCurve.m_Waypoints[2] = endWaypoint;
+        defaultCurve.m_Waypoints[0].position = rigidBodyController.transform.position;
+        defaultCurve.m_Waypoints[2].position = rigidBodyController.transform.position + (rigidBodyController.transform.forward * stepsAhead * 2f);
+        defaultCurve.m_Waypoints[1].position = (defaultCurve.m_Waypoints[0].position + defaultCurve.m_Waypoints[2].position)/2f;
+    }
+
+    public Vector3 GetPositionInPath(float distanceAlongPath)
+    {
+        if (pathTrajectory != null)
+        {
+            currentPosInPath = pathTrajectory.StandardizeUnit(distanceAlongPath, positionUnits);
+            return pathTrajectory.EvaluatePositionAtUnit(currentPosInPath, positionUnits);
+        }
+        return Vector3.zero;
+    }
+
+    public Vector3 GetPositionInDefaultCurve(float distanceAlongCurve)
+    {
+        if (defaultCurve != null)
+        {
+            currentPosInPath = defaultCurve.StandardizeUnit(distanceAlongCurve, positionUnits);
+            return defaultCurve.EvaluatePositionAtUnit(currentPosInPath, positionUnits);
+        }
+        return Vector3.zero;
+    }
+
+    public float GetGroundSlopeAngle()
+    {
+        return rigidBodyController.groundSlopeAngle;
     }
 }
