@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<< Updated upstream:Assets/Environment/Scenes/BOKI/LowPolyNature/Materials/Packages_com.unity.render-pipelines.universal_Runtime_Materials_New Terrain Material.mat.meta
 guid: 0b257ba1bf091364b8edde2b993ee66c
+=======
+guid: c31227d5ac4f09f4cbf2269d8cf52ac0
+>>>>>>> Stashed changes:Assets/PolygonFarm/Rigged/Materials/Farm15.mat.meta
 NativeFormatImporter:
   externalObjects: {}
   mainObjectFileID: 2100000

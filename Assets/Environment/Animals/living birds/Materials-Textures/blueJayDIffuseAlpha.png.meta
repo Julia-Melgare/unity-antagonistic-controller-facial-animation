@@ -1,5 +1,11 @@
 fileFormatVersion: 2
+<<<<<<< Updated upstream:Assets/Environment/Animals/living birds/Materials-Textures/blueJayDIffuseAlpha.png.meta
 guid: 586d714af0e83284da0c05b78818dbcd
+=======
+guid: 2c09cf6f72d830d43bdbfd006cb7d19f
+timeCreated: 1556771445
+licenseType: Store
+>>>>>>> Stashed changes:Assets/PolygonFarm/Textures/PolygonFarm_Texture_01_A.png.meta
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}

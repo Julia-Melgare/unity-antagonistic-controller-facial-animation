@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<< Updated upstream:Assets/Environment/Scenes/BOKI/LowPolyNature/Models/bridge_1.fbx.meta
 guid: 9614c8f1c72eb1344898ac7d679389b7
+=======
+guid: 2f72c620dc4013547b47d101486edec4
+>>>>>>> Stashed changes:Assets/PolygonFarm/Rigged/SM_Prop_Sunflower_01-rigged.fbx.meta
 ModelImporter:
   serializedVersion: 20200
   internalIDToNameTable: []

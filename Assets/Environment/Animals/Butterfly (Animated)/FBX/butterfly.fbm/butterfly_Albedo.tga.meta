@@ -1,6 +1,11 @@
 fileFormatVersion: 2
+<<<<<<< Updated upstream:Assets/Environment/Animals/Butterfly (Animated)/FBX/butterfly.fbm/butterfly_Albedo.tga.meta
 guid: 3ea3d3361ab100043a14f9a9bc253219
 timeCreated: 1458052327
+=======
+guid: 504f835fd1c65ff479cfd0c18388c52c
+timeCreated: 1556852351
+>>>>>>> Stashed changes:Assets/PolygonFarm/Textures/Circle_Texture.png.meta
 licenseType: Store
 TextureImporter:
   fileIDToRecycleName: {}

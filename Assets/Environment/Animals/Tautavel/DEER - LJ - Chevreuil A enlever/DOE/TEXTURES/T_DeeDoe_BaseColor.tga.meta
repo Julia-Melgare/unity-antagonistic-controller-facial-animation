@@ -1,6 +1,11 @@
 fileFormatVersion: 2
+<<<<<<< Updated upstream:Assets/Environment/Animals/Tautavel/DEER - LJ - Chevreuil A enlever/DOE/TEXTURES/T_DeeDoe_BaseColor.tga.meta
 guid: 0bf1cb4fcbf48b141905fc43a34835f6
 timeCreated: 1502471491
+=======
+guid: 043e30d7e873b934ea8679df42e1bd09
+timeCreated: 1557107567
+>>>>>>> Stashed changes:Assets/PolygonFarm/Textures/PolygonFarm_Texture_01_B.png.meta
 licenseType: Store
 TextureImporter:
   fileIDToRecycleName: {}

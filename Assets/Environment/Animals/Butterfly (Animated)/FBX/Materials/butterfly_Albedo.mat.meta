@@ -1,6 +1,11 @@
 fileFormatVersion: 2
+<<<<<<< Updated upstream:Assets/Environment/Animals/Butterfly (Animated)/FBX/Materials/butterfly_Albedo.mat.meta
 guid: 1eca18427cc79454e8d1c5a80ce32292
 timeCreated: 1458051983
+=======
+guid: 91146b7d5658f4642a3ecdd23fec73c7
+timeCreated: 1556845990
+>>>>>>> Stashed changes:Assets/PolygonFarm/Prefabs/Characters/SM_Chr_Attach_CowboyHat_01.prefab.meta
 licenseType: Store
 NativeFormatImporter:
   userData: 

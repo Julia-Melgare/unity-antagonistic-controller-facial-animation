@@ -1,5 +1,11 @@
 fileFormatVersion: 2
+<<<<<<< Updated upstream:Assets/Environment/Animals/living birds/Materials-Textures/cardinalDiffuseAlpha.png.meta
 guid: fbc2e95e1bc44b64b9fb7199813e4553
+=======
+guid: 3b182ea982d0e3e449af80238f56b372
+timeCreated: 1557709629
+licenseType: Store
+>>>>>>> Stashed changes:Assets/PolygonFarm/Textures/PolygonFarm_Texture_Metallic_Dirt.tga.meta
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}

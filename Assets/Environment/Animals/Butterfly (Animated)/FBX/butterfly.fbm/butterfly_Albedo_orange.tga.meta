@@ -1,6 +1,11 @@
 fileFormatVersion: 2
+<<<<<<< Updated upstream:Assets/Environment/Animals/Butterfly (Animated)/FBX/butterfly.fbm/butterfly_Albedo_orange.tga.meta
 guid: f2cef43ccb8bcca46ab552129e995cab
 timeCreated: 1458052327
+=======
+guid: 13005526ea8ded24ebe2a7566c020010
+timeCreated: 1555551175
+>>>>>>> Stashed changes:Assets/PolygonFarm/Textures/Fence_Alpha.tga.meta
 licenseType: Store
 TextureImporter:
   fileIDToRecycleName: {}

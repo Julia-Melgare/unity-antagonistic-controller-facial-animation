@@ -1,6 +1,11 @@
 fileFormatVersion: 2
+<<<<<<< Updated upstream:Assets/Environment/Animals/Butterfly (Animated)/FBX/Materials/hair_unity.mat.meta
 guid: 29233972ab4bb4a4b86281621a41e597
 timeCreated: 1458051986
+=======
+guid: 0e3e62ee2f95a804ba6e8ffaf3e57e64
+timeCreated: 1556845990
+>>>>>>> Stashed changes:Assets/PolygonFarm/Prefabs/Characters/SM_Chr_Attach_CowboyHat_02.prefab.meta
 licenseType: Store
 NativeFormatImporter:
   userData: 

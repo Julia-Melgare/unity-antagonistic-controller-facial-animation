@@ -1,5 +1,11 @@
 fileFormatVersion: 2
+<<<<<<< Updated upstream:Assets/GoudeImplementation/fixation_map.png.meta
 guid: 89744fef5772c5b4bb1042cc7191a95e
+=======
+guid: 2594d7ed6bf3b654c854fd746a30053c
+timeCreated: 1557789689
+licenseType: Store
+>>>>>>> Stashed changes:Assets/PolygonFarm/Textures/Leaves_Diff.tga.meta
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}

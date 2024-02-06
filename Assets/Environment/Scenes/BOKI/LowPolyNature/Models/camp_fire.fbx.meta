@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<< Updated upstream:Assets/Environment/Scenes/BOKI/LowPolyNature/Models/camp_fire.fbx.meta
 guid: 42f3335d395186b4d89124562b7f4ac7
+=======
+guid: 4750395f1eb095d44b0a48dec75300ad
+>>>>>>> Stashed changes:Assets/PolygonFarm/Rigged/SM_Prop_Sunflower_02-rigged.fbx.meta
 ModelImporter:
   serializedVersion: 20200
   internalIDToNameTable: []
