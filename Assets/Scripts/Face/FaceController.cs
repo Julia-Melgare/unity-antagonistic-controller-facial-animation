@@ -1,8 +1,6 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using Unity.Mathematics;
 using UnityEngine;
+using Voxus.Random;
 
 public class FaceController : MonoBehaviour
 {
@@ -19,7 +17,9 @@ public class FaceController : MonoBehaviour
     [SerializeField]
     private Transform rightEyeTransform;
     [SerializeField]
-    private float eyeXRotationLimit = 55f;
+    private float eyeXUpRotationLimit = 55f;
+    [SerializeField]
+    private float eyeXDownRotationLimit = 55f;
     [SerializeField]
     private float eyeYRotationLimit = 55f;
     [SerializeField]
@@ -31,7 +31,9 @@ public class FaceController : MonoBehaviour
     [SerializeField]
     private float eyeZComfortableRotationLimit = 25f;
     [SerializeField]
-    private float eyeMovementSpeed = 1.74533f; //100 degrees in radians;
+    private float eyeSaccadeSpeed = 13.9626f; //800 degrees in radians;
+    [SerializeField]
+    private float eyePursuitSpeed = 1.74533f; //100 degrees in radians;
 
     private Vector3 initialLeftEyeForward;
     private Vector3 initialRightEyeForward;
@@ -101,6 +103,8 @@ public class FaceController : MonoBehaviour
 
     [Header("Neck Settings")]
     [SerializeField]
+    private Transform headTransform;
+    [SerializeField]
     private Transform neckTransform;
     [SerializeField]
     private float neckXRotationLimit = 70f;
@@ -109,7 +113,7 @@ public class FaceController : MonoBehaviour
     [SerializeField]
     private float neckZRotationLimit = 30f;
     [SerializeField]
-    private float neckMovementSpeed = 1.5f;
+    private float neckMovementSpeed = 3.14159f; // 180 degrees in radians
 
     [Header("Safety Regions Settings")]
     [SerializeField]
@@ -120,26 +124,33 @@ public class FaceController : MonoBehaviour
     private float minEyeDistance = 0.1f; // Minimum distance to eye needed to start animating squint blendshape
     private float maxEyeDistance = 0.05f; // Maximum eye distance for squint blendshape (we can change dynamically after)
     private Vector3 initialNeckForward;
+    private Vector3 initialHeadForward;
 
     private bool amAvoiding = false;
     private Vector3 defaultMiddlePoint;
+
+    private RandomGaussian headAccAngleDist;
 
     private void Start()
     {
         StartCoroutine(Blink());
         initialNeckForward = neckTransform.forward;
+        initialHeadForward = headTransform.forward;
         initialLeftEyeForward = leftEyeTransform.forward;
         initialRightEyeForward = rightEyeTransform.forward;
         defaultMiddlePoint = Vector3.Lerp(leftEyeTransform.position, rightEyeTransform.position, 0.3f);
+        headAccAngleDist = new RandomGaussian(60, 10);
     }
 
     private void Update()
     {
+        float currentFixationTime = attentionController.GetCurrentFixationTime();
+        float eyeMovementSpeed = currentFixationTime > 0.2f ? eyePursuitSpeed : eyeSaccadeSpeed;
         // Check face safety regions
-        if (!amAvoiding && (faceSafetyRegionLeft.closestDistanceToEye <= minEyeDistance || faceSafetyRegionRight.closestDistanceToEye <= minEyeDistance))
+        //if (!amAvoiding && (faceSafetyRegionLeft.closestDistanceToEye <= minEyeDistance || faceSafetyRegionRight.closestDistanceToEye <= minEyeDistance))
         {
-            amAvoiding = true;
-            faceAnimator.enabled = false;
+            //amAvoiding = true;
+            //faceAnimator.enabled = false;
         }
 
         /*if (amAvoiding && faceSafetyRegionLeft.closestDistanceToEye > minEyeDistance && faceSafetyRegionRight.closestDistanceToEye > minEyeDistance)
@@ -153,29 +164,42 @@ public class FaceController : MonoBehaviour
             GameObject objectOfInterest = attentionController.GetCurrentFocus();
 
             // Rotate eyes towards the target
-            SetRotation(leftEyeTransform, objectOfInterest, initialLeftEyeForward, eyeMovementSpeed);
-            SetRotation(rightEyeTransform, objectOfInterest, initialRightEyeForward, eyeMovementSpeed);
+            SetRotation(leftEyeTransform, objectOfInterest, eyeMovementSpeed);
+            SetRotation(rightEyeTransform, objectOfInterest, eyeMovementSpeed);
 
             // Clamp eye rotations
-            ClampRotation(leftEyeTransform, eyeXRotationLimit, eyeYRotationLimit, eyeZRotationLimit);
-            ClampRotation(rightEyeTransform, eyeXRotationLimit, eyeYRotationLimit, eyeZRotationLimit);
+            ClampRotation(leftEyeTransform, eyeXUpRotationLimit, eyeXDownRotationLimit, eyeYRotationLimit, eyeZRotationLimit);
+            ClampRotation(rightEyeTransform, eyeXUpRotationLimit, eyeXDownRotationLimit, eyeYRotationLimit, eyeZRotationLimit);
 
             Vector3 middlePoint = (leftEyeTransform.forward + rightEyeTransform.forward).normalized;
             
-            if (SurpassedRotationConstraints(leftEyeTransform, eyeXComfortableRotationLimit, eyeYComfortableRotationLimit, eyeZComfortableRotationLimit) || SurpassedRotationConstraints(leftEyeTransform, eyeXComfortableRotationLimit, eyeYComfortableRotationLimit, eyeZComfortableRotationLimit))
+            if ((SurpassedRotationConstraints(leftEyeTransform, eyeXComfortableRotationLimit, eyeYComfortableRotationLimit, eyeZComfortableRotationLimit) || SurpassedRotationConstraints(leftEyeTransform, eyeXComfortableRotationLimit, eyeYComfortableRotationLimit, eyeZComfortableRotationLimit)) && attentionController.GetCurrentFixationTime() > 0.2f)
             {
                 // Rotate neck towards eyes middle point
-                float singleStep = neckMovementSpeed * Time.deltaTime;
-                Vector3 newDirection = Vector3.RotateTowards(neckTransform.forward, middlePoint, singleStep, 0.0f);
-                neckTransform.rotation = Quaternion.LookRotation(newDirection);
+                SetRotation(neckTransform, middlePoint, neckMovementSpeed/2f);
                 // Clamp neck rotation
-                ClampRotation(neckTransform, neckXRotationLimit, neckYRotationLimit, neckZRotationLimit);
+                ClampRotation(neckTransform, neckXRotationLimit, neckXRotationLimit, neckYRotationLimit, neckZRotationLimit);
+
+                // Head will copy neck rotation
+                float singleStep = neckMovementSpeed/1.5f * Time.deltaTime;
+                headTransform.rotation = Quaternion.RotateTowards(headTransform.rotation, neckTransform.rotation, singleStep);
+                // Clamp head rotation
+                ClampRotation(headTransform, neckXRotationLimit, neckXRotationLimit, neckYRotationLimit, neckZRotationLimit);
             }
 
             if (attentionController.IsFocusingOnPath())
             {
                 // If I'm focusing on path, neck will follow direction too
-                SetRotation(neckTransform, objectOfInterest, initialNeckForward, middlePoint, neckMovementSpeed);
+                var neckDirection = objectOfInterest.transform.position - neckTransform.position;
+                neckDirection.y = initialNeckForward.y;
+                SetRotation(neckTransform, neckDirection, neckMovementSpeed/2f);
+                // Clamp neck rotation
+                ClampRotation(neckTransform, neckXRotationLimit, neckXRotationLimit, neckYRotationLimit, neckZRotationLimit);
+                // Head will copy neck rotation
+                float singleStep = neckMovementSpeed/2f * Time.deltaTime;
+                headTransform.rotation = Quaternion.RotateTowards(headTransform.rotation, neckTransform.rotation, singleStep);
+                // Clamp head rotation
+                ClampRotation(headTransform, neckXRotationLimit, neckXRotationLimit, neckYRotationLimit, neckZRotationLimit);
             }
 
             // Animate eye blendhsapes according to gaze direction
@@ -183,7 +207,7 @@ public class FaceController : MonoBehaviour
         }
         else
         {
-            AnimateSquintBlendShapes();
+            //AnimateSquintBlendShapes();
             Vector3 middlePoint = Vector3.Lerp(leftEyeTransform.position, rightEyeTransform.position, 0.3f);
             //Vector3 direction = (attentionController.GetCurrentFocus().transform.position - middlePoint + neckTransform.position).normalized;
 
@@ -193,32 +217,28 @@ public class FaceController : MonoBehaviour
             //Debug.DrawRay(neckTransform.position, newDirection, Color.red);
             //Debug.DrawRay(middlePoint, direction, Color.blue);
             //Debug.DrawRay(neckTransform.position, -direction, Color.red);
-            ClampRotation(neckTransform, neckXRotationLimit, neckYRotationLimit, neckZRotationLimit);
+            //ClampRotation(neckTransform, neckXRotationLimit, neckYRotationLimit, neckZRotationLimit);
         }
     }
 
-    private void SetRotation(Transform objectTransform, GameObject objectOfInterest, Vector3 initialForward, float movementSpeed)
+    private void SetRotation(Transform objectTransform, GameObject objectOfInterest, float movementSpeed)
     {
-        Vector3 targetDirection = transform.forward + new Vector3(0, initialForward.y, 0);
-
-        if (objectOfInterest != null) targetDirection = objectOfInterest.transform.position - objectTransform.position;
+        Vector3 targetDirection = objectOfInterest.transform.position - objectTransform.position;
         float singleStep = movementSpeed * Time.deltaTime;
         Vector3 newDirection = Vector3.RotateTowards(objectTransform.forward, targetDirection, singleStep, 0.0f);
         objectTransform.rotation = Quaternion.LookRotation(newDirection);
         //Debug.DrawRay(objectTransform.position, newDirection, Color.red);
     }
 
-    private void SetRotation(Transform objectTransform, GameObject objectOfInterest, Vector3 initialForward, Vector3 targetRotation, float movementSpeed)
+    private void SetRotation(Transform objectTransform, Vector3 targetRotation, float movementSpeed)
     {
-        Vector3 targetDirection = transform.forward + new Vector3(0, initialForward.y, 0);
-        if (objectOfInterest != null) targetDirection = targetRotation;
         float singleStep = movementSpeed * Time.deltaTime;
-        Vector3 newDirection = Vector3.RotateTowards(objectTransform.forward, targetDirection, singleStep, 0.0f);
+        Vector3 newDirection = Vector3.RotateTowards(objectTransform.forward, targetRotation, singleStep, 0.0f);
         objectTransform.rotation = Quaternion.LookRotation(newDirection);
         //Debug.DrawRay(objectTransform.position, newDirection, Color.red);
     }
 
-    private void ClampRotation(Transform objectTransform, float xRotationLimit, float yRotationLimit, float zRotationLimit) 
+    private void ClampRotation(Transform objectTransform, float xUpRotationLimit, float xDownRotationLimit, float yRotationLimit, float zRotationLimit) 
     {
         Vector3 localRotation = objectTransform.localEulerAngles;
         float xRotation = localRotation.x > 180 ? localRotation.x - 360 : localRotation.x;
@@ -226,14 +246,10 @@ public class FaceController : MonoBehaviour
         float zRotation = localRotation.z > 180 ? localRotation.z - 360 : localRotation.z;
         objectTransform.localEulerAngles = new Vector3
             (
-                Mathf.Clamp(xRotation, -xRotationLimit, xRotationLimit),
+                Mathf.Clamp(xRotation, -xUpRotationLimit, xDownRotationLimit),
                 Mathf.Clamp(yRotation, -yRotationLimit, yRotationLimit),
                 Mathf.Clamp(zRotation, -zRotationLimit, zRotationLimit)
             );
-
-        /*if(xRotation < -xRotationLimit || xRotation > xRotationLimit || yRotation < -yRotationLimit || yRotation > yRotationLimit || zRotation < -zRotationLimit || zRotation > zRotationLimit)
-            return true;    
-        return false;*/
     }
 
     private bool SurpassedRotationConstraints(Transform objectTransform, float xRotationLimit, float yRotationLimit, float zRotationLimit)
@@ -261,9 +277,9 @@ public class FaceController : MonoBehaviour
         int xRightEyeBlendShapeIndex = Mathf.Sign(xRightEyeRotation) < 0 ? EyeLookUpRightBlendShapeIndex : EyeLookDownRightBlendShapeIndex;
         int yRightEyeBlendShapeIndex = Mathf.Sign(yRightEyeRotation) < 0 ? EyeLookOutRightBlendShapeIndex : EyeLookInRightBlendShapeIndex;
 
-        faceMeshRenderer.SetBlendShapeWeight(xLeftEyeBlendShapeIndex, NormalizeBlendshapeValue(xLeftEyeRotation, eyeXRotationLimit));
+        faceMeshRenderer.SetBlendShapeWeight(xLeftEyeBlendShapeIndex, NormalizeBlendshapeValue(xLeftEyeRotation, eyeXUpRotationLimit));
         faceMeshRenderer.SetBlendShapeWeight(yLeftEyeBlendShapeIndex, NormalizeBlendshapeValue(yLeftEyeRotation, eyeYRotationLimit));
-        faceMeshRenderer.SetBlendShapeWeight(xRightEyeBlendShapeIndex, NormalizeBlendshapeValue(xRightEyeRotation, eyeXRotationLimit));
+        faceMeshRenderer.SetBlendShapeWeight(xRightEyeBlendShapeIndex, NormalizeBlendshapeValue(xRightEyeRotation, eyeXUpRotationLimit));
         faceMeshRenderer.SetBlendShapeWeight(yRightEyeBlendShapeIndex, NormalizeBlendshapeValue(yRightEyeRotation, eyeYRotationLimit));
     }
 

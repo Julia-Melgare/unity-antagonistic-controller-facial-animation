@@ -1,8 +1,11 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Profiling;
 using UnityEngine.UI;
 
 public class SaliencyController : MonoBehaviour
@@ -13,8 +16,11 @@ public class SaliencyController : MonoBehaviour
     private Camera auxiliaryAgentCamera;
     [SerializeField]
     private InferenceClient inferenceClient;
+    private Texture2D saliencyMapOutput;
 
     [Header("Saliency Map Settings")]
+    [SerializeField]
+    private int saliencyMapSize = 16;
     [SerializeField]
     private float scanFrequency = 30f;
     [SerializeField]
@@ -27,7 +33,7 @@ public class SaliencyController : MonoBehaviour
 
     [Header("Debug/Visualization")]
     [SerializeField]
-    private RawImage saliencyMapOutput;
+    private RawImage saliencyMapImage;
     [SerializeField]
     private RawImage visionFrameImage;
     [SerializeField]
@@ -47,6 +53,7 @@ public class SaliencyController : MonoBehaviour
         scanInterval = 1.0f / scanFrequency;
         auxiliaryAgentCamera.enabled = false;
         salientObjectsDict = new Dictionary<GameObject, float>();
+        saliencyMapOutput = new Texture2D(16, 16);
     }
     void Update()
     {
@@ -69,7 +76,7 @@ public class SaliencyController : MonoBehaviour
     private void ScanSaliencyMap()
     {
         // Find index of highest value in map
-        Color[] saliencyMapPixels = (saliencyMapOutput.texture as Texture2D).GetPixels();
+        Color[] saliencyMapPixels = saliencyMapOutput.GetPixels();
         var saliencyPoints = new Dictionary<Vector3, float>();
         for (int i = 0; i < saliencyMapPixels.Length; i++)
         {
@@ -77,10 +84,13 @@ public class SaliencyController : MonoBehaviour
             if (grayscaleValue >= saliencyValueThreshold)
             {
                 // Convert array index to matrix indexes
-                int width = agentCamera.targetTexture.width;
-                int height = agentCamera.targetTexture.height;
+                int width = saliencyMapOutput.width;
+                int height = saliencyMapOutput.height;
                 int matrix_i = i / width;
                 int matrix_j = i % width;
+                // Compensate size difference between camera and saliency map
+                matrix_i = matrix_i*(agentCamera.targetTexture.width/saliencyMapOutput.width);
+                matrix_j = matrix_j*(agentCamera.targetTexture.height/saliencyMapOutput.height);
                 saliencyPoints.Add(new Vector3(matrix_j, matrix_i, 0), grayscaleValue);
                 if(debugSaliencyRaycast)
                     saliencyMapPixels[i] = Color.red; // Highlight pixel for visualization purposes
@@ -94,18 +104,28 @@ public class SaliencyController : MonoBehaviour
             Ray ray = auxiliaryAgentCamera.ScreenPointToRay(screenPoint.Key);
             RaycastHit[] hits = Physics.RaycastAll(ray, Mathf.Infinity, scanLayerMask);
             foreach (RaycastHit hit in hits)
-                salientObjectsDict.TryAdd(hit.collider.gameObject, screenPoint.Value);
-                                    
+            {
+                GameObject raycastObj = hit.collider.gameObject;
+
+                if (hit.collider.GetType() == typeof(TerrainCollider))
+                {
+                    //We need to look at that specific point on the terrain instead
+                    GameObject terrainPoint = new GameObject("TerrainPoint", typeof(SelfDestruct));
+                    terrainPoint.transform.position = hit.point;
+                    raycastObj = terrainPoint;
+                }
+
+                salientObjectsDict.TryAdd(raycastObj, screenPoint.Value);
+            }                          
         }
         salientObjects = new List<GameObject>(salientObjectsDict.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value).Keys);
         if (debugSaliencyRaycast)
         {
-            Texture2D newTexture = new Texture2D(360, 360);
+            Texture2D newTexture = new Texture2D(16, 16);
             newTexture.SetPixels(saliencyMapPixels);
             newTexture.Apply();
-            saliencyMapOutput.texture = newTexture;
+            saliencyMapImage.texture = newTexture;
         }
-        
     }
     public List<GameObject> GetSalientObjects()
     {
@@ -114,6 +134,7 @@ public class SaliencyController : MonoBehaviour
 
     public float GetObjectSaliency(GameObject obj)
     {
+        if (salientObjectsDict == null) return .95f;
         return salientObjectsDict.GetValueOrDefault(obj, .95f);
     }
 
@@ -143,7 +164,7 @@ public class SaliencyController : MonoBehaviour
         currentVisionFrame = image;
 
         // Encode to PNG
-        byte[] bytes = image.EncodeToPNG();
+        byte[] bytes = image.EncodeToJPG();
 
         // Set render texture back to default
         RenderTexture.active = currentRT;
@@ -153,10 +174,12 @@ public class SaliencyController : MonoBehaviour
 
     private void UpdateSaliencyMap(byte[] rawData)
     {
-        Texture2D saliencyMapTexture = new Texture2D(2, 2);
-        ImageConversion.LoadImage(saliencyMapTexture, rawData);
-        saliencyMapOutput.texture = saliencyMapTexture;
-        visionFrameImage.texture = previousVisionFrame;
+        Texture2D temp = new Texture2D(2, 2);
+        ImageConversion.LoadImage(temp, rawData);
+        saliencyMapOutput.SetPixels(temp.GetPixels());
+        saliencyMapOutput.Apply();
+        if (saliencyMapImage != null) saliencyMapImage.texture = saliencyMapOutput;
+        if (visionFrameImage != null) visionFrameImage.texture = previousVisionFrame;
     }
 
     private void UpdateAuxiliaryCamera()
@@ -167,92 +190,4 @@ public class SaliencyController : MonoBehaviour
         auxiliaryAgentCamera.transform.localScale = agentCamera.transform.localScale;
         auxiliaryAgentCamera.enabled = false;
     }
-    
-    // public Collider GetSalientObject()
-    // {
-    //     List<Collider> salientObjects = GetSalientObjects();
-    //     //TODO: Here we have to implement all of the object selection logic (choose by speed, distance, tags, etc.)
-    //     Collider salientObject = null;
-
-    //     float minDistance = float.MaxValue;
-    //     float maxDistance = float.MinValue;
-    //     float minVelocity = float.MaxValue;
-    //     float maxVelocity = float.MinValue;
-    //     float minSize = float.MaxValue;
-    //     float maxSize = float.MinValue;
-    //     float maxSaliencyScore = float.MinValue;
-    //     foreach (Collider obj in salientObjects)
-    //     {
-    //         string output = obj.name + ": \\";
-    //         // Calculate distance
-    //         var distance = Vector3.Distance(transform.position, obj.transform.position);
-    //         if (distance < minDistance)
-    //         {
-    //             minDistance = distance;
-    //             salientObject = obj;
-    //         }
-
-    //         if (distance < maxDistance)
-    //         {
-    //             maxDistance = distance;
-    //         }
-    //         float distanceFactor = NormalizeValue(distance, maxDistance, minDistance);
-    //         output+="distance factor: "+distanceFactor+"\\";
-
-    //         // Calculate velocity
-    //         var rigidbody = salientObject.gameObject.GetComponent<Rigidbody>();
-    //         var velocity = 0.0f;
-    //         if (rigidbody != null)
-    //         {
-    //             velocity = rigidbody.velocity.magnitude;
-    //             if (velocity < minVelocity)
-    //             {
-    //                 minVelocity = velocity;
-    //             }
-
-    //             if (velocity < maxVelocity)
-    //             {
-    //                 maxVelocity = velocity;
-    //             }
-    //         }
-    //         float velocityFactor = NormalizeValue(velocity, maxVelocity, minVelocity);
-    //         output+="velocity factor: "+velocityFactor+"\\";
-
-    //         // Calculate size
-    //         var size = salientObject.bounds.size.magnitude; // TODO: not sure if we want to calculate size like this
-    //         if (size < minSize)
-    //         {
-    //             minSize = size;
-    //         }
-
-    //         if (size < maxSize)
-    //         {
-    //             maxSize = size;
-    //         }
-    //         float sizeFactor = NormalizeValue(size, maxSize, minSize);
-    //         output+="size factor: "+sizeFactor+"\\";
-            
-    //         // Now calculate saliency score
-    //         float saliencyScore = CalculateSaliencyScore(distanceFactor, velocityFactor, sizeFactor);
-    //         if (saliencyScore > maxSaliencyScore)
-    //         {
-    //             maxSaliencyScore = saliencyScore;
-    //             salientObject = obj;
-    //         }
-    //         output+="saliency score: "+saliencyScore;
-    //         Debug.Log(output);           
-    //     }
-        
-    //     return salientObject;
-    // }
-
-    // private float CalculateSaliencyScore(float distanceFactor, float velocityFactor, float sizeFactor)
-    // {
-    //     return distanceFactor * distanceWeight + velocityFactor * velocityWeight + sizeFactor * sizeWeight;
-    // }
-
-    // private float NormalizeValue(float value, float min, float max)
-    // {
-    //     return (value-min)/(max-min);
-    // }
 }

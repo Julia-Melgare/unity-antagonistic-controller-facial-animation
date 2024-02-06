@@ -9,6 +9,8 @@
 /[Bb]uilds/
 /[Ll]ogs/
 /[Uu]ser[Ss]ettings/
+/[Rr]ecordings/
+/[Ss]ave[Ii]mages/
 
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data
@@ -73,5 +75,6 @@ crashlytics-build.properties
 /[Aa]ssets/[Pp]lugins
 
 # Others
-/[Aa]ssets/[Pp]olygonFarm*
+/[Aa]ssets/[Ee]nvironment/[Ss]cenes
 /[Aa]ssets/TextMesh*
+/[Aa]ssets/_[Tt]errain*

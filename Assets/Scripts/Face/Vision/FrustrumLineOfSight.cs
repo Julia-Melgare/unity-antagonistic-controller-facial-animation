@@ -1,7 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor;
 using UnityEngine;
 
 public class FrustrumLineOfSight : MonoBehaviour
@@ -28,7 +26,7 @@ public class FrustrumLineOfSight : MonoBehaviour
     [SerializeField] 
     private Color meshColor = Color.yellow;
 
-    private Collider[] colliders = new Collider[50];
+    private Collider[] colliders = new Collider[100];
     private Mesh mesh;
     private int count;
     private float scanInterval;
@@ -57,7 +55,6 @@ public class FrustrumLineOfSight : MonoBehaviour
     private void Scan()
     {
         count = Physics.OverlapSphereNonAlloc(transform.position, distance, colliders, layers, QueryTriggerInteraction.Collide);
-
         objects.Clear();
         var objectSpeedDict = new Dictionary<GameObject, float>();
         for (int i = 0; i < count; i++)
@@ -66,7 +63,11 @@ public class FrustrumLineOfSight : MonoBehaviour
             if (IsInSight(obj) && IsMoving(obj))
             {
                 float objSpeed = GetObjectSpeed(obj);
-                if (objSpeed >= fastMovementThreshold) onFastMovement?.Invoke(obj);
+                if (objSpeed > fastMovementThreshold)
+                {
+                    //Debug.Log("[Fustrum] Detected fast moving object: "+obj.name+" speed: "+objSpeed);
+                    onFastMovement?.Invoke(obj);
+                } 
                 objectSpeedDict.TryAdd(obj, objSpeed);
             }
         }
@@ -99,30 +100,29 @@ public class FrustrumLineOfSight : MonoBehaviour
 
     public bool IsMoving(GameObject obj)
     {
-        var rigidbody = obj.GetComponent<Rigidbody>();
-        if (rigidbody != null && rigidbody.velocity.magnitude > 0) return true;
-
         var movingObj = obj.GetComponent<MovingObject>();
-        if (movingObj != null && movingObj.velocity.magnitude > 0) return true;
-
-        var animator = obj.GetComponent<Animator>();
-        if (animator != null && animator.isActiveAndEnabled) return true;
-
+        if (movingObj != null && movingObj.motionState != MotionState.Static) return true;
         return false;
     }
 
     public float GetObjectSpeed(GameObject obj)
     {
-        var rigidbody = obj.GetComponent<Rigidbody>();
-        if (rigidbody != null && rigidbody.velocity.magnitude > 0) return rigidbody.velocity.magnitude;
-
         var movingObj = obj.GetComponent<MovingObject>();
-        if (movingObj != null) return movingObj.velocity.magnitude; 
-
-        var animator = obj.GetComponent<Animator>();
-        if (animator != null && animator.isActiveAndEnabled) return .3f;
-
-        return 0f;
+        if (movingObj == null) return 0f;
+        float motionSaliency = 0f;
+        switch(movingObj.motionState)
+        {
+            case MotionState.Static:
+                motionSaliency = 0.1f;
+                break;
+            case MotionState.Continuous: case MotionState.Offset:
+                motionSaliency = 0.2f;
+                break;
+            case MotionState.Change: case MotionState.Onset:
+                motionSaliency = 1f;
+                break;
+        }
+        return motionSaliency + movingObj.GetVelocity().sqrMagnitude;
     }
 
     public int Filter(GameObject[] buffer, string layerName)

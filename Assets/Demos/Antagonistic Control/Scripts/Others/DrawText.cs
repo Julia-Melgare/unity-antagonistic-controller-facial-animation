@@ -20,6 +20,6 @@ public class DrawText : MonoBehaviour
 
     void OnDrawGizmos()
     {
-        Handles.Label(transform.position, text);
+        //Handles.Label(transform.position, text);
     }
 }

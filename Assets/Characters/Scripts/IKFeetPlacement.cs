@@ -167,11 +167,11 @@ public class IKFeetPlacement : MonoBehaviour
                 {
                     if (weightIncreasingRightFoot || weightDecreasingRightFoot)
                     {
-                        Debug.Log("STOPPING COROUTINE");
+                        //Debug.Log("STOPPING COROUTINE");
                         StopCoroutine(instLerpRight);
                     }
 
-                    Debug.Log("Right Front is touching now - START INCREASING");
+                    //Debug.Log("Right Front is touching now - START INCREASING");
                     instLerpRight = LerpFunctionRight(1, durationWeightRightFoot);
                     StartCoroutine(instLerpRight);
 
@@ -183,11 +183,11 @@ public class IKFeetPlacement : MonoBehaviour
                 {
                     if (weightIncreasingRightFoot || weightDecreasingRightFoot)
                     {
-                        Debug.Log("STOPPING COROUTINE");
+                        //Debug.Log("STOPPING COROUTINE");
                         StopCoroutine(instLerpRight);
                     }
 
-                    Debug.Log("Right Front NOT touching now - START DECREASING");
+                    //Debug.Log("Right Front NOT touching now - START DECREASING");
                     instLerpRight = LerpFunctionRight(0, durationWeightRightFoot);
                     StartCoroutine(instLerpRight);
 
@@ -195,7 +195,7 @@ public class IKFeetPlacement : MonoBehaviour
                     weightIncreasingRightFoot = false;
                 }
 
-                Debug.Log("VALUE TO CHANGE RIGHT: " + weightToChangeRightFoot);
+                //Debug.Log("VALUE TO CHANGE RIGHT: " + weightToChangeRightFoot);
                 _anim.SetIKRotationWeight(AvatarIKGoal.RightFoot, weightToChangeRightFoot);
             }
         }
@@ -224,11 +224,11 @@ public class IKFeetPlacement : MonoBehaviour
                 {
                     if (weightIncreasingLeftFoot || weightDecreasingLeftFoot)
                     {
-                        Debug.Log("STOPPING COROUTINE");
+                        //Debug.Log("STOPPING COROUTINE");
                         StopCoroutine(instLerpLeft);
                     }
 
-                    Debug.Log("Left Front is touching now - START INCREASING");
+                    //Debug.Log("Left Front is touching now - START INCREASING");
                     instLerpLeft = LerpFunctionLeft(1, durationWeightLeftFoot);
                     StartCoroutine(instLerpLeft);
 
@@ -240,11 +240,11 @@ public class IKFeetPlacement : MonoBehaviour
                 {
                     if (weightIncreasingLeftFoot || weightDecreasingLeftFoot)
                     {
-                        Debug.Log("STOPPING COROUTINE");
+                        //Debug.Log("STOPPING COROUTINE");
                         StopCoroutine(instLerpLeft);
                     }
 
-                    Debug.Log("Left Front NOT touching now - START DECREASING");
+                    //Debug.Log("Left Front NOT touching now - START DECREASING");
                     instLerpLeft = LerpFunctionLeft(0, durationWeightLeftFoot);
                     StartCoroutine(instLerpLeft);
 
@@ -252,7 +252,7 @@ public class IKFeetPlacement : MonoBehaviour
                     weightIncreasingLeftFoot = false;
                 }
 
-                Debug.Log("VALUE TO CHANGE LEFT: " + weightToChangeLeftFoot);
+                //Debug.Log("VALUE TO CHANGE LEFT: " + weightToChangeLeftFoot);
                 _anim.SetIKRotationWeight(AvatarIKGoal.LeftFoot, weightToChangeLeftFoot);
             }
         }
@@ -399,7 +399,7 @@ public class IKFeetPlacement : MonoBehaviour
 
             return;
         }
-
+        Debug.Log("[Feet IK] Didn't work");
         feetIKPositions = Vector3.zero; // If we reach this, it didn't work
     }
 

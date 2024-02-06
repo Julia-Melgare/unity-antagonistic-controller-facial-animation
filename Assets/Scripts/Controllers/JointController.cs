@@ -150,11 +150,11 @@ public class JointController : MonoBehaviour
     public bool drawModeAntagonistic;
 
     [Header("Antagonistic Controller - Plot")]
-    [UPyPlot.UPyPlotController.UPyProbe]
+    //[UPyPlot.UPyPlotController.UPyProbe]
     public float antTorqueX;
-    [UPyPlot.UPyPlotController.UPyProbe]
+    //[UPyPlot.UPyPlotController.UPyProbe]
     public float antTorqueY;
-    [UPyPlot.UPyPlotController.UPyProbe]
+    //[UPyPlot.UPyPlotController.UPyProbe]
     public float antTorqueZ;
 
     [Header("Antagonistic Controller - Settings - X")]
