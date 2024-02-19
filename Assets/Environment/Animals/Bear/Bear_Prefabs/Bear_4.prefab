@@ -1913,7 +1913,6 @@ GameObject:
   m_Component:
   - component: {fileID: 7292658344771522932}
   - component: {fileID: 3734775969355451150}
-  - component: {fileID: 2867611462713903649}
   m_Layer: 0
   m_Name: Bear_4
   m_TagString: Untagged
@@ -1958,22 +1957,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &2867611462713903649
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7962199819078159310}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eeb78103a92fad34196648647e89b9aa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rigidBody: {fileID: 0}
-  animator: {fileID: 0}
-  motionState: 0
-  stateUpdateTime: 0.9
 --- !u!1 &8002475675295336084
 GameObject:
   m_ObjectHideFlags: 0

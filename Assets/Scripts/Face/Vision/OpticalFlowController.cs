@@ -52,6 +52,8 @@ public class OpticalFlowController : MonoBehaviour
     private Dictionary<GameObject, float> objectsDictLeft;
     private Dictionary<GameObject, float> objectsDictRight;
 
+    private float iFrame = 0;
+
     void Start()
     {
         objectsLeft = new List<GameObject>();
@@ -68,15 +70,16 @@ public class OpticalFlowController : MonoBehaviour
     void Update()
     {
         // Compute left and right optical flows
-        ComputeOpticalFlows();
+        //ComputeOpticalFlows();
         // Scan optical flows
-        objectsLeft = ScanOpticalFlow(opticalFlowLeft, peripheralCamLeftAux, objectsDictLeft);
-        objectsRight = ScanOpticalFlow(opticalFlowRight, peripheralCamRightAux, objectsDictRight);
+        //objectsLeft = ScanOpticalFlow(opticalFlowLeft, peripheralCamLeftAux, objectsDictLeft);
+        //objectsRight = ScanOpticalFlow(opticalFlowRight, peripheralCamRightAux, objectsDictRight);
         // Update current camera images
         UpdatePrevImages();
         // Update Aux Camera Transforms
         UpdateAuxiliaryCameras();
-
+        SaveCameraTexture(peripheralCamLeft, "opticalflowl" + iFrame);
+        iFrame++;
         if (debug)
         {
             opticalFlowLeftImg.texture = opticalFlowLeft;
@@ -173,9 +176,16 @@ public class OpticalFlowController : MonoBehaviour
         RenderTexture.active = currentRT;
     }
 
-    public float GetObjectMovementLeft(GameObject obj)
+    public float GetObjectSpeed(GameObject obj)
     {
-        return objectsDictLeft.GetValueOrDefault(obj, .95f);
+        if (objectsDictLeft.TryGetValue(obj, out float speed))
+        {
+            return speed;
+        }
+        else
+        {
+            return objectsDictRight.GetValueOrDefault(obj, .95f);
+        }
     }
 
     public float GetObjectMovementRight(GameObject obj)

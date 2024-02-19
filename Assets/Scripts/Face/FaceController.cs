@@ -180,11 +180,15 @@ public class FaceController : MonoBehaviour
                 // Clamp neck rotation
                 ClampRotation(neckTransform, neckXRotationLimit, neckXRotationLimit, neckYRotationLimit, neckZRotationLimit);
 
-                // Head will copy neck rotation
-                float singleStep = neckMovementSpeed/1.5f * Time.deltaTime;
-                headTransform.rotation = Quaternion.RotateTowards(headTransform.rotation, neckTransform.rotation, singleStep);
-                // Clamp head rotation
-                ClampRotation(headTransform, neckXRotationLimit, neckXRotationLimit, neckYRotationLimit, neckZRotationLimit);
+                if (headTransform != null)
+                {
+                    // Head will copy neck rotation
+                    float singleStep = neckMovementSpeed/1.5f * Time.deltaTime;
+                    headTransform.rotation = Quaternion.RotateTowards(headTransform.rotation, neckTransform.rotation, singleStep);
+                    // Clamp head rotation
+                    ClampRotation(headTransform, neckXRotationLimit, neckXRotationLimit, neckYRotationLimit, neckZRotationLimit);
+                }
+                
             }
 
             if (attentionController.IsFocusingOnPath())
@@ -195,12 +199,16 @@ public class FaceController : MonoBehaviour
                 SetRotation(neckTransform, neckDirection, neckMovementSpeed/2f);
                 // Clamp neck rotation
                 ClampRotation(neckTransform, neckXRotationLimit, neckXRotationLimit, neckYRotationLimit, neckZRotationLimit);
-                // Head will copy neck rotation
-                float singleStep = neckMovementSpeed/2f * Time.deltaTime;
-                headTransform.rotation = Quaternion.RotateTowards(headTransform.rotation, neckTransform.rotation, singleStep);
-                // Clamp head rotation
-                ClampRotation(headTransform, neckXRotationLimit, neckXRotationLimit, neckYRotationLimit, neckZRotationLimit);
+                if (headTransform != null)
+                {
+                    // Head will copy neck rotation
+                    float singleStep = neckMovementSpeed/2f * Time.deltaTime;
+                    headTransform.rotation = Quaternion.RotateTowards(headTransform.rotation, neckTransform.rotation, singleStep);
+                    // Clamp head rotation
+                    ClampRotation(headTransform, neckXRotationLimit, neckXRotationLimit, neckYRotationLimit, neckZRotationLimit);
+                }
             }
+                
 
             // Animate eye blendhsapes according to gaze direction
             AnimateGazeBlendShapes();
