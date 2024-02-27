@@ -27,7 +27,6 @@ public class FixationController : MonoBehaviour
 
     void Update()
     {
-        Debug.Log(fixationTimer);
         fixationTimer -= Time.deltaTime;
         if (fixationTimer <= 0)
         {

@@ -27,6 +27,8 @@ public class PathDirectionObject : MonoBehaviour
     public float heightOffset = 3f;
     private float height = 3f;
 
+    public FixationObject fixationObject;
+
     private float currentPosInPath;
     private float moveSpeed = 1f;
     private CinemachineSmoothPath defaultCurve = null;
@@ -35,6 +37,7 @@ public class PathDirectionObject : MonoBehaviour
     {
         if (!rigidBodyController.followPath) InitializeDefaultCurve();
         if (eyeTransform == null) eyeTransform = transform.parent.gameObject.transform; // if Face is not assigned, assume it's the parent object
+        fixationObject = new FixationObject(gameObject, Vector3.zero);
     }
 
     void Update()
