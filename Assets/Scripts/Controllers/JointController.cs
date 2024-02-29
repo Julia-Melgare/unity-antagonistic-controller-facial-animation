@@ -942,8 +942,8 @@ public class JointController : MonoBehaviour
         if ((controllerType == Controller.DefaultPDController) && (activateDefaultPD))
         {
             // [Local]
-            DesiredLocalRotation = ConfigurableJointExtensions.GetTargetRotationLocal(_jointAnt, _kinematicLocalOrientation, _initialLocalOrientation, _currentLocalOrientation, transform);
-            ConfigurableJointExtensions.SetTargetRotationLocal(_jointAnt, _kinematicLocalOrientation, _initialLocalOrientation);
+            DesiredLocalRotation = ControllerConfigurableJointExtensions.GetTargetRotationLocal(_jointAnt, _kinematicLocalOrientation, _initialLocalOrientation, _currentLocalOrientation, transform);
+            ControllerConfigurableJointExtensions.ControllerSetTargetRotationLocal(_jointAnt, _kinematicLocalOrientation, _initialLocalOrientation);
 
             _jointAnt.rotationDriveMode = RotationDriveMode.XYAndZ;
             var angularXDrive = _jointAnt.angularXDrive;
@@ -960,7 +960,7 @@ public class JointController : MonoBehaviour
         else
         {
             // [Local]
-            DesiredLocalRotation = ConfigurableJointExtensions.GetTargetRotationLocal(_jointAnt, _kinematicLocalOrientation, _initialLocalOrientation, _currentLocalOrientation, transform);
+            DesiredLocalRotation = ControllerConfigurableJointExtensions.GetTargetRotationLocal(_jointAnt, _kinematicLocalOrientation, _initialLocalOrientation, _currentLocalOrientation, transform);
 
             _jointAnt.targetRotation = Quaternion.identity;
             _jointAnt.rotationDriveMode = RotationDriveMode.XYAndZ;

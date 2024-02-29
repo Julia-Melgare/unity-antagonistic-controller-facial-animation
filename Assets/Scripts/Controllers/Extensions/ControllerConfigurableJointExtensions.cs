@@ -1,12 +1,12 @@
 using UnityEngine;
 
-public static class ConfigurableJointExtensions
+public static class ControllerConfigurableJointExtensions
 {
 	/// <summary>
 	/// Sets a joint's targetRotation to match a given local rotation.
 	/// The joint transform's local rotation must be cached on Start and passed into this method.
 	/// </summary>
-	public static void SetTargetRotationLocal(this ConfigurableJoint joint, Quaternion targetLocalRotation, Quaternion startLocalRotation)
+	public static void ControllerSetTargetRotationLocal(this ConfigurableJoint joint, Quaternion targetLocalRotation, Quaternion startLocalRotation)
 	{
 		if (joint.configuredInWorldSpace)
 		{
