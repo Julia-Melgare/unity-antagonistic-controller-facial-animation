@@ -60,7 +60,7 @@ public class VisionRays : MonoBehaviour
 
 	public void CastRay(Vector3 direction)
 	{
-		//Debug.DrawRay(eye.position, direction * 10, Color.blue, agent.p.decisionPeriod * Time.fixedDeltaTime, false);
+		Debug.DrawRay(eye.position, direction * 10, Color.blue, agent.p.decisionPeriod * Time.fixedDeltaTime, false);
 		if (Physics.Raycast(eye.position, direction, out RaycastHit hitInfo, visionDistance, visionMask))
 		{
 			AddRay(hitInfo);

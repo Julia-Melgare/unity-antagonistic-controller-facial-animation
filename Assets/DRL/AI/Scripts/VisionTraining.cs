@@ -21,25 +21,7 @@ public class VisionTraining : MonoBehaviour
 		AgentEvents events = GetComponent<AgentEvents>();
 		events.collectObservationsEvent += CollectObservations;
 	}
-
-	/*
-	public void CollectObservations(VectorSensor _)
-	{
-		rays.Clear();
-
-		var direction = p.target.position - rays.eye.position;
-		direction.y = 0;
-		direction = Vector3.RotateTowards(direction, Vector3.down, Mathf.PI / 3f, Mathf.Infinity);
-		if (p.targetSpeed == 0)
-		{
-			direction = Vector3.down;
-		}
-
-		rays.CastRay(direction);
-
-	}
-	*/
-
+	
 	public void CollectObservations(VectorSensor _)
 	{
 		rays.Clear();
