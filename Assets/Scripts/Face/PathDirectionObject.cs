@@ -55,17 +55,19 @@ public class PathDirectionObject : MonoBehaviour
             moveSpeed = 0;
         }
 
+        Vector3 positionInPath = Vector3.zero;
+
         if (rigidBodyController.followPath)
         {
-            Vector3 positionInPath = GetPositionInPath(currentPosInPath + moveSpeed * Time.deltaTime);
-            transform.position = new Vector3(positionInPath.x, height + heightOffset, positionInPath.z); // fix y to desired height
+            positionInPath = GetPositionInPath(currentPosInPath + moveSpeed * Time.deltaTime);
         }
         else //Assume simple trajectory estimation
         {
             UpdateDefaultCurve();
-            Vector3 positionInPath = GetPositionInDefaultCurve(currentPosInPath + moveSpeed * Time.deltaTime);
-            transform.position = new Vector3(positionInPath.x, height + heightOffset, positionInPath.z);
+            positionInPath = GetPositionInDefaultCurve(currentPosInPath + moveSpeed * Time.deltaTime);
         }
+        transform.position = new Vector3(positionInPath.x, height + heightOffset, positionInPath.z); // fix y to desired height
+
 
         UpdateStepsAheadValue(rigidBodyController.groundSlopeAngle);
         //UpdateHeight(rigidBodyController.groundSlopeAngle);

@@ -26,7 +26,7 @@ public class FrustrumLineOfSight : MonoBehaviour
     [SerializeField] 
     private Color meshColor = Color.yellow;
 
-    private Collider[] colliders = new Collider[100];
+    private Collider[] colliders = new Collider[200];
     private Mesh mesh;
     private int count;
     private float scanInterval;

@@ -36,9 +36,6 @@ public class FaceController : MonoBehaviour
     [SerializeField]
     private float eyePursuitSpeed = 1.74533f; //100 degrees in radians;
 
-    private Vector3 initialLeftEyeForward;
-    private Vector3 initialRightEyeForward;
-
     #region Blendshapes
     private const int BrowOuterUpLeftBlendShapeIndex = 0;
     private const int BrowOuterUpRightBlendShapeIndex = 1;
@@ -132,14 +129,12 @@ public class FaceController : MonoBehaviour
     {
         StartCoroutine(Blink());
         initialNeckForward = neckTransform.forward;
-        initialLeftEyeForward = leftEyeTransform.forward;
-        initialRightEyeForward = rightEyeTransform.forward;
     }
 
     private void Update()
     {
-        float currentFixationTime = attentionController.GetCurrentFixationTime();
-        float eyeMovementSpeed = currentFixationTime > 0.2f ? eyePursuitSpeed : eyeSaccadeSpeed;
+        FixationObject currentObjectOfInterest = attentionController.GetCurrentFocus();
+        float eyeMovementSpeed = GetEyeMovementSpeed(currentObjectOfInterest.GetFixationPoint());
         // Check face safety regions
         //if (!amAvoiding && (faceSafetyRegionLeft.closestDistanceToEye <= minEyeDistance || faceSafetyRegionRight.closestDistanceToEye <= minEyeDistance))
         {
@@ -155,11 +150,9 @@ public class FaceController : MonoBehaviour
         
         if (!amAvoiding)
         {
-            FixationObject objectOfInterest = attentionController.GetCurrentFocus();
-
             // Rotate eyes towards the target
-            SetRotation(leftEyeTransform, objectOfInterest, eyeMovementSpeed);
-            SetRotation(rightEyeTransform, objectOfInterest, eyeMovementSpeed);
+            SetRotation(leftEyeTransform, currentObjectOfInterest, eyeMovementSpeed);
+            SetRotation(rightEyeTransform, currentObjectOfInterest, eyeMovementSpeed);
 
             // Clamp eye rotations
             ClampRotation(leftEyeTransform, eyeXUpRotationLimit, eyeXDownRotationLimit, eyeYRotationLimit, eyeZRotationLimit);
@@ -184,7 +177,7 @@ public class FaceController : MonoBehaviour
             if (attentionController.IsFocusingOnPath())
             {
                 // If I'm focusing on path, neck will follow direction too
-                var neckDirection = objectOfInterest.GetFixationPoint() - neckTransform.position;
+                var neckDirection = currentObjectOfInterest.GetFixationPoint() - neckTransform.position;
                 neckDirection.y = initialNeckForward.y;
                 SetRotation(neckTransform, neckDirection, neckMovementSpeed/2f);
                 // Clamp neck rotation
@@ -256,6 +249,14 @@ public class FaceController : MonoBehaviour
         if(xRotation < -xRotationLimit || xRotation > xRotationLimit || yRotation < -yRotationLimit || yRotation > yRotationLimit || zRotation < -zRotationLimit || zRotation > zRotationLimit)
             return true;    
         return false;
+    }
+
+    private float GetEyeMovementSpeed(Vector3 fixationTarget)
+    {
+        Ray r = new Ray(leftEyeTransform.position, leftEyeTransform.forward);
+        var closestPointToTarget = UnityExtensions.RayExt.ClosestPointAlongRay(r, fixationTarget);
+        float distanceToTarget = Vector3.Distance(closestPointToTarget, fixationTarget);
+        return distanceToTarget < 0.1f ? eyePursuitSpeed : eyeSaccadeSpeed; 
     }
 
     private void AnimateGazeBlendShapes()

@@ -30,6 +30,7 @@ public class lb_BirdController : MonoBehaviour {
 	int birdIndex = 0;
 	GameObject[] featherEmitters = new GameObject[3];
 
+	public Transform cameraTransformOverride;
 	public void AllFlee(){
 		if(!pause){
 			for(int i=0;i<myBirds.Length;i++){
@@ -315,7 +316,7 @@ public class lb_BirdController : MonoBehaviour {
 	
 	void BirdFindTarget(GameObject bird){
 		//yield return new WaitForSeconds(1);
-		GameObject target;
+		/*GameObject target;
 		if (birdGroundTargets.Count > 0 || birdPerchTargets.Count > 0){
 			//pick a random target based on the number of available targets vs the area of ground targets
 			//each perch target counts for .3 area, each ground target's area is calculated
@@ -333,8 +334,12 @@ public class lb_BirdController : MonoBehaviour {
 				bird.SendMessage ("FlyToTarget",target.transform.position);
 			}
 		}else{
-			bird.SendMessage ("FlyToTarget",currentCamera.transform.position+new Vector3(Random.Range (-100,100),Random.Range (5,10),Random.Range(-100,100)));
-		}
+			Vector3 randomPositionOnScreen = Camera.main.ViewportToWorldPoint(new Vector2(Random.value, Random.value));
+			bird.SendMessage("FlyToTarget", currentCamera.transform.position+new Vector3(Random.Range (-100,100), 0 ,Random.Range(-100,100));
+		}*/
+		//Vector3 randomPositionOnScreen = Camera.main.ViewportToWorldPoint(new Vector2(Random.value, Random.value));
+		//bird.SendMessage("FlyToTarget", randomPositionOnScreen);
+		bird.SendMessage("FlyToTarget", bird.transform.position + cameraTransformOverride.forward * 100f);
 	}
 
 	void FeatherEmit(Vector3 pos){

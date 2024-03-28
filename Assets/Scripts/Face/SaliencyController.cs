@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -41,6 +42,7 @@ public class SaliencyController : MonoBehaviour
     private float scanInterval; 
     private float scanTimer;
     private byte[] saliencyMapBytes;
+    private bool awatingResponse = false;
 
     private Dictionary<FixationObject, float> salientObjectsDict;
     
@@ -55,17 +57,12 @@ public class SaliencyController : MonoBehaviour
     {
         scanTimer -= Time.deltaTime;
 
-        if (scanTimer < 0)
+        if (scanTimer < 0 && !awatingResponse)
         {
             scanTimer += scanInterval;
             previousVisionFrame = currentVisionFrame;
             InferSaliencyMap();
-            UpdateAuxiliaryCamera();
-            if (saliencyMapBytes!=null)
-            {
-                UpdateSaliencyMap(saliencyMapBytes);
-                ScanSaliencyMap();
-            } 
+            UpdateAuxiliaryCamera(); 
         }
     }
 
@@ -146,6 +143,8 @@ public class SaliencyController : MonoBehaviour
         {
             //Debug.LogError(error.Message);
         });
+        awatingResponse = true;
+        StartCoroutine(WaitForResponse());
     }
 
     private byte[] GetCameraImage()
@@ -187,5 +186,17 @@ public class SaliencyController : MonoBehaviour
         auxiliaryAgentCamera.transform.rotation = agentCamera.transform.rotation;
         auxiliaryAgentCamera.transform.localScale = agentCamera.transform.localScale;
         auxiliaryAgentCamera.enabled = false;
+    }
+
+    private IEnumerator WaitForResponse()
+    {
+        while (saliencyMapBytes == null)
+        {
+            Debug.Log("Awating response...");
+            yield return null;
+        }
+        UpdateSaliencyMap(saliencyMapBytes);
+        ScanSaliencyMap();
+        awatingResponse = false;
     }
 }

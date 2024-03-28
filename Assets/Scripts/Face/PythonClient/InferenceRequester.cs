@@ -30,25 +30,21 @@ public class InferenceRequester : RunAbleThread
                 if (needReply)
                 {
                     byte[] outputBytes = new byte[0];
-                    bool gotMessage = false;
+                    
                     try
                     {
-                        gotMessage = client.TryReceiveFrameBytes(out outputBytes);
+                        outputBytes = client.ReceiveFrameBytes();
                     }
                     catch (Exception e)
                     {
                         Debug.LogError(e.Message);
                     }
-                    
-                    if (gotMessage)
-                    {
                         
-                        Debug.Log("message received!");
-                        var output = new byte[outputBytes.Length];
-                        Buffer.BlockCopy(outputBytes, 0, output, 0, outputBytes.Length);
-                        onOutputReceived?.Invoke(output);
-                        needReply = false;
-                    }
+                    Debug.Log("message received!");
+                    var output = new byte[outputBytes.Length];
+                    Buffer.BlockCopy(outputBytes, 0, output, 0, outputBytes.Length);
+                    onOutputReceived?.Invoke(output);
+                    needReply = false;
                 }
                 
             }
