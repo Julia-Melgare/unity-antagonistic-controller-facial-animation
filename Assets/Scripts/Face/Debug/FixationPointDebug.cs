@@ -37,6 +37,21 @@ public class FixationPointDebug : MonoBehaviour
             fixationPoint = fixationController.GetCurrentFixationPoint();
         }
 
+        if(!attentionController.isActiveAndEnabled && !fixationController.isActiveAndEnabled)
+        {
+            Transform headTransform = GameObject.Find("mixamorig:Head").transform;
+            Debug.DrawRay(headTransform.position, (headTransform.forward.normalized + Vector3.down/5f) * 100f, Color.blue);
+            int characterLayerMask = LayerMask.NameToLayer("Character");
+            if (Physics.Raycast(headTransform.position, headTransform.forward.normalized + Vector3.down/5f, out RaycastHit hit, 100f, ~(1<<characterLayerMask)))
+            {
+                fixationPoint = hit.point;
+            }
+            else
+            {
+                Debug.Log("didn't hit anything");
+            }
+        }
+
         if (followExactEyeMovement)
         {
             float distanceToFixation = Vector3.Distance(leftEyeTransform.position, fixationPoint);

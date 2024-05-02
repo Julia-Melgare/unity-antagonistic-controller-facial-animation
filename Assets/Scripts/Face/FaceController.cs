@@ -178,7 +178,7 @@ public class FaceController : MonoBehaviour
             {
                 // If I'm focusing on path, neck will follow direction too
                 var neckDirection = currentObjectOfInterest.GetFixationPoint() - neckTransform.position;
-                neckDirection.y = initialNeckForward.y;
+                //neckDirection.y = initialNeckForward.y;
                 SetRotation(neckTransform, neckDirection, neckMovementSpeed/2f);
                 // Clamp neck rotation
                 ClampRotation(neckTransform, neckXRotationLimit, neckXRotationLimit, neckYRotationLimit, neckZRotationLimit);

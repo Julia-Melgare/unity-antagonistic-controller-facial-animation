@@ -66,6 +66,7 @@ public class PathDirectionObject : MonoBehaviour
             UpdateDefaultCurve();
             positionInPath = GetPositionInDefaultCurve(currentPosInPath + moveSpeed * Time.deltaTime);
         }
+
         transform.position = new Vector3(positionInPath.x, height + heightOffset, positionInPath.z); // fix y to desired height
 
 
@@ -73,7 +74,7 @@ public class PathDirectionObject : MonoBehaviour
         //UpdateHeight(rigidBodyController.groundSlopeAngle);
     }
 
-    private void UpdateStepsAheadValue(float slopeAngle, float maxSlopeAngle = 30)
+    private void UpdateStepsAheadValue(float slopeAngle, float maxSlopeAngle = 20)
     {
         stepsAhead = maxStepsAhead - ((slopeAngle * (maxStepsAhead - minStepsAhead))/maxSlopeAngle);
     }
