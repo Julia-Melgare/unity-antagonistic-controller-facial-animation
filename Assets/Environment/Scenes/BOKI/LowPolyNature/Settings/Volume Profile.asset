@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b2db86121404754db890f4c8dfe81b2, type: 3}
   m_Name: Bloom
   m_EditorClassIdentifier: 
-  active: 1
+  active: 0
   threshold:
     m_OverrideState: 1
     m_Value: 1
@@ -26,8 +26,8 @@ MonoBehaviour:
     m_OverrideState: 1
     m_Value: 65472
   tint:
-    m_OverrideState: 1
-    m_Value: {r: 0.47450984, g: 1, b: 0.72127914, a: 1}
+    m_OverrideState: 0
+    m_Value: {r: 0.47450984, g: 0.735531, b: 1, a: 1}
   highQualityFiltering:
     m_OverrideState: 1
     m_Value: 0
@@ -56,13 +56,13 @@ MonoBehaviour:
   active: 1
   lift:
     m_OverrideState: 1
-    m_Value: {x: 1, y: 0.99333775, z: 0.98922074, w: 0}
+    m_Value: {x: 1, y: 0.99333775, z: 0.98922074, w: 0.012361039}
   gamma:
     m_OverrideState: 1
-    m_Value: {x: 0.9923106, y: 0.99582666, z: 1, w: 0}
+    m_Value: {x: 0.9923106, y: 0.99582666, z: 1, w: -0.08652659}
   gain:
     m_OverrideState: 1
-    m_Value: {x: 1, y: 0.9970797, z: 0.9409846, w: 0}
+    m_Value: {x: 1, y: 0.9970797, z: 0.9409846, w: 0.061804507}
 --- !u!114 &-982816061689971472
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -124,19 +124,19 @@ MonoBehaviour:
   active: 1
   postExposure:
     m_OverrideState: 1
-    m_Value: 0.1
+    m_Value: 1
   contrast:
     m_OverrideState: 1
-    m_Value: 0
+    m_Value: 9
   colorFilter:
     m_OverrideState: 1
-    m_Value: {r: 1, g: 1, b: 1, a: 1}
+    m_Value: {r: 0.8773585, g: 0.8773585, b: 0.8773585, a: 1}
   hueShift:
     m_OverrideState: 1
     m_Value: 0
   saturation:
     m_OverrideState: 1
-    m_Value: -5
+    m_Value: -2
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -168,10 +168,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 221518ef91623a7438a71fef23660601, type: 3}
   m_Name: WhiteBalance
   m_EditorClassIdentifier: 
-  active: 1
+  active: 0
   temperature:
     m_OverrideState: 1
-    m_Value: -10
+    m_Value: -3
   tint:
     m_OverrideState: 1
     m_Value: 0
@@ -190,4 +190,4 @@ MonoBehaviour:
   active: 1
   mode:
     m_OverrideState: 1
-    m_Value: 2
+    m_Value: 1

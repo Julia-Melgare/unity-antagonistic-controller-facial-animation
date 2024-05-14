@@ -960,6 +960,8 @@ MonoBehaviour:
   minStepsAhead: 4
   stepsAhead: 7
   heightOffset: 3
+  fixationObject:
+    gameObject: {fileID: 0}
 --- !u!1 &2770658072135690517
 GameObject:
   m_ObjectHideFlags: 0
@@ -1469,14 +1471,18 @@ MonoBehaviour:
   lookAtObjectsWeight: 21.2
   focusTimeMean: 1.8692
   focusTimeStd: 0.9988
+  saliencyFixationModifier: 0.3
   lookAtPathTimeMin: 0.2
   lookAtPathTimeMax: 1
   inhibitionOfReturnTime: 0.9
   focusOnSalientRegions: 1
+  lookAtPathDecisionThreshold: 0.5
+  lookAtObjectsDecisionThreshold: -0.5
   decisionThreshold: 0.3
   noiseLevel: 0.01
   maxDecisionTime: 0.2
-  currentFocus: {fileID: 0}
+  currentFocus:
+    gameObject: {fileID: 0}
   currentObjects: []
   currentFocusDebugText: {fileID: 0}
 --- !u!114 &910937097457239725

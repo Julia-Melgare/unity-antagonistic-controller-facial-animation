@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Data.Common;
 using UnityEngine;
 using Voxus.Random;
 
@@ -34,9 +35,6 @@ public class FaceController : MonoBehaviour
     private float eyeSaccadeSpeed = 13.9626f; //800 degrees in radians;
     [SerializeField]
     private float eyePursuitSpeed = 1.74533f; //100 degrees in radians;
-
-    private Vector3 initialLeftEyeForward;
-    private Vector3 initialRightEyeForward;
 
     #region Blendshapes
     private const int BrowOuterUpLeftBlendShapeIndex = 0;
@@ -124,28 +122,19 @@ public class FaceController : MonoBehaviour
     private float minEyeDistance = 0.1f; // Minimum distance to eye needed to start animating squint blendshape
     private float maxEyeDistance = 0.05f; // Maximum eye distance for squint blendshape (we can change dynamically after)
     private Vector3 initialNeckForward;
-    private Vector3 initialHeadForward;
 
     private bool amAvoiding = false;
-    private Vector3 defaultMiddlePoint;
-
-    private RandomGaussian headAccAngleDist;
 
     private void Start()
     {
         StartCoroutine(Blink());
         initialNeckForward = neckTransform.forward;
-        initialHeadForward = headTransform.forward;
-        initialLeftEyeForward = leftEyeTransform.forward;
-        initialRightEyeForward = rightEyeTransform.forward;
-        defaultMiddlePoint = Vector3.Lerp(leftEyeTransform.position, rightEyeTransform.position, 0.3f);
-        headAccAngleDist = new RandomGaussian(60, 10);
     }
 
     private void Update()
     {
-        float currentFixationTime = attentionController.GetCurrentFixationTime();
-        float eyeMovementSpeed = currentFixationTime > 0.2f ? eyePursuitSpeed : eyeSaccadeSpeed;
+        FixationObject currentObjectOfInterest = attentionController.GetCurrentFocus();
+        float eyeMovementSpeed = GetEyeMovementSpeed(currentObjectOfInterest.GetFixationPoint());
         // Check face safety regions
         //if (!amAvoiding && (faceSafetyRegionLeft.closestDistanceToEye <= minEyeDistance || faceSafetyRegionRight.closestDistanceToEye <= minEyeDistance))
         {
@@ -161,11 +150,9 @@ public class FaceController : MonoBehaviour
         
         if (!amAvoiding)
         {
-            GameObject objectOfInterest = attentionController.GetCurrentFocus();
-
             // Rotate eyes towards the target
-            SetRotation(leftEyeTransform, objectOfInterest, eyeMovementSpeed);
-            SetRotation(rightEyeTransform, objectOfInterest, eyeMovementSpeed);
+            SetRotation(leftEyeTransform, currentObjectOfInterest, eyeMovementSpeed);
+            SetRotation(rightEyeTransform, currentObjectOfInterest, eyeMovementSpeed);
 
             // Clamp eye rotations
             ClampRotation(leftEyeTransform, eyeXUpRotationLimit, eyeXDownRotationLimit, eyeYRotationLimit, eyeZRotationLimit);
@@ -194,8 +181,8 @@ public class FaceController : MonoBehaviour
             if (attentionController.IsFocusingOnPath())
             {
                 // If I'm focusing on path, neck will follow direction too
-                var neckDirection = objectOfInterest.transform.position - neckTransform.position;
-                neckDirection.y = initialNeckForward.y;
+                var neckDirection = currentObjectOfInterest.GetFixationPoint() - neckTransform.position;
+                //neckDirection.y = initialNeckForward.y;
                 SetRotation(neckTransform, neckDirection, neckMovementSpeed/2f);
                 // Clamp neck rotation
                 ClampRotation(neckTransform, neckXRotationLimit, neckXRotationLimit, neckYRotationLimit, neckZRotationLimit);
@@ -229,9 +216,10 @@ public class FaceController : MonoBehaviour
         }
     }
 
-    private void SetRotation(Transform objectTransform, GameObject objectOfInterest, float movementSpeed)
+    private void SetRotation(Transform objectTransform, FixationObject objectOfInterest, float movementSpeed)
     {
-        Vector3 targetDirection = objectOfInterest.transform.position - objectTransform.position;
+        if (objectOfInterest.gameObject == null) return;
+        Vector3 targetDirection = objectOfInterest.GetFixationPoint() - objectTransform.position;
         float singleStep = movementSpeed * Time.deltaTime;
         Vector3 newDirection = Vector3.RotateTowards(objectTransform.forward, targetDirection, singleStep, 0.0f);
         objectTransform.rotation = Quaternion.LookRotation(newDirection);
@@ -269,6 +257,14 @@ public class FaceController : MonoBehaviour
         if(xRotation < -xRotationLimit || xRotation > xRotationLimit || yRotation < -yRotationLimit || yRotation > yRotationLimit || zRotation < -zRotationLimit || zRotation > zRotationLimit)
             return true;    
         return false;
+    }
+
+    private float GetEyeMovementSpeed(Vector3 fixationTarget)
+    {
+        Ray r = new Ray(leftEyeTransform.position, leftEyeTransform.forward);
+        var closestPointToTarget = UnityExtensions.RayExt.ClosestPointAlongRay(r, fixationTarget);
+        float distanceToTarget = Vector3.Distance(closestPointToTarget, fixationTarget);
+        return distanceToTarget < 0.1f ? eyePursuitSpeed : eyeSaccadeSpeed; 
     }
 
     private void AnimateGazeBlendShapes()

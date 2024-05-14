@@ -2,10 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using UnityEngine;
-using UnityEngine.AI;
-using UnityEngine.Profiling;
 using UnityEngine.UI;
 
 public class SaliencyController : MonoBehaviour
@@ -26,7 +23,7 @@ public class SaliencyController : MonoBehaviour
     [SerializeField]
     private LayerMask scanLayerMask;
     [SerializeField]
-    public List<GameObject> salientObjects;
+    public List<FixationObject> salientObjects;
     [SerializeField]
     [Range(0.0f, 1.0f)]
     private float saliencyValueThreshold = 0.5f;
@@ -45,31 +42,27 @@ public class SaliencyController : MonoBehaviour
     private float scanInterval; 
     private float scanTimer;
     private byte[] saliencyMapBytes;
+    private bool awatingResponse = false;
 
-    private Dictionary<GameObject, float> salientObjectsDict;
+    private Dictionary<FixationObject, float> salientObjectsDict;
     
     void Start()
     {
         scanInterval = 1.0f / scanFrequency;
         auxiliaryAgentCamera.enabled = false;
-        salientObjectsDict = new Dictionary<GameObject, float>();
+        salientObjectsDict = new Dictionary<FixationObject, float>();
         saliencyMapOutput = new Texture2D(16, 16);
     }
     void Update()
     {
         scanTimer -= Time.deltaTime;
 
-        if (scanTimer < 0)
+        if (scanTimer < 0 && !awatingResponse)
         {
             scanTimer += scanInterval;
             previousVisionFrame = currentVisionFrame;
             InferSaliencyMap();
-            UpdateAuxiliaryCamera();
-            if (saliencyMapBytes!=null)
-            {
-                UpdateSaliencyMap(saliencyMapBytes);
-                ScanSaliencyMap();
-            } 
+            UpdateAuxiliaryCamera(); 
         }
     }
 
@@ -97,8 +90,7 @@ public class SaliencyController : MonoBehaviour
             } 
         }        
         // Get world coordinates from camera and raycast for objects
-        saliencyPoints = saliencyPoints.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
-        salientObjectsDict = new Dictionary<GameObject, float>();
+        salientObjectsDict = new Dictionary<FixationObject, float>();
         foreach (var screenPoint in saliencyPoints)
         {
             Ray ray = auxiliaryAgentCamera.ScreenPointToRay(screenPoint.Key);
@@ -115,10 +107,13 @@ public class SaliencyController : MonoBehaviour
                     raycastObj = terrainPoint;
                 }
 
-                salientObjectsDict.TryAdd(raycastObj, screenPoint.Value);
+                Vector3 hitLocalPos = raycastObj.transform.InverseTransformPoint(hit.point);
+                FixationObject fixationObject = new FixationObject(raycastObj, hitLocalPos);
+
+                salientObjectsDict.TryAdd(fixationObject, screenPoint.Value);
             }                          
         }
-        salientObjects = new List<GameObject>(salientObjectsDict.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value).Keys);
+        salientObjects = new List<FixationObject>(salientObjectsDict.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value).Keys);
         if (debugSaliencyRaycast)
         {
             Texture2D newTexture = new Texture2D(16, 16);
@@ -127,12 +122,12 @@ public class SaliencyController : MonoBehaviour
             saliencyMapImage.texture = newTexture;
         }
     }
-    public List<GameObject> GetSalientObjects()
+    public List<FixationObject> GetSalientObjects()
     {
-        return salientObjects;
+        return salientObjects ?? new List<FixationObject>();
     }
 
-    public float GetObjectSaliency(GameObject obj)
+    public float GetObjectSaliency(FixationObject obj)
     {
         if (salientObjectsDict == null) return .95f;
         return salientObjectsDict.GetValueOrDefault(obj, .95f);
@@ -148,6 +143,8 @@ public class SaliencyController : MonoBehaviour
         {
             //Debug.LogError(error.Message);
         });
+        awatingResponse = true;
+        StartCoroutine(WaitForResponse());
     }
 
     private byte[] GetCameraImage()
@@ -189,5 +186,17 @@ public class SaliencyController : MonoBehaviour
         auxiliaryAgentCamera.transform.rotation = agentCamera.transform.rotation;
         auxiliaryAgentCamera.transform.localScale = agentCamera.transform.localScale;
         auxiliaryAgentCamera.enabled = false;
+    }
+
+    private IEnumerator WaitForResponse()
+    {
+        while (saliencyMapBytes == null)
+        {
+            Debug.Log("Awating response...");
+            yield return null;
+        }
+        UpdateSaliencyMap(saliencyMapBytes);
+        ScanSaliencyMap();
+        awatingResponse = false;
     }
 }

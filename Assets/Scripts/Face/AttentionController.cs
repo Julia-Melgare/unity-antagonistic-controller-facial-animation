@@ -47,7 +47,7 @@ public class AttentionController : MonoBehaviour
     private float maxDecisionTime = 0.2f;
 
     [SerializeField]
-    private GameObject currentFocus = null;
+    private FixationObject currentFocus;
     private float currentFixationTime = 0f;
     [SerializeField]
     private Dictionary<int, float> objectsFocusedOn;
@@ -56,16 +56,15 @@ public class AttentionController : MonoBehaviour
     private float objectDecisionTimer = 0f;
 
     [SerializeField]
-    private List<GameObject> currentObjects;
+    private List<FixationObject> currentObjects;
 
     [Header("Debug/Visualization")]
     [SerializeField]
     private TextMeshProUGUI currentFocusDebugText;
 
-    private List<GameObject> peripheralObjectsLeft;
-    private List<GameObject> peripheralObjectsRight;
-    private List<GameObject> salientObjects;
-    private Dictionary<GameObject, float> driftPerObject;
+    private List<FixationObject> lineOfSightObjects;
+    private List<FixationObject> salientObjects;
+    private Dictionary<FixationObject, float> driftPerObject;
 
     private Coroutine currentFocusRoutine;
     private RandomGaussian fixationTimeDistribution;
@@ -75,18 +74,19 @@ public class AttentionController : MonoBehaviour
     
     private void Start()
     {
+        currentFocus = new FixationObject(null, Vector3.zero);
         saliencyController.enabled = focusOnSalientRegions;
         objectsFocusedOn = new Dictionary<int, float>();
-        currentObjects = new List<GameObject>();
-        peripheralObjectsLeft = new List<GameObject>();
+        currentObjects = new List<FixationObject>();
+        lineOfSightObjects = new List<FixationObject>();
         if (focusOnSalientRegions)
-            salientObjects = new List<GameObject>();
+            salientObjects = new List<FixationObject>();
         fixationTimeDistribution = new RandomGaussian(focusTimeStd, focusTimeMean); 
     }
 
     private void Update()
     {
-        if (currentFocusDebugText != null) currentFocusDebugText.text = "Current focus: "+(currentFocus != null ? currentFocus.gameObject.name : "none");
+        if (currentFocusDebugText != null) currentFocusDebugText.text = "Current focus: "+(currentFocus.gameObject != null ? currentFocus.gameObject.name : "none");
 
         if (!IsFocusingOnPath()) timeSinceLastPathLook += Time.deltaTime; else timeSinceLastPathLook = 0f;
         ComputePathDDM();
@@ -101,8 +101,8 @@ public class AttentionController : MonoBehaviour
             {
                 isChoosingObject = false;
                 var objDecision = driftPerObject.OrderByDescending(x => x.Value).First().Key;
-                var fixationTime = Mathf.Abs(fixationTimeDistribution.Get()) * (GetObjSaliencyScore(objDecision) + saliencyFixationModifier);
-                Debug.Log("[Attention] Focusing on object "+objDecision.name+" for "+fixationTime+"s");
+                var fixationTime = Mathf.Abs(fixationTimeDistribution.Get()); //* (GetObjSaliencyScore(objDecision) + saliencyFixationModifier);
+                Debug.Log("[Attention] Focusing on object "+objDecision.gameObject.name+" for "+fixationTime+"s");
                 currentFocusRoutine = StartCoroutine(FocusOnObject(objDecision, fixationTime));
                 return;
             }
@@ -130,8 +130,8 @@ public class AttentionController : MonoBehaviour
             UpdateCurrentObjects();
             if (currentObjects.Count() > 0)
             {
-                driftPerObject = new Dictionary<GameObject, float>();
-                foreach (GameObject obj in currentObjects)
+                driftPerObject = new Dictionary<FixationObject, float>();
+                foreach (FixationObject obj in currentObjects)
                 {
                     driftPerObject.Add(obj, 0f);
                 }
@@ -161,14 +161,14 @@ public class AttentionController : MonoBehaviour
     private void ChooseObjectStep()
     {
         // Compute DDM step
-        GameObject objDecision = ComputeObjectDDM();
+        FixationObject objDecision = ComputeObjectDDM();
 
         // If an object converged, start focusing on it
-        if (objDecision != null)
+        if (objDecision.gameObject != null)
         {
             isChoosingObject = false;
-            var fixationTime = Mathf.Abs(fixationTimeDistribution.Get()) * (GetObjSaliencyScore(objDecision) + saliencyFixationModifier);
-            Debug.Log("[Attention] Focusing on object "+objDecision.name+" for "+fixationTime+"s");
+            var fixationTime = Mathf.Abs(fixationTimeDistribution.Get()); //* (GetObjSaliencyScore(objDecision) + saliencyFixationModifier);
+            Debug.Log("[Attention] Focusing on object "+objDecision.gameObject.name+" for "+fixationTime+"s");
             currentFocusRoutine = StartCoroutine(FocusOnObject(objDecision, fixationTime));
         }
         else
@@ -176,23 +176,23 @@ public class AttentionController : MonoBehaviour
             objectDecisionTimer -= Time.deltaTime;
         }
     }
-    private GameObject ComputeObjectDDM()
+    private FixationObject ComputeObjectDDM()
     {
-        foreach (GameObject obj in driftPerObject.Keys.ToList())
+        foreach (FixationObject obj in driftPerObject.Keys.ToList())
         {
             if (currentObjects.Contains(obj))
                 driftPerObject[obj] += (GetObjSaliencyScore(obj) * Time.deltaTime) + Random.Range(0, noiseLevel);
             else
                 driftPerObject[obj] *= 0.9f;
-            //Debug.Log("[DDM] ("+(maxDecisionTime - objectDecisionTimer)+"s) "+obj.name+": "+driftPerObject[obj]);
+            //Debug.Log("[DDM] ("+(maxDecisionTime - objectDecisionTimer)+"s) "+obj.gameObject.name+": "+driftPerObject[obj]);
         }
         var max = driftPerObject.OrderByDescending(x => x.Value).First();
         if (max.Value >= decisionThreshold)
         {
-            //Debug.Log("[DDM] ("+(maxDecisionTime - objectDecisionTimer)+"s) Choosing object "+max.Key.name);
+            Debug.Log("[DDM] ("+(maxDecisionTime - objectDecisionTimer)+"s) Choosing object "+max.Key.gameObject.name);
             return max.Key;
         }
-        return null;
+        return new FixationObject(null, Vector3.zero);
     }
 
     private void UpdateCurrentObjects()
@@ -202,37 +202,33 @@ public class AttentionController : MonoBehaviour
         if (focusOnSalientRegions)
             salientObjects = saliencyController.GetSalientObjects();
         
-        var currentObjectsSet = new HashSet<GameObject>();
-        foreach(GameObject obj in peripheralObjectsLeft)
-        {
-                currentObjectsSet.Add(obj);
-        }
-
-        foreach(GameObject obj in peripheralObjectsRight)
+        var currentObjectsSet = new HashSet<FixationObject>();
+        foreach(FixationObject obj in lineOfSightObjects)
         {
                 currentObjectsSet.Add(obj);
         }
             
         if (focusOnSalientRegions)
         {
-            foreach(GameObject obj in salientObjects)
+            foreach(FixationObject obj in salientObjects)
             {
                     currentObjectsSet.Add(obj);
             }
                 
         }
-        currentObjects = new List<GameObject>(currentObjectsSet.ToList());        
+        currentObjects = new List<FixationObject>(currentObjectsSet.ToList());        
     }
 
-    private float GetObjSaliencyScore(GameObject obj)
+    private float GetObjSaliencyScore(FixationObject obj)
     {
-        return (saliencyController.GetObjectSaliency(obj) * 0.5f + opticalFlowController.GetObjectSpeed(obj) * 1.0f) * (inhibitionOfReturnTime - objectsFocusedOn.GetValueOrDefault(obj.GetInstanceID(), 0f));
+        //Debug.Log("[SaliencyScore] "+obj.gameObject.name+" IS: "+saliencyController.GetObjectSaliency(obj)+" MS: "+ frustrumLineOfSight.GetObjectSpeed(obj)+" IOR: "+(1f + inhibitionOfReturnTime - objectsFocusedOn.GetValueOrDefault(obj.gameObject.GetInstanceID(), 0f)));
+        return (saliencyController.GetObjectSaliency(obj) + frustrumLineOfSight.GetObjectSpeed(obj)) * (1f + inhibitionOfReturnTime - objectsFocusedOn.GetValueOrDefault(obj.gameObject.GetInstanceID(), 0f));
     }
 
     private float GetMaxObjectSaliency()
     {
         float maxObjSaliency = 0f;
-        foreach (GameObject obj in currentObjects)
+        foreach (FixationObject obj in currentObjects)
         {
             float objSaliency = GetObjSaliencyScore(obj);
             if (objSaliency > maxObjSaliency) maxObjSaliency = objSaliency;
@@ -240,19 +236,19 @@ public class AttentionController : MonoBehaviour
         return maxObjSaliency;
     }
 
-    private void OnFastMovement(GameObject movingObj)
+    private void OnFastMovement(FixationObject movingObj)
     {
-        var fixationTime = Mathf.Abs(fixationTimeDistribution.Get()) * (GetObjSaliencyScore(movingObj) + saliencyFixationModifier);
+        var fixationTime = Mathf.Abs(fixationTimeDistribution.Get()); //* (GetObjSaliencyScore(movingObj) + saliencyFixationModifier);
         if (!isFocusing)
         {
             StartCoroutine(FocusOnObject(movingObj, fixationTime));
             return;
         }
         if (currentFocus == movingObj) return;
-        if (objectsFocusedOn.ContainsKey(movingObj.GetInstanceID())) return;
+        if (objectsFocusedOn.ContainsKey(movingObj.gameObject.GetInstanceID())) return;
         if (currentFocusRoutine != null) StopCoroutine(currentFocusRoutine);
         isFocusing = false;
-        if (currentFocus != null && currentFocus.GetInstanceID() != pathLookAhead.gameObject.GetInstanceID())
+        if (currentFocus.gameObject != null && currentFocus.gameObject.GetInstanceID() != pathLookAhead.gameObject.GetInstanceID())
         {
             int currentFocusID = currentFocus.gameObject.GetInstanceID();
             if (objectsFocusedOn.TryAdd(currentFocusID, inhibitionOfReturnTime))
@@ -263,7 +259,7 @@ public class AttentionController : MonoBehaviour
 
     private IEnumerator FocusOnPath(float fixationTime)
     {
-        currentFocus = pathLookAhead.gameObject;
+        currentFocus = pathLookAhead.fixationObject;
         currentFixationTime = fixationTime;
         isFocusing = true;
         yield return new WaitForSeconds(fixationTime);
@@ -271,7 +267,7 @@ public class AttentionController : MonoBehaviour
         yield return null;
     }
 
-    private IEnumerator FocusOnObject(GameObject obj, float fixationTime)
+    private IEnumerator FocusOnObject(FixationObject obj, float fixationTime)
     {
         currentFocus = obj;
         currentFixationTime = fixationTime;
@@ -295,9 +291,9 @@ public class AttentionController : MonoBehaviour
         yield return null;
     }
 
-    public GameObject GetCurrentFocus()
+    public FixationObject GetCurrentFocus()
     {
-        return currentFocus ?? pathLookAhead.gameObject;
+        return currentFocus ?? pathLookAhead.fixationObject;
     }
 
     public float GetCurrentFixationTime()
@@ -307,7 +303,7 @@ public class AttentionController : MonoBehaviour
 
     public bool IsFocusingOnPath()
     {
-        return currentFocus != null && currentFocus.GetInstanceID() == pathLookAhead.gameObject.GetInstanceID();
+        return currentFocus.gameObject != null && currentFocus.gameObject.GetInstanceID() == pathLookAhead.gameObject.GetInstanceID();
     }
 
     /*private void OnEnable()

@@ -20,20 +20,20 @@ public class FrustrumLineOfSight : MonoBehaviour
     [SerializeField]
     private float fastMovementThreshold = 0.5f;
     [SerializeField] 
-    private List<GameObject> objects = new List<GameObject>();
+    private List<FixationObject> objects = new List<FixationObject>();
 
     [Header("Debug/Visualization Settings")]
     [SerializeField] 
     private Color meshColor = Color.yellow;
 
-    private Collider[] colliders = new Collider[100];
+    private Collider[] colliders = new Collider[200];
     private Mesh mesh;
     private int count;
     private float scanInterval;
     private float scanTimer;
 
 
-    public delegate void OnFastMovement(GameObject movingObj);
+    public delegate void OnFastMovement(FixationObject movingObj);
     public event OnFastMovement onFastMovement;
 
     void Start()
@@ -56,27 +56,29 @@ public class FrustrumLineOfSight : MonoBehaviour
     {
         count = Physics.OverlapSphereNonAlloc(transform.position, distance, colliders, layers, QueryTriggerInteraction.Collide);
         objects.Clear();
-        var objectSpeedDict = new Dictionary<GameObject, float>();
+        var objectSpeedDict = new Dictionary<FixationObject, float>();
         for (int i = 0; i < count; i++)
         {
             GameObject obj = colliders[i].gameObject;
             if (IsInSight(obj) && IsMoving(obj))
             {
-                float objSpeed = GetObjectSpeed(obj);
+                Vector3 localFixationPoint = obj.transform.InverseTransformPoint(obj.GetComponentInChildren<Renderer>().bounds.center);
+                FixationObject fixationObject = new FixationObject(obj, localFixationPoint);
+                float objSpeed = GetObjectSpeed(fixationObject);
                 if (objSpeed > fastMovementThreshold)
                 {
                     //Debug.Log("[Fustrum] Detected fast moving object: "+obj.name+" speed: "+objSpeed);
-                    onFastMovement?.Invoke(obj);
+                    onFastMovement?.Invoke(fixationObject);
                 } 
-                objectSpeedDict.TryAdd(obj, objSpeed);
+                objectSpeedDict.TryAdd(fixationObject, objSpeed);
             }
         }
-        objects = new List<GameObject>(objectSpeedDict.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value).Keys);
+        objects = new List<FixationObject>(objectSpeedDict.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value).Keys);
     }
 
-    public List<GameObject> GetObjects()
+    public List<FixationObject> GetObjects()
     {
-        return objects;
+        return objects ?? new List<FixationObject>();
     }
 
     public bool IsInSight(GameObject obj)
@@ -105,9 +107,9 @@ public class FrustrumLineOfSight : MonoBehaviour
         return false;
     }
 
-    public float GetObjectSpeed(GameObject obj)
+    public float GetObjectSpeed(FixationObject obj)
     {
-        var movingObj = obj.GetComponent<MovingObject>();
+        var movingObj = obj.gameObject.GetComponent<MovingObject>();
         if (movingObj == null) return 0f;
         float motionSaliency = 0f;
         switch(movingObj.motionState)
@@ -131,7 +133,7 @@ public class FrustrumLineOfSight : MonoBehaviour
         int count = 0;
         foreach (var obj in objects)
         {
-            if (obj.layer == layer) buffer[count++] = obj;
+            if (obj.gameObject.layer == layer) buffer[count++] = obj.gameObject;
             if (count == buffer.Length) break;
         }
         return count;

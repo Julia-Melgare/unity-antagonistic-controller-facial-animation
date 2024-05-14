@@ -27,6 +27,8 @@ public class PathDirectionObject : MonoBehaviour
     public float heightOffset = 3f;
     private float height = 3f;
 
+    public FixationObject fixationObject;
+
     private float currentPosInPath;
     private float moveSpeed = 1f;
     private CinemachineSmoothPath defaultCurve = null;
@@ -35,6 +37,7 @@ public class PathDirectionObject : MonoBehaviour
     {
         if (!rigidBodyController.followPath) InitializeDefaultCurve();
         if (eyeTransform == null) eyeTransform = transform.parent.gameObject.transform; // if Face is not assigned, assume it's the parent object
+        fixationObject = new FixationObject(gameObject, Vector3.zero);
     }
 
     void Update()
@@ -52,23 +55,26 @@ public class PathDirectionObject : MonoBehaviour
             moveSpeed = 0;
         }
 
+        Vector3 positionInPath = Vector3.zero;
+
         if (rigidBodyController.followPath)
         {
-            Vector3 positionInPath = GetPositionInPath(currentPosInPath + moveSpeed * Time.deltaTime);
-            transform.position = new Vector3(positionInPath.x, height + heightOffset, positionInPath.z); // fix y to desired height
+            positionInPath = GetPositionInPath(currentPosInPath + moveSpeed * Time.deltaTime);
         }
         else //Assume simple trajectory estimation
         {
             UpdateDefaultCurve();
-            Vector3 positionInPath = GetPositionInDefaultCurve(currentPosInPath + moveSpeed * Time.deltaTime);
-            transform.position = new Vector3(positionInPath.x, height + heightOffset, positionInPath.z);
+            positionInPath = GetPositionInDefaultCurve(currentPosInPath + moveSpeed * Time.deltaTime);
         }
+
+        transform.position = new Vector3(positionInPath.x, height + heightOffset, positionInPath.z); // fix y to desired height
+
 
         UpdateStepsAheadValue(rigidBodyController.groundSlopeAngle);
         //UpdateHeight(rigidBodyController.groundSlopeAngle);
     }
 
-    private void UpdateStepsAheadValue(float slopeAngle, float maxSlopeAngle = 30)
+    private void UpdateStepsAheadValue(float slopeAngle, float maxSlopeAngle = 20)
     {
         stepsAhead = maxStepsAhead - ((slopeAngle * (maxStepsAhead - minStepsAhead))/maxSlopeAngle);
     }

@@ -30,6 +30,7 @@ public class lb_BirdController : MonoBehaviour {
 	int birdIndex = 0;
 	GameObject[] featherEmitters = new GameObject[3];
 
+	public Transform cameraTransformOverride;
 	public void AllFlee(){
 		if(!pause){
 			for(int i=0;i<myBirds.Length;i++){
@@ -315,26 +316,35 @@ public class lb_BirdController : MonoBehaviour {
 	
 	void BirdFindTarget(GameObject bird){
 		//yield return new WaitForSeconds(1);
-		GameObject target;
-		if (birdGroundTargets.Count > 0 || birdPerchTargets.Count > 0){
-			//pick a random target based on the number of available targets vs the area of ground targets
-			//each perch target counts for .3 area, each ground target's area is calculated
-			float gtArea=0.0f;
-			float ptArea=birdPerchTargets.Count*0.3f;
-
-			for (int i=0;i<birdGroundTargets.Count;i++){
-				gtArea += birdGroundTargets[i].GetComponent<Collider>().bounds.size.x*birdGroundTargets[i].GetComponent<Collider>().bounds.size.z;
-			}
-			if (ptArea == 0.0f || Random.value < gtArea/(gtArea+ptArea)){
-				target = birdGroundTargets[Mathf.FloorToInt (Random.Range (0,birdGroundTargets.Count))];
-				bird.SendMessage ("FlyToTarget",FindPointInGroundTarget(target));
-			}else{
-				target = birdPerchTargets[Mathf.FloorToInt (Random.Range (0,birdPerchTargets.Count))];
-				bird.SendMessage ("FlyToTarget",target.transform.position);
-			}
-		}else{
-			bird.SendMessage ("FlyToTarget",currentCamera.transform.position+new Vector3(Random.Range (-100,100),Random.Range (5,10),Random.Range(-100,100)));
+		if (cameraTransformOverride != null)
+		{
+			bird.SendMessage("FlyToTarget", bird.transform.position + cameraTransformOverride.forward * 100f);
 		}
+		else
+		{
+			GameObject target;
+			if (birdGroundTargets.Count > 0 || birdPerchTargets.Count > 0){
+				//pick a random target based on the number of available targets vs the area of ground targets
+				//each perch target counts for .3 area, each ground target's area is calculated
+				float gtArea=0.0f;
+				float ptArea=birdPerchTargets.Count*0.3f;
+
+				for (int i=0;i<birdGroundTargets.Count;i++){
+					gtArea += birdGroundTargets[i].GetComponent<Collider>().bounds.size.x*birdGroundTargets[i].GetComponent<Collider>().bounds.size.z;
+				}
+				if (ptArea == 0.0f || Random.value < gtArea/(gtArea+ptArea)){
+					target = birdGroundTargets[Mathf.FloorToInt (Random.Range (0,birdGroundTargets.Count))];
+					bird.SendMessage ("FlyToTarget",FindPointInGroundTarget(target));
+				}else{
+					target = birdPerchTargets[Mathf.FloorToInt (Random.Range (0,birdPerchTargets.Count))];
+					bird.SendMessage ("FlyToTarget",target.transform.position);
+				}
+			}else{
+				bird.SendMessage("FlyToTarget", currentCamera.transform.position+new Vector3(Random.Range(-100,100), Random.Range(5, 10) ,Random.Range(-100,100)));
+			}
+		}
+		
+		
 	}
 
 	void FeatherEmit(Vector3 pos){

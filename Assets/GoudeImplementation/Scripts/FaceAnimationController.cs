@@ -113,6 +113,12 @@ public class FaceAnimationController : MonoBehaviour
     [SerializeField]
     private float headLiftTime = 2f;
     private float headLiftTimer;
+    [SerializeField]
+    private float headLiftDuration = 2f;
+    private float headLiftDurationTimer;
+
+    [SerializeField]
+    private Transform fullBodyTransform;
 
     private Vector3 initialNeckForward;
     private Vector3 initialLeftEyeForward;
@@ -139,10 +145,21 @@ public class FaceAnimationController : MonoBehaviour
         Vector3 fixationPoint = currentFixation = fixationController.GetCurrentFixationPoint();
         Vector3 middlePoint = (leftEyeTransform.forward + rightEyeTransform.forward).normalized;
 
-        if (fixationPoint == Vector3.negativeInfinity)
+        if (headLiftTimer <= 0)
         {
-            SetRotation(neckTransform, initialNeckForward, neckMovementSpeed);
+            Debug.Log("time to lift head");
+            headLiftDurationTimer = headLiftDuration;
+        }
+
+        if (headLiftDurationTimer > 0)
+        {
+            headLiftTimer = headLiftDuration + headLiftTime;
+            var neckDirection = fullBodyTransform.forward;
+            neckDirection.y = initialNeckForward.y;
+            SetRotation(neckTransform, neckDirection, neckMovementSpeed);
             ClampRotation(neckTransform, neckXRotationLimit, neckYRotationLimit, neckZRotationLimit);
+            headLiftDurationTimer -= Time.deltaTime;
+            return;
         }
 
         //CheckBlink();
@@ -173,6 +190,7 @@ public class FaceAnimationController : MonoBehaviour
         // Animate eye blendhsapes according to gaze direction
         AnimateGazeBlendShapes();
         lastFixation = fixationPoint;
+        headLiftTimer -= Time.deltaTime;
     }
 
     private void SetRotation(Transform objectTransform, Vector3 targetRotation, float movementSpeed)

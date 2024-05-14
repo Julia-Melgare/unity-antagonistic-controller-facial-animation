@@ -20,6 +20,8 @@ public class FixationController : MonoBehaviour
 
     public bool IsFixating = false;
     private float fixationTimer;
+
+    private bool awatingResponse = false;
     void Start()
     {
         fixationTimer = 0;
@@ -27,22 +29,11 @@ public class FixationController : MonoBehaviour
 
     void Update()
     {
-        Debug.Log(fixationTimer);
         fixationTimer -= Time.deltaTime;
-        if (fixationTimer <= 0)
+        if (fixationTimer <= 0 && !awatingResponse)
         {
             InferSaliencyMap();
             UpdateAuxiliaryCamera();
-            if (fixationBytes!=null)
-            {
-                UpdateFixationIndex(fixationBytes);
-                GetFixationPoint();
-                fixationTimer = (float) currentFixationTime;
-            }
-            else
-            {
-                currentFixationPoint = Vector3.negativeInfinity;
-            } 
         }
     }
     private void GetFixationPoint()
@@ -70,7 +61,6 @@ public class FixationController : MonoBehaviour
         return currentFixationPoint;
     }
 
-
     private void InferSaliencyMap()
     {
         fixationBytes = null;
@@ -90,7 +80,7 @@ public class FixationController : MonoBehaviour
         image.Apply();
 
         // Encode to PNG
-        byte[] bytes = image.EncodeToPNG();
+        byte[] bytes = image.EncodeToJPG();
 
         // Set render texture back to default
         RenderTexture.active = currentRT;
@@ -105,17 +95,22 @@ public class FixationController : MonoBehaviour
         fixationIndex = BitConverter.ToInt32(intBytes);
         Array.Reverse(rawData);
         currentFixationTime = BitConverter.ToDouble(rawData);
+        Debug.Log("New fixation point: "+fixationIndex);
+        Debug.Log("New fixation time: "+currentFixationTime);
     }
 
     private void RunSaliencyInference(byte[] input)
     {
+        Debug.Log("running saliency inference");
         inferenceClient.Infer(input, output =>
         {
             fixationBytes = output;
         }, error =>
         {
-            //Debug.LogError(error.Message);
+            Debug.LogError(error.Message);
         });
+        awatingResponse = true;
+        StartCoroutine(WaitForResponse());
     }
 
     private void UpdateAuxiliaryCamera()
@@ -125,5 +120,18 @@ public class FixationController : MonoBehaviour
         auxiliaryAgentCamera.transform.rotation = agentCamera.transform.rotation;
         auxiliaryAgentCamera.transform.localScale = agentCamera.transform.localScale;
         auxiliaryAgentCamera.enabled = false;
+    }
+
+    private IEnumerator WaitForResponse()
+    {
+        while (fixationBytes == null)
+        {
+            yield return null;
+        }
+        Debug.Log(fixationBytes);
+        UpdateFixationIndex(fixationBytes);
+        GetFixationPoint();
+        fixationTimer = (float) currentFixationTime;
+        awatingResponse = false;
     }
 }
