@@ -11,7 +11,7 @@ public class AttentionController : MonoBehaviour
     [SerializeField]
     private SaliencyController saliencyController;
     [SerializeField]
-    private OpticalFlowController opticalFlowController;
+    private FrustrumLineOfSight frustrumLineOfSight;
     [SerializeField]
     private PathDirectionObject pathLookAhead;
 
@@ -197,8 +197,7 @@ public class AttentionController : MonoBehaviour
 
     private void UpdateCurrentObjects()
     {
-        peripheralObjectsLeft = opticalFlowController.objectsLeft;
-        peripheralObjectsRight = opticalFlowController.objectsRight;
+        lineOfSightObjects = frustrumLineOfSight.GetObjects();
         if (focusOnSalientRegions)
             salientObjects = saliencyController.GetSalientObjects();
         
@@ -306,13 +305,13 @@ public class AttentionController : MonoBehaviour
         return currentFocus.gameObject != null && currentFocus.gameObject.GetInstanceID() == pathLookAhead.gameObject.GetInstanceID();
     }
 
-    /*private void OnEnable()
+    private void OnEnable()
     {
-        opticalFlowController.onFastMovement += OnFastMovement;
+        frustrumLineOfSight.onFastMovement += OnFastMovement;
     }
 
     private void OnDisable()
     {
-        opticalFlowController.onFastMovement -= OnFastMovement;
-    }*/
+        frustrumLineOfSight.onFastMovement -= OnFastMovement;
+    }
 }
