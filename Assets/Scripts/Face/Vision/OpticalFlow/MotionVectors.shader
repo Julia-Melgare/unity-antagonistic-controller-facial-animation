@@ -51,7 +51,7 @@ Shader "Unlit/MotionVectors"
                 float3 rgb = MotionVectorsToOpticalFlow(motion);
                 return float4(rgb, 1);*/
                 fixed4 col = tex2D(_MotionVectorTexture, i.uv);
-                col.xy *= 10;
+                col.xy *= 100;
                 return col;
             }
             ENDCG
