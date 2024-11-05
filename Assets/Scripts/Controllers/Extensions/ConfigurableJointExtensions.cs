@@ -142,7 +142,7 @@ public static class ConfigurableJointExtensions
 
 		joint.rotationDriveMode = RotationDriveMode.Slerp;
 		var slerpDrive = joint.slerpDrive;
-		slerpDrive.mode = JointDriveMode.Position;
+		//slerpDrive.mode = JointDriveMode.Position;
 		slerpDrive.maximumForce = Mathf.Infinity;
 		joint.slerpDrive = slerpDrive;
 	}

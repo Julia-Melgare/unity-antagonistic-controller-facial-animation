@@ -51,7 +51,7 @@ public class SaliencyController : MonoBehaviour
         scanInterval = 1.0f / scanFrequency;
         auxiliaryAgentCamera.enabled = false;
         salientObjectsDict = new Dictionary<FixationObject, float>();
-        saliencyMapOutput = new Texture2D(16, 16);
+        saliencyMapOutput = new Texture2D(saliencyMapSize, saliencyMapSize);
     }
     void Update()
     {
@@ -116,7 +116,7 @@ public class SaliencyController : MonoBehaviour
         salientObjects = new List<FixationObject>(salientObjectsDict.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value).Keys);
         if (debugSaliencyRaycast)
         {
-            Texture2D newTexture = new Texture2D(16, 16);
+            Texture2D newTexture = new Texture2D(saliencyMapSize, saliencyMapSize);
             newTexture.SetPixels(saliencyMapPixels);
             newTexture.Apply();
             saliencyMapImage.texture = newTexture;

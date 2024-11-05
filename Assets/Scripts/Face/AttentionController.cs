@@ -23,8 +23,6 @@ public class AttentionController : MonoBehaviour
     [SerializeField]
     private float focusTimeMean = 1.8692f, focusTimeStd = 0.9988f; // Exploratory: mean = 1.8692f, std = 0.9988f; Goal-driven: mean = 0.12128f, std = 0.06778f
     [SerializeField]
-    private float saliencyFixationModifier = 0.3f;
-    [SerializeField]
     private float lookAtPathTimeMin = 0.2f, lookAtPathTimeMax = 0.5f;
     [SerializeField]
     private float inhibitionOfReturnTime = 0.9f;
