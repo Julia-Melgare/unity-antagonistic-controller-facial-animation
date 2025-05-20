@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
+  m_IndirectSpecularColor: {r: 0.37311953, g: 0.38074014, b: 0.3587274, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -159,18 +159,8 @@ MonoBehaviour:
   textureUpdateEvent:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1534700610}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: Calculate
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      - {m_Target: {fileID: 1534700610}, m_TargetAssemblyTypeName: , m_MethodName: Calculate, m_Mode: 0, m_Arguments: {m_ObjectArgument: {fileID: 0}, m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine, m_IntArgument: 0, m_FloatArgument: 0, m_StringArgument: , m_BoolArgument: 0}, m_CallState: 2}
+    m_CallsDirty: 1
   webCamTexture: {fileID: 0}
   width: 256
   height: 256
@@ -252,9 +242,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59a8745a3fd0023479a9d1bca282ef05, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  inputTexture: {fileID: 0}
   flowMaterial: {fileID: 2100000, guid: 127ac6df689824344be4b84ae9d9f012, type: 2}
   blurIterations: 0
   blurDownSample: 0
+  calculateEveryFrame: 0
+  flipY: 0
   debug: 1
 --- !u!114 &1534700611
 MonoBehaviour:

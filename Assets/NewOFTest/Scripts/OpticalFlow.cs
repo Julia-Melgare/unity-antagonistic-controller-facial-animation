@@ -14,12 +14,14 @@ namespace OpticalFlow
             BlurV = 3,
             Visualize = 4
         };
-
         public RenderTexture Flow { get { return resultBuffer; } }
 
-        [SerializeField] protected Material flowMaterial;
-        [SerializeField, Range(0, 6)] int blurIterations = 0, blurDownSample = 0;
-        [SerializeField] protected bool debug;
+        public Texture inputTexture;
+        public Material flowMaterial;
+        [Range(0, 6)] public int blurIterations = 0, blurDownSample = 0;
+        public bool calculateEveryFrame = false;
+        public bool flipY = false;
+        public bool debug;
 
         protected RenderTexture prevFrame, flowBuffer, resultBuffer;
 
@@ -28,10 +30,16 @@ namespace OpticalFlow
         protected void Start () {
         }
 
-        protected void OnRenderImage(RenderTexture source, RenderTexture destination)
-        {
-            Graphics.Blit(resultBuffer, destination, flowMaterial, (int)Pass.Visualize);
-        }
+		private void Update() {
+
+            if (calculateEveryFrame)
+                Calculate();
+		}
+
+		//protected void OnRenderImage(RenderTexture source, RenderTexture destination)
+  //      {
+  //          Graphics.Blit(resultBuffer, destination, flowMaterial, (int)Pass.Visualize);
+  //      }
 
         protected void OnDestroy ()
         {
@@ -54,7 +62,7 @@ namespace OpticalFlow
 
             const int offset = 10;
             const int width = 176, height = 144;
-            //GUI.DrawTexture(new Rect(offset, offset, width, height), prevFrame);
+            GUI.DrawTexture(new Rect(offset, offset, width, height), prevFrame);
             GUI.DrawTexture(new Rect(offset, offset + height, width, height), flowBuffer);
         }
 
@@ -76,6 +84,34 @@ namespace OpticalFlow
             resultBuffer.format = RenderTextureFormat.ARGBFloat;
             resultBuffer.wrapMode = TextureWrapMode.Repeat;
             resultBuffer.Create();
+        }
+
+        public void Calculate() {
+
+            if (inputTexture == null)
+                return;
+
+            if (prevFrame == null) {
+                Setup(inputTexture.width, inputTexture.height);
+                Graphics.Blit(inputTexture, prevFrame);
+            }
+
+            flowMaterial.SetTexture("_PrevTex", prevFrame);
+            flowMaterial.SetFloat("_Ratio", 1f * Screen.height / Screen.width);
+            flowMaterial.SetInt("_FlipY", flipY ? 1 : 0);
+
+            Graphics.Blit(inputTexture, flowBuffer, flowMaterial, (int)Pass.Flow);
+            Graphics.Blit(inputTexture, prevFrame);
+
+            // Graphics.Blit(flowBuffer, destination, flowMaterial, (int)Pass.Visualize);
+
+            // Blur and visualize flow
+            var downSampled = DownSample(flowBuffer, blurDownSample);
+            Blur(downSampled, blurIterations);
+            // Graphics.Blit(downSampled, destination, flowMaterial, (int)Pass.Visualize);
+            Graphics.Blit(downSampled, resultBuffer);
+
+            RenderTexture.ReleaseTemporary(downSampled);
         }
 
         public void Calculate(Texture current)

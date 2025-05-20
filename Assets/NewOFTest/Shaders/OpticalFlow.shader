@@ -69,6 +69,8 @@
 
     float _Scale, _Lambda, _Threshold;
 
+    int _FlipY;
+
     float4 grayScale(float4 col)
     {
         float gray = dot(float3(col.x, col.y, col.z), float3(0.3, 0.59, 0.11));
@@ -141,6 +143,7 @@
             float4 fragFlow (vsin i) : SV_Target
 			{
                 float2 uv = i.uv;
+                if (_FlipY > 0) uv.y = 1.0f - uv.y;
 				float4 current = tex2D(_MainTex, uv);
 				float4 prev = tex2D(_PrevTex, uv);
 
@@ -164,7 +167,8 @@
 
                 float w = length(flow);
                 float nw = (w - _Threshold) / (1.0 - _Threshold);
-                flow = lerp(float2(0, 0), normalize(flow) * nw * _Scale, step(_Threshold, w));
+                if (w > 0) flow = normalize(flow);
+                flow = lerp(float2(0, 0), flow * nw * _Scale, step(_Threshold, w));
                 return float4(flow, 0, 1);
             }
 
