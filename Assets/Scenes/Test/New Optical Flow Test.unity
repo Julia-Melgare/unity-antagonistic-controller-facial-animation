@@ -1146,7 +1146,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 199234264}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 59a8745a3fd0023479a9d1bca282ef05, type: 3}
   m_Name: 
@@ -2512,7 +2512,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.7775424, y: 1}
+    m_SensorSize: {x: 1.7783018, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -3354,7 +3354,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 182331092712131235, guid: 23362761152b80a43bfdef68f548de63, type: 3}
       propertyPath: m_RendererIndex
-      value: 0
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 182331092712131235, guid: 23362761152b80a43bfdef68f548de63, type: 3}
+      propertyPath: m_RequiresDepthTextureOption
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 243612610155701074, guid: 23362761152b80a43bfdef68f548de63, type: 3}
       propertyPath: m_Layer
@@ -6241,7 +6245,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.7775424, y: 1}
+    m_SensorSize: {x: 1.7783018, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0

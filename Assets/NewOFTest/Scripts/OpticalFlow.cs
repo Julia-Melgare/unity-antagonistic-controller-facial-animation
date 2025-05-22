@@ -114,30 +114,6 @@ namespace OpticalFlow
             RenderTexture.ReleaseTemporary(downSampled);
         }
 
-        public void Calculate(Texture current)
-        {
-            if(prevFrame == null) {
-                Setup(current.width, current.height);
-                Graphics.Blit(current, prevFrame);
-            }
-
-            flowMaterial.SetTexture("_PrevTex", prevFrame);
-            flowMaterial.SetFloat("_Ratio", 1f * Screen.height / Screen.width);
-
-            Graphics.Blit(current, flowBuffer, flowMaterial, (int)Pass.Flow);
-            Graphics.Blit(current, prevFrame);
-
-            // Graphics.Blit(flowBuffer, destination, flowMaterial, (int)Pass.Visualize);
-
-            // Blur and visualize flow
-            var downSampled = DownSample(flowBuffer, blurDownSample);
-            Blur(downSampled, blurIterations);
-            // Graphics.Blit(downSampled, destination, flowMaterial, (int)Pass.Visualize);
-            Graphics.Blit(downSampled, resultBuffer);
-
-            RenderTexture.ReleaseTemporary(downSampled);
-        }
-
         RenderTexture DownSample(RenderTexture source, int lod)
         {
             var dst = RenderTexture.GetTemporary(source.width, source.height, 0, source.format);
