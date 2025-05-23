@@ -1,0 +1,43 @@
+#pragma kernel CSMain
+
+Texture2D<float> _DepthTexture;
+Texture2D<float4> _OpticalFlow;
+RWTexture2D<float4> _CameraFlowOut;
+
+float4x4 _CurrViewProj;
+float4x4 _PrevViewProj;
+float4x4 _InvCurrViewProj;
+
+[numthreads(8, 8, 1)]
+void CSMain(uint3 id : SV_DispatchThreadID)
+{
+    int2 pixel = id.xy;
+
+    float depth = _DepthTexture.Load(int3(pixel, 0));
+    if (depth <= 0.0)
+    {
+        _CameraFlowOut[pixel] = float4(0, 0, 0, 1);
+        return;
+    }
+
+    int2 texSize;
+    _CameraFlowOut.GetDimensions(texSize.x, texSize.y);
+    float2 uv = (float2)pixel / texSize;
+
+    float2 ndc = uv * 2.0 - 1.0;
+    float4 currClip = float4(ndc * depth, depth, 1.0);
+
+    float4 worldPos = mul(_InvCurrViewProj, currClip);
+    worldPos /= worldPos.w;
+
+    float4 prevClip = mul(_PrevViewProj, worldPos);
+    prevClip /= prevClip.w;
+
+    float2 prevUV = (prevClip.xy * 0.5) + 0.5;
+    float2 camFlow = uv - prevUV;
+
+    float2 totalFlow = _OpticalFlow.Load(int3(pixel, 0)).xy;
+    float2 objectFlow = totalFlow - camFlow;
+
+    _CameraFlowOut[pixel] = float4(objectFlow, 0, 1);
+}

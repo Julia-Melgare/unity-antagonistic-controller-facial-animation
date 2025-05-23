@@ -18,6 +18,7 @@ namespace OpticalFlow
 
         public Texture inputTexture;
         public Material flowMaterial;
+        public RenderTexture outputTexture;
         [Range(0, 6)] public int blurIterations = 0, blurDownSample = 0;
         public bool calculateEveryFrame = false;
         public bool flipY = false;
@@ -33,7 +34,10 @@ namespace OpticalFlow
 		private void Update() {
 
             if (calculateEveryFrame)
+            {
                 Calculate();
+                Graphics.Blit(flowBuffer, outputTexture);
+            }
 		}
 
 		//protected void OnRenderImage(RenderTexture source, RenderTexture destination)
@@ -61,7 +65,7 @@ namespace OpticalFlow
             if (!debug || prevFrame == null || flowBuffer == null) return;
 
             const int offset = 10;
-            const int width = 176, height = 144;
+            const int width = 256, height = 256;
             GUI.DrawTexture(new Rect(offset, offset, width, height), prevFrame);
             GUI.DrawTexture(new Rect(offset, offset + height, width, height), flowBuffer);
         }
