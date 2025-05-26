@@ -15,7 +15,9 @@ public class CameraMotionRemover : MonoBehaviour
     [SerializeField]
     private RenderTexture opticalFlowTexture;
     [SerializeField]
-    private RenderTexture cameraDepthTexture;
+    private RenderTexture currentDepthTexture;
+    [SerializeField]
+    private RenderTexture previousDepthTexture;
     private Matrix4x4 currViewProjMatrix;
     private Matrix4x4 prevViewProjMatrix;
     private Matrix4x4 invCurrViewProjMatrix;
@@ -46,11 +48,18 @@ public class CameraMotionRemover : MonoBehaviour
         // Save the current matrix as previous for next frame
         prevViewProjMatrix = currViewProjMatrix;
 
+        // Save the current depth texture as previous for next frame
+        Graphics.Blit(currentDepthTexture, previousDepthTexture);
+
         // Compute the current view-projection matrix
         Matrix4x4 proj = GL.GetGPUProjectionMatrix(cam.projectionMatrix, false);
         Matrix4x4 view = cam.worldToCameraMatrix;
         currViewProjMatrix = proj * view;
         invCurrViewProjMatrix = currViewProjMatrix.inverse;
+
+        Debug.Log(currViewProjMatrix);
+        Debug.Log(prevViewProjMatrix);
+        Debug.Log(invCurrViewProjMatrix);
 
         DispatchComputeShader();
         if (debug)
@@ -63,7 +72,7 @@ public class CameraMotionRemover : MonoBehaviour
         cameraMovementShader.SetMatrix("_PrevViewProj", prevViewProjMatrix);
         cameraMovementShader.SetMatrix("_InvCurrViewProj", invCurrViewProjMatrix);
 
-        cameraMovementShader.SetTexture(kernel, "_DepthTexture", cameraDepthTexture);
+        cameraMovementShader.SetTexture(kernel, "_DepthTexture", currentDepthTexture);
         cameraMovementShader.SetTexture(kernel, "_OpticalFlow", opticalFlowTexture);
         cameraMovementShader.SetTexture(kernel, "_CameraFlowOut", outputTexture);
 
