@@ -4,6 +4,14 @@ Texture2D<float> _DepthTexture;
 Texture2D<float4> _OpticalFlow;
 RWTexture2D<float4> _CameraFlowOut;
 
+struct DebugPixelData {
+    float2 camFlow;
+    float2 totalFlow;
+    float2 objectFlow;
+};
+
+RWStructuredBuffer<DebugPixelData> _DebugBuffer;
+
 float4x4 _CurrViewProj;
 float4x4 _PrevViewProj;
 float4x4 _InvCurrViewProj;
@@ -37,7 +45,14 @@ void CSMain(uint3 id : SV_DispatchThreadID)
     float2 camFlow = uv - prevUV;
 
     float2 totalFlow = _OpticalFlow.Load(int3(pixel, 0)).xy;
-    float2 objectFlow = totalFlow - camFlow;
-
+    float2 objectFlow = totalFlow - abs(camFlow);
     _CameraFlowOut[pixel] = float4(objectFlow, 0, 1);
+
+    int linearIndex = pixel.y * texSize.x + pixel.x;
+    DebugPixelData debug;
+    debug.camFlow = camFlow;
+    debug.totalFlow = totalFlow;
+    debug.objectFlow = objectFlow;
+
+    _DebugBuffer[linearIndex] = debug;
 }

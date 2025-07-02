@@ -10,6 +10,8 @@ public class CameraMotionRemover : MonoBehaviour
     private Camera cam;
     [SerializeField]
     private ComputeShader cameraMovementShader;
+    [SerializeField]
+    private Material cameraMotionMaterial;
 
     [Header("Compute Shader Inputs")]
     [SerializeField]
@@ -27,7 +29,15 @@ public class CameraMotionRemover : MonoBehaviour
     private int kernel;
 
     public bool debug;
+    public bool debugShader;
     public RawImage debugImage;
+
+    struct DebugPixelData
+    {
+        public Vector2 camFlow;
+        public Vector2 totalFlow;
+        public Vector2 objectFlow;
+    }
 
     void Start()
     {
@@ -57,15 +67,15 @@ public class CameraMotionRemover : MonoBehaviour
         currViewProjMatrix = proj * view;
         invCurrViewProjMatrix = currViewProjMatrix.inverse;
 
-        Debug.Log(currViewProjMatrix);
-        Debug.Log(prevViewProjMatrix);
-        Debug.Log(invCurrViewProjMatrix);
+        // Debug.Log(currViewProjMatrix);
+        // Debug.Log(prevViewProjMatrix);
+        // Debug.Log(invCurrViewProjMatrix);
 
         DispatchComputeShader();
         if (debug)
             debugImage.texture = outputTexture;
     }
-    
+
     void DispatchComputeShader()
     {
         cameraMovementShader.SetMatrix("_CurrViewProj", currViewProjMatrix);
@@ -76,8 +86,24 @@ public class CameraMotionRemover : MonoBehaviour
         cameraMovementShader.SetTexture(kernel, "_OpticalFlow", opticalFlowTexture);
         cameraMovementShader.SetTexture(kernel, "_CameraFlowOut", outputTexture);
 
+        int pixelCount = outputTexture.width * outputTexture.height;
+        ComputeBuffer debugBuffer = new ComputeBuffer(pixelCount, sizeof(float) * 6);
+        DebugPixelData[] debugData = new DebugPixelData[pixelCount];
+
+        cameraMovementShader.SetBuffer(kernel, "_DebugBuffer", debugBuffer);
+
         int threadGroupsX = Mathf.CeilToInt(outputTexture.width / 8f);
         int threadGroupsY = Mathf.CeilToInt(outputTexture.height / 8f);
         cameraMovementShader.Dispatch(kernel, threadGroupsX, threadGroupsY, 1);
+
+        if (debugShader)
+        {
+            debugBuffer.GetData(debugData);
+            for (int i = 0; i < pixelCount; i++)
+            {
+                if (debugData[i].camFlow.magnitude > 0 || debugData[i].totalFlow.magnitude > 0 || debugData[i].objectFlow.magnitude > 0)
+                    Debug.Log($"Pixel {i}: camFlow = {debugData[i].camFlow}, totalFlow = {debugData[i].totalFlow}, objectFlow = {debugData[i].objectFlow}");
+            }
+        }
     }
 }
