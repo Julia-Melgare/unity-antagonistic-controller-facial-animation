@@ -99,11 +99,18 @@ public class CameraMotionRemover : MonoBehaviour
         if (debugShader)
         {
             debugBuffer.GetData(debugData);
+            Vector2 camFlowSum, totalFlowSum, objectFlowSum;
+            camFlowSum = totalFlowSum = objectFlowSum = Vector2.zero;
             for (int i = 0; i < pixelCount; i++)
             {
-                if (debugData[i].camFlow.magnitude > 0 || debugData[i].totalFlow.magnitude > 0 || debugData[i].objectFlow.magnitude > 0)
-                    Debug.Log($"Pixel {i}: camFlow = {debugData[i].camFlow}, totalFlow = {debugData[i].totalFlow}, objectFlow = {debugData[i].objectFlow}");
+                camFlowSum += debugData[i].camFlow;
+                totalFlowSum += debugData[i].totalFlow;
+                objectFlowSum += debugData[i].objectFlow;
+                // if (debugData[i].camFlow.magnitude > 0 || debugData[i].totalFlow.magnitude > 0 || debugData[i].objectFlow.magnitude > 0)
+                //     Debug.Log($"Pixel {i}: camFlow = {debugData[i].camFlow}, totalFlow = {debugData[i].totalFlow}, objectFlow = {debugData[i].objectFlow}");
             }
+            Debug.Log($"camFlowSum = {camFlowSum}, totalFlowSum = {totalFlowSum}, objectFlowSum = {objectFlowSum}");
+            //camFlowSum = totalFlowSum = objectFlowSum = Vector2.zero;
         }
     }
 }
