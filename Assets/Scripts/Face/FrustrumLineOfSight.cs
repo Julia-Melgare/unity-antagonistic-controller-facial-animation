@@ -65,6 +65,7 @@ public class FrustrumLineOfSight : MonoBehaviour
                 Vector3 localFixationPoint = obj.transform.InverseTransformPoint(obj.GetComponentInChildren<Renderer>().bounds.center);
                 FixationObject fixationObject = new FixationObject(obj, localFixationPoint);
                 float objSpeed = GetObjectSpeed(fixationObject);
+                fixationObject.motionSaliencyScore = objSpeed;
                 if (objSpeed > fastMovementThreshold)
                 {
                     //Debug.Log("[Fustrum] Detected fast moving object: "+obj.name+" speed: "+objSpeed);

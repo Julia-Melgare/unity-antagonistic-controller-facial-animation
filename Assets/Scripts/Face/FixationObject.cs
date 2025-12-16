@@ -4,8 +4,11 @@ using UnityEngine;
 [Serializable]
 public class FixationObject : IEquatable<FixationObject>
 {
-    public GameObject gameObject;
-    private Vector3 localPoint;
+    public GameObject gameObject; // Corresponding game object
+    public float imageSaliencyScore = 0f;
+    public float motionSaliencyScore = 0f;
+    public int objectType;
+    private Vector3 localPoint; // Local point in the game object where the fixation raycast hit
 
     public FixationObject(GameObject obj, Vector3 point)
     {

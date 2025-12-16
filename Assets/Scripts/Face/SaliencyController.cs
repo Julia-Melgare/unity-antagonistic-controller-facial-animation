@@ -109,7 +109,7 @@ public class SaliencyController : MonoBehaviour
 
                 Vector3 hitLocalPos = raycastObj.transform.InverseTransformPoint(hit.point);
                 FixationObject fixationObject = new FixationObject(raycastObj, hitLocalPos);
-
+                fixationObject.imageSaliencyScore = screenPoint.Value;
                 salientObjectsDict.TryAdd(fixationObject, screenPoint.Value);
             }                          
         }
@@ -129,8 +129,8 @@ public class SaliencyController : MonoBehaviour
 
     public float GetObjectSaliency(FixationObject obj)
     {
-        if (salientObjectsDict == null) return .95f;
-        return salientObjectsDict.GetValueOrDefault(obj, .95f);
+        if (salientObjectsDict == null) return 0f;
+        return salientObjectsDict.GetValueOrDefault(obj, 0f);
     }
 
     private void InferSaliencyMap()
