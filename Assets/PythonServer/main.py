@@ -17,7 +17,10 @@ input_plhd = tf.placeholder(tf.float32, (None, None, None, 3))
 [predicted_maps] = tf.import_graph_def(graph_def,
                                        input_map={"input": input_plhd},
                                        return_elements=["output:0"])
-with tf.Session() as sess:
+
+config = tf.ConfigProto()
+config.gpu_options.allow_growth = True
+with tf.Session(config=config) as sess:
     #run warm-up inference
     warmup_input = cv2.imread('input.png')
     input_img = cv2.cvtColor(warmup_input, cv2.COLOR_BGR2RGB)
