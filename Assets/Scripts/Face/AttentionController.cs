@@ -74,7 +74,7 @@ public class AttentionController : MonoBehaviour
     
     private void Start()
     {
-        currentFocus = new FixationObject(null, Vector3.zero);
+        currentFocus = pathLookAhead.fixationObject;
         saliencyController.enabled = focusOnSalientRegions;
         objectsFocusedOn = new Dictionary<int, float>();
         currentObjects = new List<FixationObject>();
