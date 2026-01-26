@@ -1,0 +1,29 @@
+#pragma kernel AccumulateFlow
+
+Texture2D<float4> AddFlow;               // frame to add
+Texture2D<float4> SubFlow;                // frame to subtract
+RWTexture2D<float4> AccumulatedFlow;       // accumulated optical flow image
+
+cbuffer Params
+{
+    int Width;
+    int Height;
+    int FramesInBuffer; // how much the buffer is actually filled
+};
+
+[numthreads(8, 8, 1)]
+void AccumulateFlow(uint3 id : SV_DispatchThreadID)
+{
+    float4 addFlow = AddFlow[id.xy];
+    
+    float4 acc = AccumulatedFlow[id.xy];
+    
+    if (FramesInBuffer >= 12)
+    {
+        float4 subFlow = SubFlow[id.xy];
+        acc -= subFlow;
+    }
+    
+    acc += addFlow;
+    AccumulatedFlow[id.xy] = acc;
+}
