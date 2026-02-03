@@ -4,6 +4,7 @@ using UnityEngine;
 public class InferenceClient : MonoBehaviour
 {
     private InferenceRequester inferenceRequester;
+    public string socketID = "5555";
 
     private void Start() => InitializeServer();
 
@@ -18,7 +19,7 @@ public class InferenceClient : MonoBehaviour
 
     public void InitializeServer()
     {
-        inferenceRequester = new InferenceRequester();
+        inferenceRequester = new InferenceRequester(socketID);
         inferenceRequester.Start();
     }
 
@@ -32,7 +33,7 @@ public class InferenceClient : MonoBehaviour
     {
         Debug.Log("NetMQ socket crash detected - resetting request socket");
         inferenceRequester.Stop();
-        inferenceRequester = new InferenceRequester();
+        inferenceRequester = new InferenceRequester(socketID);
         inferenceRequester.Start();
     }
 

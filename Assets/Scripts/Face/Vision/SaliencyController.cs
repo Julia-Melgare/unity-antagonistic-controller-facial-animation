@@ -160,7 +160,7 @@ public class SaliencyController : MonoBehaviour
 
         currentVisionFrame = image;
 
-        // Encode to PNG
+        // Encode to JPG
         byte[] bytes = image.EncodeToJPG();
 
         // Set render texture back to default

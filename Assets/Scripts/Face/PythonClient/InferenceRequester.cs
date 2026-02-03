@@ -18,13 +18,20 @@ public class InferenceRequester : RunAbleThread
     public bool NeedReset = false;
 
     private int failThreshold = 3;
+
+    private string socketID;
+
+    public InferenceRequester(string socketID) : base()
+    {
+        this.socketID = socketID;
+    }
     protected override void Run()
     {
         ForceDotNet.Force();
         using (RequestSocket client = new RequestSocket())
         {
             this.client = client;
-            client.Connect("tcp://localhost:5555");
+            client.Connect("tcp://localhost:"+socketID);
             while (Running)
             {
                 if (needReply)

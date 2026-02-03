@@ -3485,8 +3485,12 @@ PrefabInstance:
       value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 8913270830099966755, guid: 23362761152b80a43bfdef68f548de63, type: 3}
+      propertyPath: socketID
+      value: 5556
+      objectReference: {fileID: 0}
+    - target: {fileID: 8913270830099966755, guid: 23362761152b80a43bfdef68f548de63, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8966766898724995413, guid: 23362761152b80a43bfdef68f548de63, type: 3}
       propertyPath: m_Layer
@@ -3558,9 +3562,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   opticalFlowAccumShader: {fileID: 7200000, guid: 3ae07a7de26887f42af343f15f595c18, type: 3}
+  inferenceClient: {fileID: 889821755}
+  opticalFlowScaleMaterial: {fileID: 2100000, guid: b402dec83d5815542a69cc6a5d8b71e7, type: 2}
   opticalFlowTexture: {fileID: 8400000, guid: 41706c3073d3dca49b3aed553dee8304, type: 2}
   bufferSize: 12
   accumOpticalFlowImage: {fileID: 437787948}
+--- !u!114 &889821755 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8913270830099966755, guid: 23362761152b80a43bfdef68f548de63, type: 3}
+  m_PrefabInstance: {fileID: 889821750}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 889821753}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5590e4fed8d5ac4ca1411ee054d4883, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &937469340
 GameObject:
   m_ObjectHideFlags: 0
@@ -21666,6 +21683,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5590e4fed8d5ac4ca1411ee054d4883, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  socketID: 5555
 --- !u!114 &8913270828543183574
 MonoBehaviour:
   m_ObjectHideFlags: 0
