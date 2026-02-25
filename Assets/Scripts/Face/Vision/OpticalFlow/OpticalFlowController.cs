@@ -66,7 +66,7 @@ public class OpticalFlowController : MonoBehaviour
     void Update()
     {
         AccumulateOpticalFlow();
-        
+
         if (awaitingResponse)
             return;
         InferOpticalFlow();
@@ -121,7 +121,6 @@ public class OpticalFlowController : MonoBehaviour
 
     public void InferOpticalFlow()
     {
-        opticalFlowObjects.Clear();
         var input = GetOpticalFlowImage();
         inferenceClient.Infer(input, output =>
         {
@@ -172,6 +171,7 @@ public class OpticalFlowController : MonoBehaviour
             return;
 
         var jsonObjects = result.Split('\n');
+        opticalFlowObjects.Clear();
         foreach (string obj in jsonObjects)
         {
             if (string.IsNullOrEmpty(obj))

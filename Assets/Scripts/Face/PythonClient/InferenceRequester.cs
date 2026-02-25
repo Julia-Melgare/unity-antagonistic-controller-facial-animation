@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using AsyncIO;
 using NetMQ;
 using NetMQ.Sockets;
@@ -27,35 +28,35 @@ public class InferenceRequester : RunAbleThread
     protected override void Run()
     {
         ForceDotNet.Force();
-        using (RequestSocket client = new RequestSocket())
+        client = new RequestSocket();
+        client.Connect("tcp://localhost:"+socketID);
+        while (Running)
         {
-            this.client = client;
-            client.Connect("tcp://localhost:"+socketID);
-            while (Running)
+            if (needReply)
             {
-                if (needReply)
+                try
                 {
-                    byte[] outputBytes = new byte[0];
-                    
-                    try
+                    if (client.TryReceiveFrameBytes(
+                            TimeSpan.FromMilliseconds(100),
+                            out var outputBytes))
                     {
-                        outputBytes = client.ReceiveFrameBytes();
+                        //Debug.Log("message received!");
+                        onOutputReceived?.Invoke(outputBytes);
+                        needReply = false;
                     }
-                    catch (Exception e)
-                    {
-                        Debug.LogError(e.Message);
-                    }
-                        
-                    //Debug.Log("message received!");
-                    var output = new byte[outputBytes.Length];
-                    Buffer.BlockCopy(outputBytes, 0, output, 0, outputBytes.Length);
-                    onOutputReceived?.Invoke(output);
-                    needReply = false;
                 }
-                
+                catch (Exception e)
+                {
+                    Debug.LogError(e.Message);
+                }
+            }
+            else
+            {
+                Thread.Sleep(1); // prevent CPU spinning
             }
         }
-
+        client.Close();
+        client.Dispose();
         NetMQConfig.Cleanup();
     }
 
