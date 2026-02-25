@@ -1405,6 +1405,8 @@ GameObject:
   - component: {fileID: 8319618088684450035}
   - component: {fileID: 910937097457239725}
   - component: {fileID: 7212299569271494567}
+  - component: {fileID: 8206076611756496469}
+  - component: {fileID: 1605793787579600648}
   m_Layer: 0
   m_Name: Sintel_HEAD_07
   m_TagString: Untagged
@@ -1500,7 +1502,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   saliencyController: {fileID: 910937097457239725}
   frustrumLineOfSight: {fileID: 1439549073265928360}
-  opticalFlowController: {fileID: 0}
   pathLookAhead: {fileID: 1457861925528186356}
   lookAtPathWeight: 78.8
   lookAtObjectsWeight: 21.2
@@ -1557,6 +1558,39 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5590e4fed8d5ac4ca1411ee054d4883, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  socketID: 5555
+--- !u!114 &8206076611756496469
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3811494239223336302}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60bfe5a85535fea4f9047962b8152520, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  opticalFlowAccumShader: {fileID: 7200000, guid: 3ae07a7de26887f42af343f15f595c18, type: 3}
+  inferenceClient: {fileID: 1605793787579600648}
+  opticalFlowScaleMaterial: {fileID: 2100000, guid: b402dec83d5815542a69cc6a5d8b71e7, type: 2}
+  opticalFlowTexture: {fileID: 8400000, guid: 41706c3073d3dca49b3aed553dee8304, type: 2}
+  bufferSize: 12
+  accumOpticalFlowImage: {fileID: 0}
+  opticalFlowObjects: []
+--- !u!114 &1605793787579600648
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3811494239223336302}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5590e4fed8d5ac4ca1411ee054d4883, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  socketID: 5556
 --- !u!1 &3861245140332151323
 GameObject:
   m_ObjectHideFlags: 0

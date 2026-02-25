@@ -51,7 +51,8 @@ public class SaliencyController : MonoBehaviour
         scanInterval = 1.0f / scanFrequency;
         auxiliaryAgentCamera.enabled = false;
         salientObjectsDict = new Dictionary<FixationObject, float>();
-        saliencyMapOutput = new Texture2D(16, 16);
+        saliencyMapOutput = new Texture2D(saliencyMapSize, saliencyMapSize);
+        currentVisionFrame = new Texture2D(360, 360);
     }
     void Update()
     {
@@ -66,10 +67,75 @@ public class SaliencyController : MonoBehaviour
         }
     }
 
+    private void UpdateAuxiliaryCamera()
+    {
+        auxiliaryAgentCamera.enabled = true;
+        auxiliaryAgentCamera.transform.position = agentCamera.transform.position;
+        auxiliaryAgentCamera.transform.rotation = agentCamera.transform.rotation;
+        auxiliaryAgentCamera.transform.localScale = agentCamera.transform.localScale;
+        auxiliaryAgentCamera.enabled = false;
+    }
+
+    private void InferSaliencyMap()
+    {
+        var input = GetCameraImage();
+        inferenceClient.Infer(input, output =>
+        {
+            saliencyMapBytes = output;
+        }, error =>
+        {
+            Debug.LogError(error.Message);
+        });
+        awatingResponse = true;
+        StartCoroutine(WaitForResponse());
+    }
+
+    private byte[] GetCameraImage()
+    {
+        // Set render target to target texture
+        var currentRT = RenderTexture.active;
+        RenderTexture.active = agentCamera.targetTexture;
+
+        // Read the active Render Texture into our current vision frame.
+        Debug.Log(currentVisionFrame);
+        currentVisionFrame.ReadPixels(new Rect(0, 0, currentVisionFrame.width, currentVisionFrame.height), 0, 0);
+        currentVisionFrame.Apply(false);
+
+        // Set render texture back to default
+        RenderTexture.active = currentRT;
+
+        return currentVisionFrame.EncodeToJPG();
+    }
+
+    private IEnumerator WaitForResponse()
+    {
+        while (saliencyMapBytes == null)
+        {
+            Debug.Log("Awating response...");
+            yield return null;
+        }
+        UpdateSaliencyMap(saliencyMapBytes);
+        saliencyMapBytes = null;
+        awatingResponse = false;
+    }
+
+    private void UpdateSaliencyMap(byte[] rawData)
+    {
+        Texture2D temp = new Texture2D(2, 2);
+        ImageConversion.LoadImage(temp, rawData);
+        saliencyMapOutput.SetPixels(temp.GetPixels());
+        saliencyMapOutput.Apply();
+        Destroy(temp);
+        if (saliencyMapImage != null) saliencyMapImage.texture = saliencyMapOutput;
+        if (visionFrameImage != null) visionFrameImage.texture = previousVisionFrame;
+        ScanSaliencyMap();
+    }
+
     private void ScanSaliencyMap()
     {
+        salientObjectsDict.Clear();
         // Find index of highest value in map
-        Color[] saliencyMapPixels = saliencyMapOutput.GetPixels();
+        Color[] saliencyMapPixels = saliencyMapOutput.GetPixels();        
         var saliencyPoints = new Dictionary<Vector3, float>();
         for (int i = 0; i < saliencyMapPixels.Length; i++)
         {
@@ -78,7 +144,6 @@ public class SaliencyController : MonoBehaviour
             {
                 // Convert array index to matrix indexes
                 int width = saliencyMapOutput.width;
-                int height = saliencyMapOutput.height;
                 int matrix_i = i / width;
                 int matrix_j = i % width;
                 // Compensate size difference between camera and saliency map
@@ -90,7 +155,6 @@ public class SaliencyController : MonoBehaviour
             } 
         }        
         // Get world coordinates from camera and raycast for objects
-        salientObjectsDict = new Dictionary<FixationObject, float>();
         foreach (var screenPoint in saliencyPoints)
         {
             Ray ray = auxiliaryAgentCamera.ScreenPointToRay(screenPoint.Key);
@@ -116,10 +180,11 @@ public class SaliencyController : MonoBehaviour
         salientObjects = new List<FixationObject>(salientObjectsDict.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value).Keys);
         if (debugSaliencyRaycast)
         {
-            Texture2D newTexture = new Texture2D(16, 16);
+            Texture2D newTexture = new Texture2D(saliencyMapOutput.width, saliencyMapOutput.height);
             newTexture.SetPixels(saliencyMapPixels);
             newTexture.Apply();
             saliencyMapImage.texture = newTexture;
+            Destroy(newTexture);
         }
     }
     public List<FixationObject> GetSalientObjects()
@@ -133,70 +198,10 @@ public class SaliencyController : MonoBehaviour
         return salientObjectsDict.GetValueOrDefault(obj, .95f);
     }
 
-    private void InferSaliencyMap()
+    private void OnDestroy()
     {
-        var input = GetCameraImage();
-        inferenceClient.Infer(input, output =>
-        {
-            saliencyMapBytes = output;
-        }, error =>
-        {
-            //Debug.LogError(error.Message);
-        });
-        awatingResponse = true;
-        StartCoroutine(WaitForResponse());
-    }
-
-    private byte[] GetCameraImage()
-    {
-        // Set render target to target texture
-        var currentRT = RenderTexture.active;
-        RenderTexture.active = agentCamera.targetTexture;
-
-        // Create a new texture and read the active Render Texture into it.
-        Texture2D image = new Texture2D(agentCamera.targetTexture.width, agentCamera.targetTexture.height);
-        image.ReadPixels(new Rect(0, 0, agentCamera.targetTexture.width, agentCamera.targetTexture.height), 0, 0);
-        image.Apply();
-
-        currentVisionFrame = image;
-
-        // Encode to JPG
-        byte[] bytes = image.EncodeToJPG();
-
-        // Set render texture back to default
-        RenderTexture.active = currentRT;
-
-        return bytes;
-    }
-
-    private void UpdateSaliencyMap(byte[] rawData)
-    {
-        Texture2D temp = new Texture2D(2, 2);
-        ImageConversion.LoadImage(temp, rawData);
-        saliencyMapOutput.SetPixels(temp.GetPixels());
-        saliencyMapOutput.Apply();
-        if (saliencyMapImage != null) saliencyMapImage.texture = saliencyMapOutput;
-        if (visionFrameImage != null) visionFrameImage.texture = previousVisionFrame;
-    }
-
-    private void UpdateAuxiliaryCamera()
-    {
-        auxiliaryAgentCamera.enabled = true;
-        auxiliaryAgentCamera.transform.position = agentCamera.transform.position;
-        auxiliaryAgentCamera.transform.rotation = agentCamera.transform.rotation;
-        auxiliaryAgentCamera.transform.localScale = agentCamera.transform.localScale;
-        auxiliaryAgentCamera.enabled = false;
-    }
-
-    private IEnumerator WaitForResponse()
-    {
-        while (saliencyMapBytes == null)
-        {
-            Debug.Log("Awating response...");
-            yield return null;
-        }
-        UpdateSaliencyMap(saliencyMapBytes);
-        ScanSaliencyMap();
-        awatingResponse = false;
+        if (currentVisionFrame != null) Destroy(currentVisionFrame);
+        if (previousVisionFrame != null) Destroy(previousVisionFrame);
+        if (saliencyMapOutput != null) Destroy(saliencyMapOutput);
     }
 }

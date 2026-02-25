@@ -3,7 +3,6 @@ using AsyncIO;
 using NetMQ;
 using NetMQ.Sockets;
 using UnityEngine;
-using UnityEngine.Profiling;
 
 public class InferenceRequester : RunAbleThread
 {
@@ -47,7 +46,7 @@ public class InferenceRequester : RunAbleThread
                         Debug.LogError(e.Message);
                     }
                         
-                    Debug.Log("message received!");
+                    //Debug.Log("message received!");
                     var output = new byte[outputBytes.Length];
                     Buffer.BlockCopy(outputBytes, 0, output, 0, outputBytes.Length);
                     onOutputReceived?.Invoke(output);

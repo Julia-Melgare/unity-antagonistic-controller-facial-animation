@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-using NetMQ.Sockets;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -35,6 +34,7 @@ public class OpticalFlowController : MonoBehaviour
     private Queue<RenderTexture> opticalFlowBuffer;
 
     private RenderTexture accumExportTexture;
+    private Texture2D captureTexture;
     private bool awaitingResponse = false;
     private byte[] inferenceResultBytes;
 
@@ -60,18 +60,16 @@ public class OpticalFlowController : MonoBehaviour
         accumExportTexture.Create();
 
         opticalFlowObjects = new List<OpticalFlowObject>();
+        captureTexture = new Texture2D(width, height);
     }
 
     void Update()
     {
         AccumulateOpticalFlow();
+        
         if (awaitingResponse)
             return;
-        if (Input.GetKey(KeyCode.T))
-        {
-            InferOpticalFlow();
-        }
-        //InferOpticalFlow();
+        InferOpticalFlow();
     }
 
     private void AccumulateOpticalFlow()
@@ -94,12 +92,16 @@ public class OpticalFlowController : MonoBehaviour
             blankTexture.enableRandomWrite = true;
             blankTexture.Create();
             DispatchComputeShader(opticalFlowFrame, blankTexture, accumOpticalFlowTexture, opticalFlowBuffer.Count);            
+            blankTexture.Release();
+            Destroy(blankTexture);
         }
         else
         {
             var oldFlow = opticalFlowBuffer.Dequeue();
             opticalFlowBuffer.Enqueue(opticalFlowFrame);
             DispatchComputeShader(opticalFlowFrame, oldFlow, accumOpticalFlowTexture, opticalFlowBuffer.Count);
+            oldFlow.Release();
+            Destroy(oldFlow);
         }
     }
     private void DispatchComputeShader(RenderTexture addFlow, RenderTexture subFlow, RenderTexture accumFlow, int framesInBuffer)
@@ -114,7 +116,7 @@ public class OpticalFlowController : MonoBehaviour
 
         opticalFlowAccumShader.Dispatch(kernel, Mathf.CeilToInt(width/8f), Mathf.CeilToInt(height/8f), 1);
 
-        accumOpticalFlowImage.texture = accumOpticalFlowTexture; 
+        accumOpticalFlowImage.texture = accumOpticalFlowTexture;
     }
 
     public void InferOpticalFlow()
@@ -141,16 +143,12 @@ public class OpticalFlowController : MonoBehaviour
         RenderTexture.active = accumExportTexture;
 
         // Create a new texture and read the active Render Texture into it
-        Texture2D image = new Texture2D(accumExportTexture.width, accumExportTexture.height);
-        image.ReadPixels(new Rect(0, 0, accumExportTexture.width, accumExportTexture.height), 0, 0);
-        image.Apply();
-
-        // Encode to JPG
-        byte[] bytes = image.EncodeToJPG();
+        captureTexture.ReadPixels(new Rect(0, 0, accumExportTexture.width, accumExportTexture.height), 0, 0);
+        captureTexture.Apply(false);
 
         // Set render texture back to default
         RenderTexture.active = currentRT;
-        return bytes;
+        return captureTexture.EncodeToJPG();
     }
 
     private IEnumerator WaitForResponse()
@@ -163,6 +161,8 @@ public class OpticalFlowController : MonoBehaviour
         // Process result
         string response = Encoding.UTF8.GetString(inferenceResultBytes, 0, inferenceResultBytes.Length);
         awaitingResponse = false;
+        inferenceResultBytes = null;
+
         ProcessInferenceResult(response);
     }
 
@@ -178,5 +178,29 @@ public class OpticalFlowController : MonoBehaviour
                 continue;
             opticalFlowObjects.Add(JsonUtility.FromJson<OpticalFlowObject>(obj));
         }
+    }
+
+    private void OnDestroy()
+    {
+        foreach (var rt in opticalFlowBuffer)
+        {
+            rt.Release();
+            Destroy(rt);
+        }
+
+        if (accumOpticalFlowTexture != null)
+        {
+            accumOpticalFlowTexture.Release();
+            Destroy(accumOpticalFlowTexture);
+        }
+
+        if (accumExportTexture != null)
+        {
+            accumExportTexture.Release();
+            Destroy(accumExportTexture);
+        }
+
+        if (captureTexture != null)
+            Destroy(captureTexture);
     }
 }
