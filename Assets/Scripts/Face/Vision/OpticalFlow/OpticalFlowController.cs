@@ -13,6 +13,10 @@ public class OpticalFlowController : MonoBehaviour
     private InferenceClient inferenceClient;
     [SerializeField]
     private Material opticalFlowScaleMaterial;
+    [SerializeField]
+    private Camera peripheralViewCamera;
+    [SerializeField]
+    private LayerMask scanLayerMask;
 
     [Header("Compute Shader Inputs")]
     [SerializeField]
@@ -177,6 +181,22 @@ public class OpticalFlowController : MonoBehaviour
             if (string.IsNullOrEmpty(obj))
                 continue;
             opticalFlowObjects.Add(JsonUtility.FromJson<OpticalFlowObject>(obj));
+        }
+
+        ScanOpticalFlowObjects();
+    }
+
+    void ScanOpticalFlowObjects()
+    {
+        foreach (var obj in opticalFlowObjects)
+        {
+            Ray ray = peripheralViewCamera.ScreenPointToRay(new Vector3(obj.centroid[1], obj.centroid[0], 0));
+            Debug.DrawRay(ray.origin, ray.direction, Color.red, 10f);
+            RaycastHit[] hits = Physics.RaycastAll(ray, Mathf.Infinity, scanLayerMask);
+            foreach (var hit in hits)
+            {
+                Debug.Log(hit.collider.gameObject);
+            }
         }
     }
 

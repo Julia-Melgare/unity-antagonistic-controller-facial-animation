@@ -1887,7 +1887,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.7768924, y: 1}
+    m_SensorSize: {x: 1.7775378, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -2368,7 +2368,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1369442626360506921, guid: 23362761152b80a43bfdef68f548de63, type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1369442626360506921, guid: 23362761152b80a43bfdef68f548de63, type: 3}
       propertyPath: scanFrequency
@@ -3324,7 +3324,7 @@ PrefabInstance:
       objectReference: {fileID: 236417444}
     - target: {fileID: 7840846339765668983, guid: 23362761152b80a43bfdef68f548de63, type: 3}
       propertyPath: focusOnSalientRegions
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7866103926117229585, guid: 23362761152b80a43bfdef68f548de63, type: 3}
       propertyPath: m_Layer
@@ -3345,6 +3345,14 @@ PrefabInstance:
     - target: {fileID: 7945659905237052113, guid: 23362761152b80a43bfdef68f548de63, type: 3}
       propertyPath: m_Enabled
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7945659905237052113, guid: 23362761152b80a43bfdef68f548de63, type: 3}
+      propertyPath: peripheralViewCamera
+      value: 
+      objectReference: {fileID: 1510496381}
+    - target: {fileID: 7945659905237052113, guid: 23362761152b80a43bfdef68f548de63, type: 3}
+      propertyPath: scanLayerMask.m_Bits
+      value: 3639
       objectReference: {fileID: 0}
     - target: {fileID: 7945659905237052113, guid: 23362761152b80a43bfdef68f548de63, type: 3}
       propertyPath: accumOpticalFlowImage
@@ -3436,7 +3444,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8913270830099966755, guid: 23362761152b80a43bfdef68f548de63, type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8966766898724995413, guid: 23362761152b80a43bfdef68f548de63, type: 3}
       propertyPath: m_Layer
@@ -4961,7 +4969,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.7768924, y: 1}
+    m_SensorSize: {x: 1.7775378, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -5466,6 +5474,11 @@ Transform:
 GameObject:
   m_CorrespondingSourceObject: {fileID: 100092, guid: 5f38a05f6440d154495172bd3da87d55, type: 3}
   m_PrefabInstance: {fileID: 1508796612}
+  m_PrefabAsset: {fileID: 0}
+--- !u!20 &1510496381 stripped
+Camera:
+  m_CorrespondingSourceObject: {fileID: 260487932999722227, guid: 23362761152b80a43bfdef68f548de63, type: 3}
+  m_PrefabInstance: {fileID: 889821750}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1516802481
 GameObject:
