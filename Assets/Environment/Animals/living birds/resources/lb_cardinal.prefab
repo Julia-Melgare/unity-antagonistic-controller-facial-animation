@@ -1644,6 +1644,8 @@ MonoBehaviour:
   flyAway1: {fileID: 8300000, guid: 9dabaef0cd2ecb241956e3db52d3bc8d, type: 3}
   flyAway2: {fileID: 8300000, guid: ae13220b2fee67344b8b455414c59ff4, type: 3}
   fleeCrows: 1
+  useRandomSeed: 0
+  randomSeed: 0
 --- !u!65 &6500000
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1655,8 +1657,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.02, y: 0.08, z: 0.04}
-  m_Center: {x: 0, y: 0.04, z: 0}
+  m_Size: {x: 0.15506294, y: 0.08, z: 0.09694141}
+  m_Center: {x: 0.0076741646, y: 0.04, z: -0.017183483}
 --- !u!54 &5400000
 Rigidbody:
   m_ObjectHideFlags: 0

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
@@ -27,8 +28,11 @@ public class OpticalFlowController : MonoBehaviour
     [Header("Debug/Visualization")]
     [SerializeField]
     private RawImage accumOpticalFlowImage;
+    [SerializeField]
+    private List<OpticalFlowObject> opticalFlowObjects;
 
-    public List<OpticalFlowObject> opticalFlowObjects;
+    [Header("Output")]
+    public List<FixationObject> motionSalientObjects;
 
     private int width = 256;
     private int height = 256;
@@ -41,6 +45,8 @@ public class OpticalFlowController : MonoBehaviour
     private Texture2D captureTexture;
     private bool awaitingResponse = false;
     private byte[] inferenceResultBytes;
+
+    private Dictionary<FixationObject, float> motionSalientObjectsDict;
 
     void Start()
     {            
@@ -64,6 +70,8 @@ public class OpticalFlowController : MonoBehaviour
         accumExportTexture.Create();
 
         opticalFlowObjects = new List<OpticalFlowObject>();
+        motionSalientObjects = new List<FixationObject>();
+        motionSalientObjectsDict = new Dictionary<FixationObject, float>();
         captureTexture = new Texture2D(width, height);
     }
 
@@ -195,8 +203,13 @@ public class OpticalFlowController : MonoBehaviour
             RaycastHit[] hits = Physics.RaycastAll(ray, Mathf.Infinity, scanLayerMask);
             foreach (var hit in hits)
             {
-                Debug.Log(hit.collider.gameObject);
+                GameObject raycastObj = hit.collider.gameObject;
+                Vector3 hitLocalPos = raycastObj.transform.InverseTransformPoint(hit.point);
+                FixationObject fixationObject = new FixationObject(raycastObj, hitLocalPos);
+
+                motionSalientObjectsDict.TryAdd(fixationObject, obj.score);
             }
+            motionSalientObjects = new List<FixationObject>(motionSalientObjectsDict.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value).Keys);
         }
     }
 
