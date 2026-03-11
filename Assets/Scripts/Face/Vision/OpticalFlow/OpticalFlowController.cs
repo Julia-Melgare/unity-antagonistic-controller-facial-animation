@@ -30,6 +30,7 @@ public class OpticalFlowController : MonoBehaviour
     private RawImage accumOpticalFlowImage;
     [SerializeField]
     private List<OpticalFlowObject> opticalFlowObjects;
+    private Dictionary<int, GameObject> opticalFlowToGameObject;
 
     [Header("Output")]
     public List<FixationObject> motionSalientObjects;
@@ -70,6 +71,7 @@ public class OpticalFlowController : MonoBehaviour
         accumExportTexture.Create();
 
         opticalFlowObjects = new List<OpticalFlowObject>();
+        opticalFlowToGameObject = new Dictionary<int, GameObject>();
         motionSalientObjects = new List<FixationObject>();
         motionSalientObjectsDict = new Dictionary<FixationObject, float>();
         captureTexture = new Texture2D(width, height);
@@ -201,8 +203,10 @@ public class OpticalFlowController : MonoBehaviour
             Ray ray = peripheralViewCamera.ScreenPointToRay(new Vector3(obj.centroid[1], obj.centroid[0], 0));
             Debug.DrawRay(ray.origin, ray.direction, Color.red, 10f);
             RaycastHit[] hits = Physics.RaycastAll(ray, Mathf.Infinity, scanLayerMask);
+            Debug.Log("number of raycast hits for ID "+ obj.id + ": "+ hits.Length);
             foreach (var hit in hits)
             {
+                Debug.Log(hit.collider.gameObject.name);
                 GameObject raycastObj = hit.collider.gameObject;
                 Vector3 hitLocalPos = raycastObj.transform.InverseTransformPoint(hit.point);
                 FixationObject fixationObject = new FixationObject(raycastObj, hitLocalPos);
