@@ -182,6 +182,10 @@ public class SaliencyController : MonoBehaviour
             else
             {
                 // create fixation from the raycast direction
+                GameObject rayPoint = new GameObject("RayPoint", typeof(SelfDestruct));
+                rayPoint.transform.position = ray.GetPoint(100f);
+                FixationObject fixationObject = new FixationObject(rayPoint, Vector3.zero);
+                salientObjectsDict.TryAdd(fixationObject, screenPoint.Value);
             }
                                       
         }
