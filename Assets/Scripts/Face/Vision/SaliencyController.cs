@@ -159,34 +159,33 @@ public class SaliencyController : MonoBehaviour
         {
             Ray ray = auxiliaryAgentCamera.ScreenPointToRay(screenPoint.Key);
             RaycastHit[] hits = Physics.RaycastAll(ray, Mathf.Infinity, scanLayerMask);
+            FixationObject fixationObject = null;
             if (hits.Length > 0)
             {
-                foreach (RaycastHit hit in hits)
+                var hit = hits[0];
+                GameObject raycastObj = hit.collider.gameObject;
+
+                if (hit.collider.GetType() == typeof(TerrainCollider))
                 {
-                    GameObject raycastObj = hit.collider.gameObject;
-
-                    if (hit.collider.GetType() == typeof(TerrainCollider))
-                    {
-                        //We need to look at that specific point on the terrain instead
-                        GameObject terrainPoint = new GameObject("TerrainPoint", typeof(SelfDestruct));
-                        terrainPoint.transform.position = hit.point;
-                        raycastObj = terrainPoint;
-                    }
-
-                    Vector3 hitLocalPos = raycastObj.transform.InverseTransformPoint(hit.point);
-                    FixationObject fixationObject = new FixationObject(raycastObj, hitLocalPos);
-
-                    salientObjectsDict.TryAdd(fixationObject, screenPoint.Value);
+                    //We need to look at that specific point on the terrain instead
+                    GameObject terrainPoint = new GameObject("TerrainPoint", typeof(SelfDestruct));
+                    terrainPoint.transform.position = hit.point;
+                    raycastObj = terrainPoint;
                 }
+
+                Vector3 hitLocalPos = raycastObj.transform.InverseTransformPoint(hit.point);
+                fixationObject = new FixationObject(raycastObj, hitLocalPos);
+                
             }
             else
             {
                 // create fixation from the raycast direction
                 GameObject rayPoint = new GameObject("RayPoint", typeof(SelfDestruct));
                 rayPoint.transform.position = ray.GetPoint(100f);
-                FixationObject fixationObject = new FixationObject(rayPoint, Vector3.zero);
-                salientObjectsDict.TryAdd(fixationObject, screenPoint.Value);
+                fixationObject = new FixationObject(rayPoint, Vector3.zero);
+                
             }
+            salientObjectsDict.TryAdd(fixationObject, screenPoint.Value);
                                       
         }
         salientObjects = new List<FixationObject>(salientObjectsDict.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value).Keys);
