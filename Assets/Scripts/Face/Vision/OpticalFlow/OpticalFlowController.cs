@@ -35,7 +35,7 @@ public class OpticalFlowController : MonoBehaviour
     private Dictionary<int, GameObject> opticalFlowToGameObject;
 
     [Header("Output")]
-    public List<GameObject> motionSalientObjects; //FixationObject
+    public List<FixationObject> motionSalientObjects;
 
     private int width = 256;
     private int height = 256;
@@ -48,8 +48,6 @@ public class OpticalFlowController : MonoBehaviour
     private Texture2D captureTexture;
     private bool awaitingResponse = false;
     private byte[] inferenceResultBytes;
-
-    private Dictionary<FixationObject, float> motionSalientObjectsDict;
 
     void Start()
     {            
@@ -74,8 +72,7 @@ public class OpticalFlowController : MonoBehaviour
 
         opticalFlowObjects = new List<OpticalFlowObject>();
         opticalFlowToGameObject = new Dictionary<int, GameObject>();
-        motionSalientObjects = new List<GameObject>();//new List<FixationObject>();
-        motionSalientObjectsDict = new Dictionary<FixationObject, float>();
+        motionSalientObjects = new List<FixationObject>();//new List<FixationObject>();
         captureTexture = new Texture2D(width, height);
     }
 
@@ -200,7 +197,7 @@ public class OpticalFlowController : MonoBehaviour
 
     void ScanOpticalFlowObjects()
     {
-        motionSalientObjectsDict.Clear();
+        motionSalientObjects.Clear();
         // remove lost objects from dictionary
         var objIDs = from obj in opticalFlowObjects select obj.id;
         foreach (int key in opticalFlowToGameObject.Keys.ToArray())
@@ -215,34 +212,35 @@ public class OpticalFlowController : MonoBehaviour
         // assign/update game object for each ID
         foreach (var obj in opticalFlowObjects)
         {
+            FixationObject fixationObject;
             if (opticalFlowToGameObject.ContainsKey(obj.id) && !opticalFlowToGameObject[obj.id].name.Equals("OpticalFlowPoint"))
             {
+                fixationObject = new FixationObject(opticalFlowToGameObject[obj.id], Vector3.zero, 0, obj.score);
                 // we already found a proper game object for this ID, continue
                 continue;
             }
             // raycast for new IDs and update IDs that dont have a proper game object
             Ray ray = peripheralViewCamera.ScreenPointToRay(new Vector3(obj.centroid[1], obj.centroid[0], 0));
             RaycastHit[] hits = Physics.RaycastAll(ray, Mathf.Infinity, scanLayerMask);
-            FixationObject fixationObject = null;
             GameObject raycastObj;
+            Vector3 hitLocalPos = Vector3.zero;
             if (hits.Length > 0)
             {
                 var hit = hits[0];
                 raycastObj = hit.collider.gameObject;
-                Vector3 hitLocalPos = raycastObj.transform.InverseTransformPoint(hit.point);
-                fixationObject = new FixationObject(raycastObj, hitLocalPos);
+                hitLocalPos = raycastObj.transform.InverseTransformPoint(hit.point);
             }
             else
             {
                 // create fixation from the raycast direction OR update its position
-                raycastObj = opticalFlowToGameObject.ContainsKey(obj.id) ? opticalFlowToGameObject[obj.id] : new GameObject("OpticalFlowPoint");
+                raycastObj = opticalFlowToGameObject.ContainsKey(obj.id) ? opticalFlowToGameObject[obj.id].gameObject : new GameObject("OpticalFlowPoint");
                 raycastObj.transform.position = ray.GetPoint(25f);
-                fixationObject = new FixationObject(raycastObj, Vector3.zero);
             }
-            opticalFlowToGameObject[obj.id] = raycastObj;               
-            motionSalientObjectsDict.TryAdd(fixationObject, obj.score);
+            opticalFlowToGameObject[obj.id] = raycastObj;
+            fixationObject = new FixationObject(raycastObj, hitLocalPos, 0, obj.score);
+            motionSalientObjects.Add(fixationObject);
         }
-        motionSalientObjects = new List<GameObject>(opticalFlowToGameObject.Values);//new List<FixationObject>(motionSalientObjectsDict.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value).Keys);
+        motionSalientObjects.Sort((x, y) => x.motionSaliencyScore.CompareTo(y.motionSaliencyScore));
     }
 
     private void OnDestroy()

@@ -23,7 +23,7 @@ public class SaliencyController : MonoBehaviour
     [SerializeField]
     private LayerMask scanLayerMask;
     [SerializeField]
-    public List<FixationObject> salientObjects;
+    public List<FixationObject> imageSalientObjects;
     [SerializeField]
     [Range(0.0f, 1.0f)]
     private float saliencyValueThreshold = 0.5f;
@@ -134,6 +134,7 @@ public class SaliencyController : MonoBehaviour
     private void ScanSaliencyMap()
     {
         salientObjectsDict.Clear();
+        imageSalientObjects.Clear();
         // Find index of highest value in map
         Color[] saliencyMapPixels = saliencyMapOutput.GetPixels();        
         var saliencyPoints = new Dictionary<Vector3, float>();
@@ -159,7 +160,7 @@ public class SaliencyController : MonoBehaviour
         {
             Ray ray = auxiliaryAgentCamera.ScreenPointToRay(screenPoint.Key);
             RaycastHit[] hits = Physics.RaycastAll(ray, Mathf.Infinity, scanLayerMask);
-            FixationObject fixationObject = null;
+            FixationObject fixationObject;
             if (hits.Length > 0)
             {
                 var hit = hits[0];
@@ -174,21 +175,19 @@ public class SaliencyController : MonoBehaviour
                 }
 
                 Vector3 hitLocalPos = raycastObj.transform.InverseTransformPoint(hit.point);
-                fixationObject = new FixationObject(raycastObj, hitLocalPos);
-                
+                fixationObject = new FixationObject(raycastObj, hitLocalPos, screenPoint.Value);                
             }
             else
             {
                 // create fixation from the raycast direction
                 GameObject rayPoint = new GameObject("RayPoint", typeof(SelfDestruct));
                 rayPoint.transform.position = ray.GetPoint(100f);
-                fixationObject = new FixationObject(rayPoint, Vector3.zero);
+                fixationObject = new FixationObject(rayPoint, Vector3.zero, screenPoint.Value);
                 
             }
-            salientObjectsDict.TryAdd(fixationObject, screenPoint.Value);
-                                      
+            imageSalientObjects.Add(fixationObject);                                      
         }
-        salientObjects = new List<FixationObject>(salientObjectsDict.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value).Keys);
+        imageSalientObjects.Sort((x, y) => x.imageSaliencyScore.CompareTo(y.imageSaliencyScore));
         if (debugSaliencyRaycast)
         {
             Texture2D newTexture = new Texture2D(saliencyMapOutput.width, saliencyMapOutput.height);
@@ -200,7 +199,7 @@ public class SaliencyController : MonoBehaviour
     }
     public List<FixationObject> GetSalientObjects()
     {
-        return salientObjects ?? new List<FixationObject>();
+        return imageSalientObjects ?? new List<FixationObject>();
     }
 
     public float GetObjectSaliency(FixationObject obj)

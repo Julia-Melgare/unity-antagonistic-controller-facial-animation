@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class FixationComponent : MonoBehaviour
 {
-    public Vector3 localPoint;
-    public float imageSaliencyScore;
-    public float motionSaliencyScore;
+    public Vector3 localPoint = Vector3.zero;
+    public float imageSaliencyScore = 0f;
+    public float motionSaliencyScore = 0f;
 }
