@@ -43,14 +43,11 @@ public class SaliencyController : MonoBehaviour
     private float scanTimer;
     private byte[] saliencyMapBytes;
     private bool awatingResponse = false;
-
-    private Dictionary<FixationObject, float> salientObjectsDict;
     
     void Start()
     {
         scanInterval = 1.0f / scanFrequency;
         auxiliaryAgentCamera.enabled = false;
-        salientObjectsDict = new Dictionary<FixationObject, float>();
         saliencyMapOutput = new Texture2D(saliencyMapSize, saliencyMapSize);
         currentVisionFrame = new Texture2D(360, 360);
     }
@@ -133,7 +130,6 @@ public class SaliencyController : MonoBehaviour
 
     private void ScanSaliencyMap()
     {
-        salientObjectsDict.Clear();
         imageSalientObjects.Clear();
         // Find index of highest value in map
         Color[] saliencyMapPixels = saliencyMapOutput.GetPixels();        
@@ -200,12 +196,6 @@ public class SaliencyController : MonoBehaviour
     public List<FixationObject> GetSalientObjects()
     {
         return imageSalientObjects ?? new List<FixationObject>();
-    }
-
-    public float GetObjectSaliency(FixationObject obj)
-    {
-        if (salientObjectsDict == null) return .95f;
-        return salientObjectsDict.GetValueOrDefault(obj, .95f);
     }
 
     private void OnDestroy()

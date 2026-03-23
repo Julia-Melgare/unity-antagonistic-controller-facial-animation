@@ -221,7 +221,7 @@ public class AttentionController : MonoBehaviour
     private float GetObjSaliencyScore(FixationObject obj)
     {
         //Debug.Log("[SaliencyScore] "+obj.gameObject.name+" IS: "+saliencyController.GetObjectSaliency(obj)+" MS: "+ frustrumLineOfSight.GetObjectSpeed(obj)+" IOR: "+(1f + inhibitionOfReturnTime - objectsFocusedOn.GetValueOrDefault(obj.gameObject.GetInstanceID(), 0f)));
-        return (saliencyController.GetObjectSaliency(obj) + frustrumLineOfSight.GetObjectSpeed(obj)) * (1f + inhibitionOfReturnTime - objectsFocusedOn.GetValueOrDefault(obj.gameObject.GetInstanceID(), 0f));
+        return (obj.imageSaliencyScore + frustrumLineOfSight.GetObjectSpeed(obj)) * (1f + inhibitionOfReturnTime - objectsFocusedOn.GetValueOrDefault(obj.gameObject.GetInstanceID(), 0f));
     }
 
     private float GetMaxObjectSaliency()
@@ -229,7 +229,7 @@ public class AttentionController : MonoBehaviour
         float maxObjSaliency = 0f;
         foreach (FixationObject obj in currentObjects)
         {
-            float objSaliency = GetObjSaliencyScore(obj);
+            float objSaliency = obj.imageSaliencyScore;
             if (objSaliency > maxObjSaliency) maxObjSaliency = objSaliency;
         }
         return maxObjSaliency;
