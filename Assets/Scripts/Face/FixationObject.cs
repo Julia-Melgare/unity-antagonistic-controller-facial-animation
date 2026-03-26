@@ -12,7 +12,7 @@ public class FixationObject : IEquatable<FixationObject>
     public float firstAppearTime = 0f;
     public float lastObservedTime = 0f;
     public float uncertainty = 0f;
-    private Vector3 localPoint = Vector3.zero;
+    public Vector3 localPoint = Vector3.zero;
 
     public FixationObject(GameObject obj, Vector3 point, float imageSaliency = 0f, float motionSaliency = 0f)
     {
