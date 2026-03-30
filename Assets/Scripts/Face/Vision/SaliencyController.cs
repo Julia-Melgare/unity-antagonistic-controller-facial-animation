@@ -38,7 +38,6 @@ public class SaliencyController : MonoBehaviour
     private Texture2D previousVisionFrame;
     private Texture2D currentVisionFrame;
 
-
     private float scanInterval; 
     private float scanTimer;
     private byte[] saliencyMapBytes;
@@ -50,6 +49,7 @@ public class SaliencyController : MonoBehaviour
         auxiliaryAgentCamera.enabled = false;
         saliencyMapOutput = new Texture2D(saliencyMapSize, saliencyMapSize);
         currentVisionFrame = new Texture2D(360, 360);
+        imageSalientObjects = new List<FixationObject>();
     }
     void Update()
     {

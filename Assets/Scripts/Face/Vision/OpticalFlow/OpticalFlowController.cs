@@ -270,4 +270,9 @@ public class OpticalFlowController : MonoBehaviour
         if (captureTexture != null)
             Destroy(captureTexture);
     }
+
+    public List<FixationObject> GetSalientObjects()
+    {
+        return motionSalientObjects;
+    }
 }
