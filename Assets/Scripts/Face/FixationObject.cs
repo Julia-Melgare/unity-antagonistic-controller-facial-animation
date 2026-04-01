@@ -7,11 +7,12 @@ public class FixationObject : IEquatable<FixationObject>
     public GameObject gameObject;
     public float imageSaliencyScore = 0f;
     public float motionSaliencyScore = 0f;
-    public float distance = 0f;
+    public float currentIOR = 0f;
+    //public float distance = 0f;
 
-    public float firstAppearTime = 0f;
-    public float lastObservedTime = 0f;
-    public float uncertainty = 0f;
+    //public float firstAppearTime = 0f;
+    //public float lastObservedTime = 0f;
+    //public float uncertainty = 0f;
     public Vector3 localPoint = Vector3.zero;
 
     public FixationObject(GameObject obj, Vector3 point, float imageSaliency = 0f, float motionSaliency = 0f)
@@ -20,9 +21,14 @@ public class FixationObject : IEquatable<FixationObject>
         localPoint = point;
         imageSaliencyScore = imageSaliency;
         motionSaliencyScore = motionSaliency;
-        firstAppearTime =  Time.time;
+        //firstAppearTime =  Time.time;
     }
 
+    public float GetSaliencyScore()
+    {
+        return Math.Max(imageSaliencyScore, motionSaliencyScore); 
+    }
+    
     public Vector3 GetFixationPoint()
     {
         return gameObject.transform.TransformPoint(localPoint);

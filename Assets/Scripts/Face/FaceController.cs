@@ -134,86 +134,61 @@ public class FaceController : MonoBehaviour
     private void Update()
     {
         FixationObject currentObjectOfInterest = attentionController.GetCurrentFocus();
+        if (currentObjectOfInterest.gameObject == null) return;
+
         float eyeMovementSpeed = GetEyeMovementSpeed(currentObjectOfInterest.GetFixationPoint());
-        // Check face safety regions
-        //if (!amAvoiding && (faceSafetyRegionLeft.closestDistanceToEye <= minEyeDistance || faceSafetyRegionRight.closestDistanceToEye <= minEyeDistance))
-        {
-            //amAvoiding = true;
-            //faceAnimator.enabled = false;
-        }
-
-        /*if (amAvoiding && faceSafetyRegionLeft.closestDistanceToEye > minEyeDistance && faceSafetyRegionRight.closestDistanceToEye > minEyeDistance)
-        {
-            amAvoiding = false;
-            faceAnimator.enabled = true;
-        }*/
         
-        if (!amAvoiding)
+        // Rotate eyes towards the target
+        SetRotation(leftEyeTransform, currentObjectOfInterest, eyeMovementSpeed);
+        SetRotation(rightEyeTransform, currentObjectOfInterest, eyeMovementSpeed);
+
+        // Clamp eye rotations
+        ClampRotation(leftEyeTransform, eyeXUpRotationLimit, eyeXDownRotationLimit, eyeYRotationLimit, eyeZRotationLimit);
+        ClampRotation(rightEyeTransform, eyeXUpRotationLimit, eyeXDownRotationLimit, eyeYRotationLimit, eyeZRotationLimit);
+
+        Vector3 middlePoint = (leftEyeTransform.forward + rightEyeTransform.forward).normalized;
+        
+        if ((SurpassedRotationConstraints(leftEyeTransform, eyeXComfortableRotationLimit, eyeYComfortableRotationLimit, eyeZComfortableRotationLimit) || SurpassedRotationConstraints(leftEyeTransform, eyeXComfortableRotationLimit, eyeYComfortableRotationLimit, eyeZComfortableRotationLimit)) && attentionController.GetCurrentFixationTime() > 0.2f)
         {
-            // Rotate eyes towards the target
-            SetRotation(leftEyeTransform, currentObjectOfInterest, eyeMovementSpeed);
-            SetRotation(rightEyeTransform, currentObjectOfInterest, eyeMovementSpeed);
+            // Rotate neck towards eyes middle point
+            SetRotation(neckTransform, middlePoint, neckMovementSpeed/2f);
+            // Clamp neck rotation
+            ClampRotation(neckTransform, neckXRotationLimit, neckXRotationLimit, neckYRotationLimit, neckZRotationLimit);
 
-            // Clamp eye rotations
-            ClampRotation(leftEyeTransform, eyeXUpRotationLimit, eyeXDownRotationLimit, eyeYRotationLimit, eyeZRotationLimit);
-            ClampRotation(rightEyeTransform, eyeXUpRotationLimit, eyeXDownRotationLimit, eyeYRotationLimit, eyeZRotationLimit);
-
-            Vector3 middlePoint = (leftEyeTransform.forward + rightEyeTransform.forward).normalized;
+            if (headTransform != null)
+            {
+                // Head will copy neck rotation
+                float singleStep = neckMovementSpeed/1.5f * Time.deltaTime;
+                headTransform.rotation = Quaternion.RotateTowards(headTransform.rotation, neckTransform.rotation, singleStep);
+                // Clamp head rotation
+                ClampRotation(headTransform, neckXRotationLimit, neckXRotationLimit, neckYRotationLimit, neckZRotationLimit);
+            }
             
-            if ((SurpassedRotationConstraints(leftEyeTransform, eyeXComfortableRotationLimit, eyeYComfortableRotationLimit, eyeZComfortableRotationLimit) || SurpassedRotationConstraints(leftEyeTransform, eyeXComfortableRotationLimit, eyeYComfortableRotationLimit, eyeZComfortableRotationLimit)) && attentionController.GetCurrentFixationTime() > 0.2f)
-            {
-                // Rotate neck towards eyes middle point
-                SetRotation(neckTransform, middlePoint, neckMovementSpeed/2f);
-                // Clamp neck rotation
-                ClampRotation(neckTransform, neckXRotationLimit, neckXRotationLimit, neckYRotationLimit, neckZRotationLimit);
-
-                if (headTransform != null)
-                {
-                    // Head will copy neck rotation
-                    float singleStep = neckMovementSpeed/1.5f * Time.deltaTime;
-                    headTransform.rotation = Quaternion.RotateTowards(headTransform.rotation, neckTransform.rotation, singleStep);
-                    // Clamp head rotation
-                    ClampRotation(headTransform, neckXRotationLimit, neckXRotationLimit, neckYRotationLimit, neckZRotationLimit);
-                }
-                
-            }
-
-            if (attentionController.IsFocusingOnPath())
-            {
-                // If I'm focusing on path, neck will follow direction too
-                var neckDirection = currentObjectOfInterest.GetFixationPoint() - neckTransform.position;
-                //neckDirection.y = initialNeckForward.y;
-                SetRotation(neckTransform, neckDirection, neckMovementSpeed/2f);
-                // Clamp neck rotation
-                ClampRotation(neckTransform, neckXRotationLimit, neckXRotationLimit, neckYRotationLimit, neckZRotationLimit);
-                if (headTransform != null)
-                {
-                    // Head will copy neck rotation
-                    float singleStep = neckMovementSpeed/2f * Time.deltaTime;
-                    headTransform.rotation = Quaternion.RotateTowards(headTransform.rotation, neckTransform.rotation, singleStep);
-                    // Clamp head rotation
-                    ClampRotation(headTransform, neckXRotationLimit, neckXRotationLimit, neckYRotationLimit, neckZRotationLimit);
-                }
-            }
-                
-
-            // Animate eye blendhsapes according to gaze direction
-            AnimateGazeBlendShapes();
         }
-        else
-        {
-            //AnimateSquintBlendShapes();
-            Vector3 middlePoint = Vector3.Lerp(leftEyeTransform.position, rightEyeTransform.position, 0.3f);
-            //Vector3 direction = (attentionController.GetCurrentFocus().transform.position - middlePoint + neckTransform.position).normalized;
 
-            //float singleStep = neckMovementSpeed * Time.deltaTime;
-            //Vector3 newDirection = Vector3.RotateTowards(neckTransform.forward, -direction, singleStep, 0.0f);
-            //neckTransform.rotation = Quaternion.LookRotation(-direction);
-            //Debug.DrawRay(neckTransform.position, newDirection, Color.red);
-            //Debug.DrawRay(middlePoint, direction, Color.blue);
-            //Debug.DrawRay(neckTransform.position, -direction, Color.red);
-            //ClampRotation(neckTransform, neckXRotationLimit, neckYRotationLimit, neckZRotationLimit);
-        }
+        // TODO: Add this whenever the agent is moving instead of focusing on path?
+
+        // if (attentionController.IsFocusingOnPath())
+        // {
+        //     // If I'm focusing on path, neck will follow direction too
+        //     var neckDirection = currentObjectOfInterest.GetFixationPoint() - neckTransform.position;
+        //     //neckDirection.y = initialNeckForward.y;
+        //     SetRotation(neckTransform, neckDirection, neckMovementSpeed/2f);
+        //     // Clamp neck rotation
+        //     ClampRotation(neckTransform, neckXRotationLimit, neckXRotationLimit, neckYRotationLimit, neckZRotationLimit);
+        //     if (headTransform != null)
+        //     {
+        //         // Head will copy neck rotation
+        //         float singleStep = neckMovementSpeed/2f * Time.deltaTime;
+        //         headTransform.rotation = Quaternion.RotateTowards(headTransform.rotation, neckTransform.rotation, singleStep);
+        //         // Clamp head rotation
+        //         ClampRotation(headTransform, neckXRotationLimit, neckXRotationLimit, neckYRotationLimit, neckZRotationLimit);
+        //     }
+        // }
+            
+
+        // Animate eye blendhsapes according to gaze direction
+        AnimateGazeBlendShapes();        
     }
 
     private void SetRotation(Transform objectTransform, FixationObject objectOfInterest, float movementSpeed)
@@ -341,30 +316,4 @@ public class FaceController : MonoBehaviour
         yield return Blink();
         yield return null;
     }
-
-    // private string GetBlendshapeNames()
-    // {
-    //     string blendshapeNames = "";
-    //     for (int i = 0; i < faceMeshRenderer.sharedMesh.blendShapeCount; i++)
-    //     {
-    //         string blendShapeName = faceMeshRenderer.sharedMesh.GetBlendShapeName(i);
-    //         string blendShapeDirection = "";
-    //         string[] blendShapeNameDir = blendShapeName.Split('_');
-    //         if (blendShapeNameDir.Length > 1)
-    //         {
-    //             blendShapeDirection = blendShapeNameDir[1];
-    //             if(blendShapeDirection.Contains("R"))
-    //             {
-    //                 blendShapeDirection = "Right";
-    //             }
-    //             else
-    //             {
-    //                 blendShapeDirection = "Left";
-    //             }
-    //         }
-    //         blendShapeName = char.ToUpper(blendShapeNameDir[0][0]) + blendShapeNameDir[0].Substring(1);
-    //         blendshapeNames += String.Format("private const int {0}{1}BlendShapeIndex = {2};\n", blendShapeName, blendShapeDirection, i);
-    //     }
-    //     return blendshapeNames;
-    // }
 }
