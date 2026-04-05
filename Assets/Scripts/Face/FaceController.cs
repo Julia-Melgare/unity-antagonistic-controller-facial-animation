@@ -35,6 +35,8 @@ public class FaceController : MonoBehaviour
     private float eyeSaccadeSpeed = 13.9626f; //800 degrees in radians;
     [SerializeField]
     private float eyePursuitSpeed = 1.74533f; //100 degrees in radians;
+    [SerializeField]
+    private float moveHeadFixationTime = 0.1f; // Minimum fixation time required for agent to move head towards target
 
     #region Blendshapes
     private const int BrowOuterUpLeftBlendShapeIndex = 0;
@@ -123,7 +125,6 @@ public class FaceController : MonoBehaviour
     private float maxEyeDistance = 0.05f; // Maximum eye distance for squint blendshape (we can change dynamically after)
     private Vector3 initialNeckForward;
 
-    private bool amAvoiding = false;
 
     private void Start()
     {
@@ -148,7 +149,7 @@ public class FaceController : MonoBehaviour
 
         Vector3 middlePoint = (leftEyeTransform.forward + rightEyeTransform.forward).normalized;
         
-        if ((SurpassedRotationConstraints(leftEyeTransform, eyeXComfortableRotationLimit, eyeYComfortableRotationLimit, eyeZComfortableRotationLimit) || SurpassedRotationConstraints(leftEyeTransform, eyeXComfortableRotationLimit, eyeYComfortableRotationLimit, eyeZComfortableRotationLimit)) && attentionController.GetCurrentFixationTime() > 0.2f)
+        if ((SurpassedRotationConstraints(leftEyeTransform, eyeXComfortableRotationLimit, eyeYComfortableRotationLimit, eyeZComfortableRotationLimit) || SurpassedRotationConstraints(leftEyeTransform, eyeXComfortableRotationLimit, eyeYComfortableRotationLimit, eyeZComfortableRotationLimit)) && attentionController.GetCurrentFixationTime() > moveHeadFixationTime)
         {
             // Rotate neck towards eyes middle point
             SetRotation(neckTransform, middlePoint, neckMovementSpeed/2f);
