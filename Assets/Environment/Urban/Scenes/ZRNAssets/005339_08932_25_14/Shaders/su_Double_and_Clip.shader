@@ -1,117 +1,200 @@
 Shader "su_Double_Clip"
 {
-	Properties 
-	{
-_TexColor("_TexColor", Color) = (1,1,1,1)
-_Texture("_Texture", 2D) = "gray" {}
-_ClipValue("_ClipValue", Range(0,1) ) = 0.5
+    Properties
+    {
+        _TexColor("Tint Color", Color) = (1,1,1,1)
+        _Texture("Texture", 2D) = "gray" {}
+        _ClipValue("Alpha Cutoff", Range(0,1)) = 0.5
 
-	}
-	
-	SubShader 
-	{
-		Tags
-		{
-"Queue"="Geometry"
-"IgnoreProjector"="False"
-"RenderType"="Opaque"
+        // LitInput.hlsl / pass includes require these to exist
+        [HideInInspector] _BaseMap("Base Map", 2D) = "white" {}
+        [HideInInspector] _BaseColor("Base Color", Color) = (1,1,1,1)
+        [HideInInspector] _Cutoff("Cutoff", Range(0,1)) = 0.5
+        [HideInInspector] _Smoothness("Smoothness", Range(0,1)) = 0.5
+        [HideInInspector] _Metallic("Metallic", Range(0,1)) = 0.0
+        [HideInInspector] _BumpMap("Bump Map", 2D) = "bump" {}
+        [HideInInspector] _BumpScale("Bump Scale", Float) = 1.0
+        [HideInInspector] _EmissionColor("Emission Color", Color) = (0,0,0,1)
+        [HideInInspector] _EmissionMap("Emission Map", 2D) = "white" {}
+        [HideInInspector] _OcclusionMap("Occlusion", 2D) = "white" {}
+        [HideInInspector] _OcclusionStrength("Occlusion Strength", Range(0,1)) = 1.0
+        [HideInInspector] _MetallicGlossMap("Metallic Gloss", 2D) = "white" {}
+        [HideInInspector] _SpecColor("Spec Color", Color) = (1,1,1,1)
+        [HideInInspector] _SpecGlossMap("Spec Gloss Map", 2D) = "white" {}
+        [HideInInspector] _GlossMapScale("Gloss Map Scale", Range(0,1)) = 1.0
+        [HideInInspector] _SmoothnessTextureChannel("Smoothness Channel", Float) = 0
+        [HideInInspector] _DetailMask("Detail Mask", 2D) = "white" {}
+        [HideInInspector] _DetailAlbedoMap("Detail Albedo", 2D) = "grey" {}
+        [HideInInspector] _DetailNormalMap("Detail Normal", 2D) = "bump" {}
+        [HideInInspector] _DetailNormalMapScale("Detail Normal Scale", Float) = 1.0
+        [HideInInspector] _ParallaxMap("Parallax", 2D) = "black" {}
+        [HideInInspector] _Parallax("Parallax Scale", Range(0.005,0.08)) = 0.02
+    }
 
-		}
+    SubShader
+    {
+        Tags
+        {
+            "RenderType"     = "TransparentCutout"
+            "RenderPipeline" = "UniversalPipeline"
+            "Queue"          = "AlphaTest"
+        }
 
-		
-Cull Off
-ZWrite On
-ZTest LEqual
-ColorMask RGBA
-Fog{
-}
+        Cull Off
+        ZWrite On
+        ZTest LEqual
 
+        // ------------------------------------------------------------------
+        // Forward Lit Pass
+        Pass
+        {
+            Name "ForwardLit"
+            Tags { "LightMode" = "UniversalForward" }
 
-		CGPROGRAM
-#pragma surface surf BlinnPhongEditor  vertex:vert
-#pragma target 2.0
+            HLSLPROGRAM
+            #pragma target 2.0
+            #pragma vertex   vert
+            #pragma fragment frag
 
+            #pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE
+            #pragma multi_compile _ _ADDITIONAL_LIGHTS_VERTEX _ADDITIONAL_LIGHTS
+            #pragma multi_compile_fragment _ _ADDITIONAL_LIGHT_SHADOWS
+            #pragma multi_compile_fragment _ _SHADOWS_SOFT
+            #pragma multi_compile_fog
+            #pragma multi_compile_instancing
 
-float4 _TexColor;
-sampler2D _Texture;
-float _ClipValue;
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/Shaders/LitInput.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
 
-			struct EditorSurfaceOutput {
-				half3 Albedo;
-				half3 Normal;
-				half3 Emission;
-				half3 Gloss;
-				half Specular;
-				half Alpha;
-				half4 Custom;
-			};
-			
-			inline half4 LightingBlinnPhongEditor_PrePass (EditorSurfaceOutput s, half4 light)
-			{
-half3 spec = light.a * s.Gloss;
-half4 c;
-c.rgb = (s.Albedo * light.rgb + light.rgb * spec);
-c.a = s.Alpha;
-return c;
+            TEXTURE2D(_Texture); SAMPLER(sampler_Texture);
 
-			}
+            // _Texture_ST and _ClipValue live outside LitInput's CBUFFER
+            // so we extend it here — note LitInput.hlsl already opened
+            // UnityPerMaterial; we cannot reopen it, so we use separate uniforms
+            float4 _Texture_ST;
+            half4  _TexColor;
+            half   _ClipValue;
 
-			inline half4 LightingBlinnPhongEditor (EditorSurfaceOutput s, half3 lightDir, half3 viewDir, half atten)
-			{
-				half3 h = normalize (lightDir + viewDir);
-				
-				half diff = max (0, dot ( lightDir, s.Normal ));
-				
-				float nh = max (0, dot (s.Normal, h));
-				float spec = pow (nh, s.Specular*128.0);
-				
-				half4 res;
-				res.rgb = _LightColor0.rgb * diff;
-				res.w = spec * Luminance (_LightColor0.rgb);
-				res *= atten * 2.0;
+            struct Attributes
+            {
+                float4 positionOS : POSITION;
+                float3 normalOS   : NORMAL;
+                float2 uv         : TEXCOORD0;
+                UNITY_VERTEX_INPUT_INSTANCE_ID
+            };
 
-				return LightingBlinnPhongEditor_PrePass( s, res );
-			}
-			
-			struct Input {
-				float2 uv_Texture;
+            struct Varyings
+            {
+                float4 positionCS : SV_POSITION;
+                float2 uv         : TEXCOORD0;
+                float3 normalWS   : TEXCOORD1;
+                float3 positionWS : TEXCOORD2;
+                half   fogFactor  : TEXCOORD3;
+                UNITY_VERTEX_INPUT_INSTANCE_ID
+                UNITY_VERTEX_OUTPUT_STEREO
+            };
 
-			};
+            Varyings vert(Attributes input)
+            {
+                Varyings output = (Varyings)0;
+                UNITY_SETUP_INSTANCE_ID(input);
+                UNITY_TRANSFER_INSTANCE_ID(input, output);
+                UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
 
-			void vert (inout appdata_full v) {
-float4 VertexOutputMaster0_0_NoInput = float4(0,0,0,0);
-float4 VertexOutputMaster0_1_NoInput = float4(0,0,0,0);
-float4 VertexOutputMaster0_2_NoInput = float4(0,0,0,0);
-float4 VertexOutputMaster0_3_NoInput = float4(0,0,0,0);
+                VertexPositionInputs posInput = GetVertexPositionInputs(input.positionOS.xyz);
+                output.positionCS = posInput.positionCS;
+                output.positionWS = posInput.positionWS;
+                output.normalWS   = TransformObjectToWorldNormal(input.normalOS);
+                output.uv         = TRANSFORM_TEX(input.uv, _Texture);
+                output.fogFactor  = ComputeFogFactor(posInput.positionCS.z);
+                return output;
+            }
 
+            half4 frag(Varyings input, half facing : VFACE) : SV_Target
+            {
+                UNITY_SETUP_INSTANCE_ID(input);
+                UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
 
-			}
-			
+                half4 texSample = SAMPLE_TEXTURE2D(_Texture, sampler_Texture, input.uv);
+                clip(texSample.a - _ClipValue);
 
-			void surf (Input IN, inout EditorSurfaceOutput o) {
-				o.Normal = float3(0.0,0.0,1.0);
-				o.Alpha = 1.0;
-				o.Albedo = 0.0;
-				o.Emission = 0.0;
-				o.Gloss = 0.0;
-				o.Specular = 0.0;
-				o.Custom = 0.0;
-				
-float4 Tex2D0=tex2D(_Texture,(IN.uv_Texture.xyxy).xy);
-float4 Multiply0=_TexColor * Tex2D0;
-float4 Subtract0=Tex2D0.aaaa - _ClipValue.xxxx;
-float4 Master0_1_NoInput = float4(0,0,1,1);
-float4 Master0_2_NoInput = float4(0,0,0,0);
-float4 Master0_3_NoInput = float4(0,0,0,0);
-float4 Master0_4_NoInput = float4(0,0,0,0);
-float4 Master0_5_NoInput = float4(1,1,1,1);
-float4 Master0_7_NoInput = float4(0,0,0,0);
-clip( Subtract0 );
-o.Albedo = Multiply0;
+                half3 albedo = texSample.rgb * _TexColor.rgb;
 
-				o.Normal = normalize(o.Normal);
-			}
-		ENDCG
-	}
-	Fallback "Diffuse"
+                half3 normalWS = facing >= 0.0
+                    ? normalize(input.normalWS)
+                    : normalize(-input.normalWS);
+
+                Light mainLight = GetMainLight(TransformWorldToShadowCoord(input.positionWS));
+                half  NdotL     = saturate(dot(normalWS, mainLight.direction));
+                half3 color     = albedo * (SampleSH(normalWS)
+                                + mainLight.color * NdotL * mainLight.shadowAttenuation);
+
+                uint lightCount = GetAdditionalLightsCount();
+                for (uint i = 0; i < lightCount; ++i)
+                {
+                    Light light  = GetAdditionalLight(i, input.positionWS);
+                    half  NdotLi = saturate(dot(normalWS, light.direction));
+                    color += albedo * light.color * NdotLi
+                           * light.distanceAttenuation * light.shadowAttenuation;
+                }
+
+                color = MixFog(color, input.fogFactor);
+                return half4(color, 1.0);
+            }
+            ENDHLSL
+        }
+
+        // ------------------------------------------------------------------
+        // Shadow Caster
+        Pass
+        {
+            Name "ShadowCaster"
+            Tags { "LightMode" = "ShadowCaster" }
+
+            ZWrite On
+            ZTest LEqual
+            Cull Off
+
+            HLSLPROGRAM
+            #pragma target 2.0
+            #pragma vertex   ShadowPassVertex
+            #pragma fragment ShadowPassFragment
+            #pragma shader_feature_local_fragment _ALPHATEST_ON
+            #pragma shader_feature_local_fragment _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
+            #pragma multi_compile_instancing
+
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/Shaders/LitInput.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/Shaders/ShadowCasterPass.hlsl"
+            ENDHLSL
+        }
+
+        // ------------------------------------------------------------------
+        // Depth Only
+        Pass
+        {
+            Name "DepthOnly"
+            Tags { "LightMode" = "DepthOnly" }
+
+            ZWrite On
+            ColorMask 0
+            Cull Off
+
+            HLSLPROGRAM
+            #pragma target 2.0
+            #pragma vertex   DepthOnlyVertex
+            #pragma fragment DepthOnlyFragment
+            #pragma shader_feature_local_fragment _ALPHATEST_ON
+            #pragma shader_feature_local_fragment _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
+            #pragma multi_compile_instancing
+
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/Shaders/LitInput.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/Shaders/DepthOnlyPass.hlsl"
+            ENDHLSL
+        }
+    }
+
+    FallBack "Universal Render Pipeline/Lit"
 }
