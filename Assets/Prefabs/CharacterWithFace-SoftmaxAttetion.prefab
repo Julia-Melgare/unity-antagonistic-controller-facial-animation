@@ -1473,7 +1473,7 @@ Camera:
     serializedVersion: 2
     m_Bits: 4087
   m_RenderingPath: -1
-  m_TargetTexture: {fileID: 8400000, guid: 62e390da2b331824baa4559fecac4618, type: 2}
+  m_TargetTexture: {fileID: 8400000, guid: 5d0eb345eb4a7a6439a8d82a33fba9e0, type: 2}
   m_TargetDisplay: 0
   m_TargetEye: 3
   m_HDR: 1
@@ -2210,6 +2210,7 @@ MonoBehaviour:
     imageSaliencyScore: 0
     motionSaliencyScore: 0
     currentIOR: 0
+    scoreBoost: 0
     localPoint: {x: 0, y: 0, z: 0}
 --- !u!1 &2549329999676943728
 GameObject:
@@ -3341,6 +3342,7 @@ MonoBehaviour:
   eyeZComfortableRotationLimit: 22.2
   eyeSaccadeSpeed: 13.9626
   eyePursuitSpeed: 1.74533
+  moveHeadFixationTime: 0.1
   blinkIntervalMin: 1
   blinkIntervalMax: 5
   headTransform: {fileID: 6487854922369645274}
@@ -3375,6 +3377,7 @@ MonoBehaviour:
     imageSaliencyScore: 0
     motionSaliencyScore: 0
     currentIOR: 0
+    scoreBoost: 0
     localPoint: {x: 0, y: 0, z: 0}
   currentFixationTime: 0
 --- !u!114 &757059963867515267
