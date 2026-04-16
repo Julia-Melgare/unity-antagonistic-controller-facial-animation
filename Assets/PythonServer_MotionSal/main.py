@@ -169,7 +169,7 @@ class CentroidTracker(object):
         return f"[id:{self.id}, area:{self.area}, centroid:{self.centroid}, bbox:{self.bbox}, of_v:{self.of_vector}, of_mag:{self.of_magnitude}, avg_speed: {self.avg_speed}, centroid_v:{self.centroid_velocity}, hits:{self.hits}, lost:{self.lost}, motion saliency score: {self.motion_saliency_score}]"
 
 class Tracker(object):
-    def __init__(self, max_age=1, min_hits=3, dist_threshold=3.0, max_id_threshold=30):
+    def __init__(self, max_age=1, min_hits=3, dist_threshold=3.0, max_id_threshold=100):
         self.max_age = max_age
         self.min_hits = min_hits
         self.dist_threshold = dist_threshold

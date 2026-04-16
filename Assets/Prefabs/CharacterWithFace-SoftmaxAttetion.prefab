@@ -3172,7 +3172,7 @@ MonoBehaviour:
   moveForwardOnly: 0
   followPath: 1
   pathTrajectory: {fileID: 0}
-  pathFollowSpeedModifier: 1.2
+  pathFollowSpeedModifier: 0.6
   _inputs: {x: 0, y: 0, z: 0}
   moveDirection: {x: 0, y: 0, z: 0}
   inputMagnitude: 0
@@ -3434,6 +3434,7 @@ MonoBehaviour:
   inferenceClient: {fileID: 1183671001685311526}
   opticalFlowScaleMaterial: {fileID: 2100000, guid: b402dec83d5815542a69cc6a5d8b71e7, type: 2}
   peripheralViewCamera: {fileID: 1881891888055310169}
+  auxiliaryPeripheralViewCamera: {fileID: 1837647691036157126}
   scanLayerMask:
     serializedVersion: 2
     m_Bits: 3639

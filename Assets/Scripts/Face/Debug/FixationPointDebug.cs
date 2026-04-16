@@ -27,7 +27,7 @@ public class FixationPointDebug : MonoBehaviour
     void Update()
     {
         Vector3 fixationPoint = Vector3.zero;
-        if(attentionController != null && attentionController.isActiveAndEnabled)
+        if(attentionController != null && attentionController.isActiveAndEnabled && attentionController.GetCurrentFocus().gameObject != null)
         {
             fixationPoint = attentionController.GetCurrentFocus().GetFixationPoint();
         }

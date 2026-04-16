@@ -3,9 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using UnityEngine;
-using UnityEngine.AI;
 using UnityEngine.UI;
 
 public class OpticalFlowController : MonoBehaviour
@@ -19,6 +17,8 @@ public class OpticalFlowController : MonoBehaviour
     private Material opticalFlowScaleMaterial;
     [SerializeField]
     private Camera peripheralViewCamera;
+    [SerializeField]
+    private Camera auxiliaryPeripheralViewCamera;
     [SerializeField]
     private LayerMask scanLayerMask;
 
@@ -75,6 +75,8 @@ public class OpticalFlowController : MonoBehaviour
         opticalFlowToObject = new Dictionary<int, FixationObject>();
         motionSalientObjects = new List<FixationObject>();//new List<FixationObject>();
         captureTexture = new Texture2D(width, height);
+
+        auxiliaryPeripheralViewCamera.enabled = false;
     }
 
     void Update()
@@ -84,6 +86,7 @@ public class OpticalFlowController : MonoBehaviour
         if (awaitingResponse)
             return;
         InferOpticalFlow();
+        UpdateAuxiliaryCamera();
     }
 
     private void AccumulateOpticalFlow()
@@ -131,6 +134,15 @@ public class OpticalFlowController : MonoBehaviour
         opticalFlowAccumShader.Dispatch(kernel, Mathf.CeilToInt(width/8f), Mathf.CeilToInt(height/8f), 1);
 
         accumOpticalFlowImage.texture = accumOpticalFlowTexture;
+    }
+
+    private void UpdateAuxiliaryCamera()
+    {
+        auxiliaryPeripheralViewCamera.enabled = true;
+        auxiliaryPeripheralViewCamera.transform.position = peripheralViewCamera.transform.position;
+        auxiliaryPeripheralViewCamera.transform.rotation = peripheralViewCamera.transform.rotation;
+        auxiliaryPeripheralViewCamera.transform.localScale = peripheralViewCamera.transform.localScale;
+        auxiliaryPeripheralViewCamera.enabled = false;
     }
 
     public void InferOpticalFlow()
@@ -217,11 +229,13 @@ public class OpticalFlowController : MonoBehaviour
             {
                 // update motion saliency score
                 opticalFlowToObject[obj.id].motionSaliencyScore = obj.score;
+                // add it to the motion salient objects list since it's cleared every frame
+                motionSalientObjects.Add(opticalFlowToObject[obj.id]);
                 // we already found a proper game object for this ID, continue
                 continue;
             }
             // raycast for new IDs and update IDs that dont have a proper game object
-            Ray ray = peripheralViewCamera.ScreenPointToRay(new Vector3(obj.centroid[1], obj.centroid[0], 0));
+            Ray ray = auxiliaryPeripheralViewCamera.ScreenPointToRay(new Vector3(obj.centroid[1], obj.centroid[0], 0));
             RaycastHit[] hits = Physics.RaycastAll(ray, Mathf.Infinity, scanLayerMask);
             GameObject raycastObj;
             FixationObject fixationObject = opticalFlowToObject.ContainsKey(obj.id) ? opticalFlowToObject[obj.id] : new FixationObject(null, Vector3.zero);
