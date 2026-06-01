@@ -27,7 +27,7 @@ public class FixationObject : IEquatable<FixationObject>
 
     public float GetSaliencyScore()
     {
-        return Math.Max(imageSaliencyScore, motionSaliencyScore) + scoreBoost - currentIOR; 
+        return 0.5f * imageSaliencyScore + 0.5f * motionSaliencyScore + scoreBoost - currentIOR; //Math.Max(imageSaliencyScore, motionSaliencyScore)
     }
     
     public Vector3 GetFixationPoint()
