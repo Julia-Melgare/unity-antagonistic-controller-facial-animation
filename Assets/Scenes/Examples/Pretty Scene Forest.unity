@@ -1199,7 +1199,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 242003641472051548, guid: e870347c99002d7458a4e1f71374d35a, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 242003641472051549, guid: e870347c99002d7458a4e1f71374d35a, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -540
       objectReference: {fileID: 0}
     - target: {fileID: 242003641773968663, guid: e870347c99002d7458a4e1f71374d35a, type: 3}
       propertyPath: m_Pivot.x
@@ -1305,17 +1309,21 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 242003642484710752, guid: e870347c99002d7458a4e1f71374d35a, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -180
+      objectReference: {fileID: 0}
     - target: {fileID: 242003642484710753, guid: e870347c99002d7458a4e1f71374d35a, type: 3}
       propertyPath: m_Texture
       value: 
       objectReference: {fileID: 8400000, guid: ac4556f233c9202428bfc662122bfa05, type: 2}
     - target: {fileID: 242003642484710755, guid: e870347c99002d7458a4e1f71374d35a, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 542746652391693387, guid: e870347c99002d7458a4e1f71374d35a, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1657153976371256145, guid: e870347c99002d7458a4e1f71374d35a, type: 3}
       propertyPath: m_IsActive
@@ -1325,11 +1333,19 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -900
       objectReference: {fileID: 0}
+    - target: {fileID: 7128386791822274263, guid: e870347c99002d7458a4e1f71374d35a, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -540
+      objectReference: {fileID: 0}
     - target: {fileID: 7836915518030631728, guid: e870347c99002d7458a4e1f71374d35a, type: 3}
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9152152456930864555, guid: e870347c99002d7458a4e1f71374d35a, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9195418071366884143, guid: e870347c99002d7458a4e1f71374d35a, type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
@@ -2302,7 +2318,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.7776315, y: 1}
+    m_SensorSize: {x: 1, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -3206,7 +3222,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1369442626360506921, guid: 23362761152b80a43bfdef68f548de63, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1369442626360506921, guid: 23362761152b80a43bfdef68f548de63, type: 3}
       propertyPath: scanFrequency
@@ -5902,7 +5918,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.7776315, y: 1}
+    m_SensorSize: {x: 1, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -8771,6 +8787,11 @@ MonoBehaviour:
   heightOffset: 3
   fixationObject:
     gameObject: {fileID: 0}
+    imageSaliencyScore: 0
+    motionSaliencyScore: 0
+    currentIOR: 0
+    scoreBoost: 0
+    localPoint: {x: 0, y: 0, z: 0}
 --- !u!4 &860536718380802242
 Transform:
   m_ObjectHideFlags: 0
@@ -22627,6 +22648,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5590e4fed8d5ac4ca1411ee054d4883, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  socketID: 5555
 --- !u!114 &8913270828543183574
 MonoBehaviour:
   m_ObjectHideFlags: 0

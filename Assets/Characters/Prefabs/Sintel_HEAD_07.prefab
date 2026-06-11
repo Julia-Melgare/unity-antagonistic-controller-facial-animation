@@ -996,6 +996,11 @@ MonoBehaviour:
   heightOffset: 3
   fixationObject:
     gameObject: {fileID: 0}
+    imageSaliencyScore: 0
+    motionSaliencyScore: 0
+    currentIOR: 0
+    scoreBoost: 0
+    localPoint: {x: 0, y: 0, z: 0}
 --- !u!1 &2770658072135690517
 GameObject:
   m_ObjectHideFlags: 0
@@ -1477,6 +1482,7 @@ MonoBehaviour:
   eyeZComfortableRotationLimit: 22.2
   eyeSaccadeSpeed: 13.9626
   eyePursuitSpeed: 1.74533
+  moveHeadFixationTime: 0.1
   blinkIntervalMin: 1
   blinkIntervalMax: 5
   headTransform: {fileID: 6641876916658304500}
@@ -1501,7 +1507,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   saliencyController: {fileID: 910937097457239725}
-  frustrumLineOfSight: {fileID: 1439549073265928360}
+  motionSaliencyController: {fileID: 1439549073265928360}
   pathLookAhead: {fileID: 1457861925528186356}
   lookAtPathWeight: 78.8
   lookAtObjectsWeight: 21.2
@@ -1519,6 +1525,11 @@ MonoBehaviour:
   maxDecisionTime: 0.2
   currentFocus:
     gameObject: {fileID: 0}
+    imageSaliencyScore: 0
+    motionSaliencyScore: 0
+    currentIOR: 0
+    scoreBoost: 0
+    localPoint: {x: 0, y: 0, z: 0}
   currentObjects: []
   currentFocusDebugText: {fileID: 0}
 --- !u!114 &910937097457239725
@@ -1541,7 +1552,7 @@ MonoBehaviour:
   scanLayerMask:
     serializedVersion: 2
     m_Bits: 3639
-  salientObjects: []
+  imageSalientObjects: []
   saliencyValueThreshold: 0.95
   saliencyMapImage: {fileID: 0}
   visionFrameImage: {fileID: 0}
@@ -1574,10 +1585,16 @@ MonoBehaviour:
   opticalFlowAccumShader: {fileID: 7200000, guid: 3ae07a7de26887f42af343f15f595c18, type: 3}
   inferenceClient: {fileID: 1605793787579600648}
   opticalFlowScaleMaterial: {fileID: 2100000, guid: b402dec83d5815542a69cc6a5d8b71e7, type: 2}
+  peripheralViewCamera: {fileID: 0}
+  auxiliaryPeripheralViewCamera: {fileID: 0}
+  scanLayerMask:
+    serializedVersion: 2
+    m_Bits: 0
   opticalFlowTexture: {fileID: 8400000, guid: 41706c3073d3dca49b3aed553dee8304, type: 2}
   bufferSize: 12
   accumOpticalFlowImage: {fileID: 0}
   opticalFlowObjects: []
+  motionSalientObjects: []
 --- !u!114 &1605793787579600648
 MonoBehaviour:
   m_ObjectHideFlags: 0

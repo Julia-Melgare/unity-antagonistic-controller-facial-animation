@@ -6,7 +6,7 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class OpticalFlowController : MonoBehaviour
+public class OpticalFlowController : MotionSaliencyController
 {
     [Header("Script Inputs")]
     [SerializeField]
@@ -285,7 +285,7 @@ public class OpticalFlowController : MonoBehaviour
             Destroy(captureTexture);
     }
 
-    public List<FixationObject> GetSalientObjects()
+    public override List<FixationObject> GetSalientObjects()
     {
         return motionSalientObjects;
     }

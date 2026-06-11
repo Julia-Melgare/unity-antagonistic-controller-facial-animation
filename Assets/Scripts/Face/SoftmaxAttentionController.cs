@@ -10,7 +10,7 @@ public class SoftmaxAttentionController : AttentionController
     [SerializeField]
     private SaliencyController imageSaliencyController;
     [SerializeField]
-    private OpticalFlowController motionSaliencyController;
+    private MotionSaliencyController motionSaliencyController;
     [SerializeField]
     private PathDirectionObject pathLookAhead;
 
@@ -19,6 +19,8 @@ public class SoftmaxAttentionController : AttentionController
     public float focusBoost = 20f;
     public float IORFactor = 0.5f;
     public float minFixationTime = 0.2f;
+    public float timeSinceLastPathLookModifier = 0.8f;
+    
     [SerializeField]
     private List<FixationObject> fixationObjects;
 
@@ -26,8 +28,8 @@ public class SoftmaxAttentionController : AttentionController
     private FixationObject currentFocus;
     [SerializeField]
     private float currentFixationTime = 0;
-
     private float timeSinceLastPathLook = 0f;
+
 
     private void Start()
     {
@@ -50,7 +52,7 @@ public class SoftmaxAttentionController : AttentionController
             // Count fixation time
             currentFixationTime += Time.deltaTime;
             // Make current focus less interesting over time
-            currentFocus.currentIOR += IORFactor;
+            currentFocus.currentIOR += IORFactor * (1 - GetFocusSaliencyScore());
         }
 
         fixationObjects.Clear();
@@ -63,18 +65,20 @@ public class SoftmaxAttentionController : AttentionController
 
         //Collect their scores
         float[] scores = (from fixationObject in fixationObjects select fixationObject.GetSaliencyScore()).ToArray();
-        scores.Append(pathLookAhead.GetGroundSlopeAngle() * timeSinceLastPathLook); // TODO: Make sure this value is normalized between 0 and 1
-        Debug.Log("[Softmax Attetion] score list: "+ string.Join(',', scores));
+
+        //Add path score
+        scores.Append(pathLookAhead.GetPathSaliencyScore(timeSinceLastPathLook, timeSinceLastPathLookModifier));
+        //Debug.Log("[Softmax Attetion] score list: "+ string.Join(',', scores));
 
         //Sample using softmax
         float[] scores_probs = SoftmaxFunction.Softmax(scores, softmaxTemperature);
-        Debug.Log("[Softmax Attetion] scores probabilities: "+ string.Join(',', scores_probs));
+        //Debug.Log("[Softmax Attetion] scores probabilities: "+ string.Join(',', scores_probs));
         int targetIndex = SoftmaxFunction.SoftmaxSample(scores, softmaxTemperature);
 
         //Choose the next target and see if it's a different object than what we're currently looking at
         FixationObject nextTarget = fixationObjects.ElementAt(targetIndex);
-        Debug.Log("[Softmax Attention] chosen target: "+ nextTarget.gameObject.name);
-        if (nextTarget != currentFocus && currentFixationTime >= minFixationTime) //If we are switching targets
+        //Debug.Log("[Softmax Attention] chosen target: "+ nextTarget.gameObject.name);
+        if (nextTarget != currentFocus && currentFixationTime >= minFixationTime) //If we are switching targets 
         {
             //Reset current target modifiers
             currentFocus.scoreBoost = 0f;
@@ -82,8 +86,20 @@ public class SoftmaxAttentionController : AttentionController
             currentFixationTime = 0f;
             //Switch target and apply score boost to keep focus
             currentFocus = nextTarget;
-            currentFocus.scoreBoost = focusBoost;
+            currentFocus.scoreBoost = focusBoost; //* Mathf.Pow(GetFocusSaliencyScore(), 2f);
         }
+    }
+
+    private float GetFocusSaliencyScore()
+    {
+        if (currentFocus == pathLookAhead.fixationObject)
+        {
+            float normalizedSlope = Mathf.Clamp01(pathLookAhead.GetGroundSlopeAngle() / 30.0f);
+            float normalizedTimeSinceLastLook = 1.0f - Mathf.Exp(-timeSinceLastPathLookModifier * timeSinceLastPathLook);
+            return 0.5f * normalizedSlope + 0.5f * normalizedTimeSinceLastLook;
+        }
+
+        return 0.5f * currentFocus.imageSaliencyScore + 0.5f * currentFocus.motionSaliencyScore;
     }
 
     public override FixationObject GetCurrentFocus()

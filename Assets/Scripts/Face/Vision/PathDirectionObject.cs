@@ -167,4 +167,12 @@ public class PathDirectionObject : MonoBehaviour
     {
         return rigidBodyController.groundSlopeAngle;
     }
+
+    public float GetPathSaliencyScore(float timeSinceLastPathLook, float timeSinceLastPathLookModifier)
+    {
+        float normalizedSlope = Mathf.Clamp01(GetGroundSlopeAngle() / 30.0f);
+        float normalizedTimeSinceLastLook = 1.0f - Mathf.Exp(-timeSinceLastPathLookModifier * timeSinceLastPathLook);
+        return 0.5f * normalizedSlope + 0.5f * normalizedTimeSinceLastLook + fixationObject.scoreBoost - fixationObject.currentIOR;
+    }
+    
 }

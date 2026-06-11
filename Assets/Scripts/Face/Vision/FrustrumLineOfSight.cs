@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class FrustrumLineOfSight : MonoBehaviour
+public class FrustrumLineOfSight : MotionSaliencyController
 {
     [Header("LOS Settings")]
     [SerializeField] 
@@ -69,14 +69,15 @@ public class FrustrumLineOfSight : MonoBehaviour
                 {
                     //Debug.Log("[Fustrum] Detected fast moving object: "+obj.name+" speed: "+objSpeed);
                     onFastMovement?.Invoke(fixationObject);
-                } 
+                }
+                fixationObject.motionSaliencyScore = objSpeed; 
                 objectSpeedDict.TryAdd(fixationObject, objSpeed);
             }
         }
         objects = new List<FixationObject>(objectSpeedDict.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value).Keys);
     }
 
-    public List<FixationObject> GetObjects()
+    public override List<FixationObject> GetSalientObjects()
     {
         return objects ?? new List<FixationObject>();
     }
@@ -118,13 +119,13 @@ public class FrustrumLineOfSight : MonoBehaviour
                 motionSaliency = 0.1f;
                 break;
             case MotionState.Continuous: case MotionState.Offset:
-                motionSaliency = 0.2f;
+                motionSaliency = 0.8f;
                 break;
             case MotionState.Change: case MotionState.Onset:
                 motionSaliency = 1f;
                 break;
         }
-        return motionSaliency + movingObj.GetVelocity().sqrMagnitude;
+        return motionSaliency; //+ movingObj.GetVelocity().sqrMagnitude;
     }
 
     public int Filter(GameObject[] buffer, string layerName)

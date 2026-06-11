@@ -3368,9 +3368,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   imageSaliencyController: {fileID: 757059963867515267}
   motionSaliencyController: {fileID: 8630028573185890683}
+  pathLookAhead: {fileID: 1305639007181923034}
   softmaxTemperature: 1.5
-  focusBoost: 10
-  IORFactor: 0.5
+  focusBoost: 20
+  IORFactor: 0.1
+  minFixationTime: 0.2
+  timeSinceLastPathLookModifier: 0.8
   fixationObjects: []
   currentFocus:
     gameObject: {fileID: 0}

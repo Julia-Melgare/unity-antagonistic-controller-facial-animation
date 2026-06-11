@@ -11,7 +11,7 @@ public class DDMAttentionController : AttentionController
     [SerializeField]
     private SaliencyController saliencyController;
     [SerializeField]
-    private FrustrumLineOfSight frustrumLineOfSight;
+    private MotionSaliencyController motionSaliencyController;
     [SerializeField]
     private PathDirectionObject pathLookAhead;
 
@@ -181,7 +181,7 @@ public class DDMAttentionController : AttentionController
         foreach (FixationObject obj in driftPerObject.Keys.ToList())
         {
             if (currentObjects.Contains(obj))
-                driftPerObject[obj] += (GetObjSaliencyScore(obj) * Time.deltaTime) + Random.Range(0, noiseLevel);
+                driftPerObject[obj] += (obj.GetSaliencyScore() * Time.deltaTime) + Random.Range(0, noiseLevel);
             else
                 driftPerObject[obj] *= 0.9f;
             //Debug.Log("[DDM] ("+(maxDecisionTime - objectDecisionTimer)+"s) "+obj.gameObject.name+": "+driftPerObject[obj]);
@@ -197,7 +197,7 @@ public class DDMAttentionController : AttentionController
 
     private void UpdateCurrentObjects()
     {
-        lineOfSightObjects = frustrumLineOfSight.GetObjects();
+        lineOfSightObjects = motionSaliencyController.GetSalientObjects();
         if (focusOnSalientRegions)
             salientObjects = saliencyController.GetSalientObjects();
         
@@ -218,11 +218,11 @@ public class DDMAttentionController : AttentionController
         currentObjects = new List<FixationObject>(currentObjectsSet.ToList());        
     }
 
-    private float GetObjSaliencyScore(FixationObject obj)
-    {
-        //Debug.Log("[SaliencyScore] "+obj.gameObject.name+" IS: "+saliencyController.GetObjectSaliency(obj)+" MS: "+ frustrumLineOfSight.GetObjectSpeed(obj)+" IOR: "+(1f + inhibitionOfReturnTime - objectsFocusedOn.GetValueOrDefault(obj.gameObject.GetInstanceID(), 0f)));
-        return (obj.imageSaliencyScore + frustrumLineOfSight.GetObjectSpeed(obj)) * (1f + inhibitionOfReturnTime - objectsFocusedOn.GetValueOrDefault(obj.gameObject.GetInstanceID(), 0f));
-    }
+    // private float GetObjSaliencyScore(FixationObject obj)
+    // {
+    //     //Debug.Log("[SaliencyScore] "+obj.gameObject.name+" IS: "+saliencyController.GetObjectSaliency(obj)+" MS: "+ frustrumLineOfSight.GetObjectSpeed(obj)+" IOR: "+(1f + inhibitionOfReturnTime - objectsFocusedOn.GetValueOrDefault(obj.gameObject.GetInstanceID(), 0f)));
+    //     return (obj.imageSaliencyScore + motionSaliencyController.GetObjectSpeed(obj)) * (1f + inhibitionOfReturnTime - objectsFocusedOn.GetValueOrDefault(obj.gameObject.GetInstanceID(), 0f));
+    // }
 
     private float GetMaxObjectSaliency()
     {
@@ -303,15 +303,5 @@ public class DDMAttentionController : AttentionController
     public bool IsFocusingOnPath()
     {
         return currentFocus.gameObject != null && currentFocus.gameObject.GetInstanceID() == pathLookAhead.gameObject.GetInstanceID();
-    }
-
-    private void OnEnable()
-    {
-        frustrumLineOfSight.onFastMovement += OnFastMovement;
-    }
-
-    private void OnDisable()
-    {
-        frustrumLineOfSight.onFastMovement -= OnFastMovement;
     }
 }
