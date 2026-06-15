@@ -26,7 +26,7 @@ public class OpticalFlowController : MotionSaliencyController
     [SerializeField]
     private RenderTexture opticalFlowTexture;
     [SerializeField]
-    private int bufferSize = 12;
+    private int bufferSize = 6;
 
     [Header("Debug/Visualization")]
     [SerializeField]
@@ -235,7 +235,7 @@ public class OpticalFlowController : MotionSaliencyController
                 continue;
             }
             // raycast for new IDs and update IDs that dont have a proper game object
-            Ray ray = auxiliaryPeripheralViewCamera.ScreenPointToRay(new Vector3(obj.centroid[1], obj.centroid[0], 0));
+            Ray ray = auxiliaryPeripheralViewCamera.ScreenPointToRay(new Vector3(obj.centroid[0], height - obj.centroid[1], 0)); 
             RaycastHit[] hits = Physics.RaycastAll(ray, Mathf.Infinity, scanLayerMask);
             GameObject raycastObj;
             FixationObject fixationObject = opticalFlowToObject.ContainsKey(obj.id) ? opticalFlowToObject[obj.id] : new FixationObject(null, Vector3.zero);

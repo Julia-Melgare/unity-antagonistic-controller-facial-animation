@@ -18,7 +18,7 @@ void AccumulateFlow(uint3 id : SV_DispatchThreadID)
     
     float4 acc = AccumulatedFlow[id.xy];
     
-    if (FramesInBuffer >= 12)
+    if (FramesInBuffer >= 6)
     {
         float4 subFlow = SubFlow[id.xy];
         acc -= subFlow;
