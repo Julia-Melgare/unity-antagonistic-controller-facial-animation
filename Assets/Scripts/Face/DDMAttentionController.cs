@@ -229,7 +229,7 @@ public class DDMAttentionController : AttentionController
         float maxObjSaliency = 0f;
         foreach (FixationObject obj in currentObjects)
         {
-            float objSaliency = obj.imageSaliencyScore;
+            float objSaliency = obj.imageSaliencyScore + obj.motionSaliencyScore;
             if (objSaliency > maxObjSaliency) maxObjSaliency = objSaliency;
         }
         return maxObjSaliency;

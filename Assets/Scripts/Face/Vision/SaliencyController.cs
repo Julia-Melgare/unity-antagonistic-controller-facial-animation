@@ -108,7 +108,7 @@ public class SaliencyController : MonoBehaviour
     {
         while (saliencyMapBytes == null)
         {
-            Debug.Log("Awating response...");
+            //Debug.Log("Awating response...");
             yield return null;
         }
         UpdateSaliencyMap(saliencyMapBytes);

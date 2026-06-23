@@ -240,7 +240,7 @@ context = zmq.Context()
 socket = context.socket(zmq.REP)
 socket.bind("tcp://*:5556")
 
-my_tracker = Tracker(max_age=3, min_hits=17, dist_threshold=15)
+my_tracker = Tracker(max_age=3, min_hits=3, dist_threshold=15)
 motion_sal_estim = MotionSaliencyEstimator()
 detections = []
 

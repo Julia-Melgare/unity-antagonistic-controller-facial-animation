@@ -1,8 +1,8 @@
 using System;
+using System.Threading;
 using AsyncIO;
 using NetMQ;
 using NetMQ.Sockets;
-using UnityEngine;
 
 public class InferenceRequester : RunAbleThread
 {
@@ -17,46 +17,51 @@ public class InferenceRequester : RunAbleThread
     public bool NeedReset = false;
 
     private int failThreshold = 3;
-
     private string socketID;
+
+    // Timeout for TryReceive — short enough to check Running frequently
+    private static readonly TimeSpan ReceiveTimeout = TimeSpan.FromMilliseconds(150);
 
     public InferenceRequester(string socketID) : base()
     {
         this.socketID = socketID;
     }
+
     protected override void Run()
     {
         ForceDotNet.Force();
         using (RequestSocket client = new RequestSocket())
         {
             this.client = client;
-            client.Connect("tcp://localhost:"+socketID);
+            client.Connect("tcp://localhost:" + socketID);
+
             while (Running)
             {
-                if (needReply)
+                if (!needReply)
                 {
-                    byte[] outputBytes = new byte[0];
-                    
-                    try
-                    {
-                        outputBytes = client.ReceiveFrameBytes();
-                    }
-                    catch (Exception e)
-                    {
-                        Debug.LogError(e.Message);
-                    }
-                        
-                    //Debug.Log("message received!");
-                    var output = new byte[outputBytes.Length];
-                    Buffer.BlockCopy(outputBytes, 0, output, 0, outputBytes.Length);
-                    onOutputReceived?.Invoke(output);
-                    needReply = false;
+                    // Nothing to do — yield the thread briefly instead of spinning hot
+                    Thread.Sleep(1);
+                    continue;
                 }
-                
-            }
-        }
 
-        NetMQConfig.Cleanup();
+                // Non-blocking receive with timeout so we can check Running each cycle
+                bool received = client.TryReceiveFrameBytes(ReceiveTimeout, out byte[] outputBytes);
+
+                if (!received)
+                {
+                    // Timed out — loop back and check Running / needReply again
+                    continue;
+                }
+
+                var output = new byte[outputBytes.Length];
+                Buffer.BlockCopy(outputBytes, 0, output, 0, outputBytes.Length);
+                onOutputReceived?.Invoke(output);
+                needReply = false;
+            }
+            // Socket is disposed here by the using block — safe because we exited the loop
+        }
+        // false = don't block waiting for in-flight messages to drain
+        NetMQConfig.Cleanup(false);
     }
 
     public void SendInput(byte[] input)
@@ -71,16 +76,14 @@ public class InferenceRequester : RunAbleThread
         }
         catch (Exception e)
         {
-            onFail(e);
+            onFail?.Invoke(e);
             failCount++;
-            //Debug.Log("NetMQ send fail count: "+failCount);
             if (failCount >= failThreshold)
             {
                 NeedReset = true;
                 failCount = 0;
             }
         }
-
     }
 
     public void SetOnOutputReceivedListener(Action<byte[]> onOutputReceived, Action<Exception> fallback)

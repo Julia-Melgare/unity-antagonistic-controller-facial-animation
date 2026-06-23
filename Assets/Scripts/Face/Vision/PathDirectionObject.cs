@@ -1,3 +1,4 @@
+using System;
 using Cinemachine;
 using UnityEngine;
 
@@ -76,7 +77,7 @@ public class PathDirectionObject : MonoBehaviour
 
     private void UpdateStepsAheadValue(float slopeAngle, float maxSlopeAngle = 20)
     {
-        stepsAhead = maxStepsAhead - ((slopeAngle * (maxStepsAhead - minStepsAhead))/maxSlopeAngle);
+        stepsAhead = Math.Max(minStepsAhead, maxStepsAhead - (slopeAngle * (maxStepsAhead - minStepsAhead)/maxSlopeAngle));
     }
 
     /*private void UpdateHeight(float slopeAngle, float maxSlopeAngle = 30)
