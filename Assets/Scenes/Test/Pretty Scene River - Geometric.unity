@@ -814,7 +814,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e477855e6ed5bf64484d5e97dcfc1552, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attentionController: {fileID: 1261014346}
+  attentionController: {fileID: 1613399351}
   fixationController: {fileID: 1846248156}
   followExactEyeMovement: 0
   leftEyeTransform: {fileID: 0}
@@ -54509,17 +54509,6 @@ Transform:
   m_Father: {fileID: 317121839}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1261014346 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7840846339765668983, guid: 23362761152b80a43bfdef68f548de63, type: 3}
-  m_PrefabInstance: {fileID: 1206781763}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1c5598e282eaac14a94a76adf453ff0a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &1261079628
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -86486,6 +86475,10 @@ PrefabInstance:
       propertyPath: neckYRotationLimit
       value: 35
       objectReference: {fileID: 0}
+    - target: {fileID: 1547644798687579831, guid: 23362761152b80a43bfdef68f548de63, type: 3}
+      propertyPath: attentionController
+      value: 
+      objectReference: {fileID: 1613399351}
     - target: {fileID: 1759751579906310184, guid: 23362761152b80a43bfdef68f548de63, type: 3}
       propertyPath: m_Layer
       value: 14
