@@ -94,7 +94,6 @@ public class SaliencyController : MonoBehaviour
         RenderTexture.active = agentCamera.targetTexture;
 
         // Read the active Render Texture into our current vision frame.
-        Debug.Log(currentVisionFrame);
         currentVisionFrame.ReadPixels(new Rect(0, 0, currentVisionFrame.width, currentVisionFrame.height), 0, 0);
         currentVisionFrame.Apply(false);
 
