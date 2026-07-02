@@ -1,8 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.UIElements.Experimental;
 
@@ -46,6 +48,9 @@ public class GazeScoreCalculator : MonoBehaviour
 
     void OnApplicationQuit()
     {
+        Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+        
+        string res = "SoftmaxGeo,";
         Debug.Log("-------- Gaze Score Metrics --------");
         Debug.Log("Total simulation frames: "+totalFixations);
         int totalRelevantFixations = 0;
@@ -53,8 +58,11 @@ public class GazeScoreCalculator : MonoBehaviour
         {
             Debug.Log("Frames focusing on " + obj.Key.name + ": " + obj.Value + "(" + ((float)obj.Value/totalFixations) + ")");
             totalRelevantFixations += obj.Value;
+            res += (float)obj.Value/totalFixations + ",";
         }
 
         Debug.Log("Overall Gaze Score: " + ((float)totalRelevantFixations/totalFixations));
+        res += (float)totalRelevantFixations/totalFixations;
+        Debug.Log(res);
     }
 }
